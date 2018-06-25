@@ -135,17 +135,8 @@
             cursor: "move",
             revert: "invalid",
             appendTo: 'body',
-            containment: 'frame',
             helper: 'clone'
         });
-
-        function enableDraggable(el) {
-            $(el).draggable({
-                containment: ".fw-content",
-                cursor: "help",
-                grid: [80, 80]
-            }).css('position', 'absolute');
-        }
 
         var counter = 1;
         $(".drop-container").droppable({
@@ -154,7 +145,6 @@
             drop: function (event, ui) {
                 var cloned = $(ui.helper).clone();
                 cloned.attr("id", "clonedElem" + counter);
-                var pos = $(ui.helper).offset();
 
                 var draggableOffset = ui.helper.offset(),
                     droppableOffset = $(this).offset(),
@@ -169,10 +159,11 @@
 
                 cloned.attr("visible", "true");
 
+
                 cloned.draggable({
+                    appendTo: 'body',
+                    containment:'.drop-container',
                     refreshPositions: true,
-                    // revert: "invalid",
-                    // containment: 'parent',
                     stop: function (ev, ui) {
                         console.log("aqui");
                     }
