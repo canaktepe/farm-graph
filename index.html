@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>FarmGraph Management</title>
+    <link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.min.css" />
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/style.css" />
+</head>
+
+<body>
+    <div class="main">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
+                aria-expanded="false" aria-label="Toggle navigation"></button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="#">Action 1</a>
+                            <a class="dropdown-item" href="#">Action 2</a>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+        <div class="container-fluid">
+            <div class="row mt-3">
+                <div class="col">
+                    <div class="mCustomScrollbar content-device" data-mcs-theme="dark">
+                        <ul class="list-inline devices draggable">
+                            <li class="list-inline-item">
+                                <svg width="200" height="100">
+                                    <rect width="200" height="100" style="fill:rgb(250, 169, 158);stroke-width:1;stroke:rgb(100, 100, 100)" />
+                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
+                                </svg>
+                            </li>
+                            <li class="list-inline-item">
+                                <svg width="200" height="100">
+                                    <rect width="200" height="100" style="fill:rgb(135, 255, 215);stroke-width:1;stroke:rgb(100, 100, 100)" />
+                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Grazeway</text>
+                                </svg>
+                            </li>
+                            <li class="list-inline-item">
+                                <svg width="200" height="100">
+                                    <rect width="200" height="100" style="fill:rgb(125, 145, 255);stroke-width:1;stroke:rgb(100, 100, 100)" />
+                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Cosmix</text>
+                                </svg>
+                            </li>
+                            <li class="list-inline-item">
+                                <svg width="200" height="100">
+                                    <rect width="200" height="100" style="fill:rgb(255, 244, 149);stroke-width:1;stroke:rgb(100, 100, 100)" />
+                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
+                                </svg>
+                            </li>
+                            <li class="list-inline-item">
+                                <svg width="200" height="100">
+                                    <rect width="200" height="100" style="fill:rgb(235, 158, 250);stroke-width:1;stroke:rgb(100, 100, 100)" />
+                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
+                                </svg>
+                            </li>
+                            <li class="list-inline-item">
+                                <svg width="200" height="100">
+                                    <rect width="200" height="100" style="fill:rgb(250, 169, 158);stroke-width:1;stroke:rgb(100, 100, 100)" />
+                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
+                                </svg>
+                            </li>
+                            <li class="list-inline-item">
+                                <svg width="200" height="100">
+                                    <rect width="200" height="100" style="fill:rgb(135, 255, 215);stroke-width:1;stroke:rgb(100, 100, 100)" />
+                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
+                                </svg>
+                            </li>
+                            <li class="list-inline-item">
+                                <svg width="200" height="100">
+                                    <rect width="200" height="100" style="fill:rgb(125, 145, 255);stroke-width:1;stroke:rgb(100, 100, 100)" />
+                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
+                                </svg>
+                            </li>
+                            <li class="list-inline-item">
+                                <svg width="200" height="100">
+                                    <rect width="200" height="100" style="fill:rgb(255, 244, 149);stroke-width:1;stroke:rgb(100, 100, 100)" />
+                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
+                                </svg>
+                            </li>
+                            <li class="list-inline-item">
+                                <svg width="200" height="100">
+                                    <rect width="200" height="100" style="fill:rgb(235, 158, 250);stroke-width:1;stroke:rgb(100, 100, 100)" />
+                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
+                                </svg>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col canvas-col">
+                    <div class="drop-container w-100" style="position: relative;height: 300px;bottom:0;right: 0;left:0; border:1px solid #000000;"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script type="text/javascript">
+
+        $(".content-device").mCustomScrollbar({
+            axis: "x",
+            theme: "dark-thin",
+            autoExpandScrollbar: true,
+            advanced: { autoExpandHorizontalScroll: true }
+        });
+
+        $(".draggable svg").draggable({
+            cursor: "move",
+            revert: "invalid",
+            appendTo: 'body',
+            containment: 'frame',
+            helper: 'clone'
+        });
+
+        function enableDraggable(el) {
+            $(el).draggable({
+                containment: ".fw-content",
+                cursor: "help",
+                grid: [80, 80]
+            }).css('position', 'absolute');
+        }
+
+        var counter = 1;
+        $(".drop-container").droppable({
+            accept: '.draggable svg',
+            refreshPositions: true,
+            drop: function (event, ui) {
+                var cloned = $(ui.helper).clone();
+                cloned.attr("id", "clonedElem" + counter);
+                var pos = $(ui.helper).offset();
+
+                var draggableOffset = ui.helper.offset(),
+                    droppableOffset = $(this).offset(),
+                    left = draggableOffset.left - droppableOffset.left,
+                    thisTop = draggableOffset.top - droppableOffset.top;
+
+                cloned.css({
+                    "position": "absolute",
+                    "left": left,
+                    "top": thisTop
+                });
+
+                cloned.attr("visible", "true");
+
+                cloned.draggable({
+                    refreshPositions: true,
+                    // revert: "invalid",
+                    // containment: 'parent',
+                    stop: function (ev, ui) {
+                        console.log("aqui");
+                    }
+                });
+
+                cloned.appendTo(this);
+                counter++;
+
+            }
+        });
+    </script>
+</body>
+
+</html>

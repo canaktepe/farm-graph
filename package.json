@@ -1,0 +1,15 @@
+{
+  "name": "farmgraph",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^4.1.1",
+    "jquery": "^3.3.1",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-dist": "^1.12.1",
+    "malihu-custom-scrollbar-plugin": "^3.1.5"
+  }
+}
