@@ -8,7 +8,7 @@
     <title>FarmGraph Management</title>
     <link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.min.css" />
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="assets/style.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
 <body>
@@ -39,141 +39,136 @@
             </div>
         </nav>
         <div class="container-fluid">
+
             <div class="row mt-3">
-                <div class="col">
-                    <div class="mCustomScrollbar content-device" data-mcs-theme="dark">
-                        <ul class="list-inline devices draggable">
-                            <li class="list-inline-item">
-                                <svg width="200" height="100">
-                                    <rect width="200" height="100" style="fill:rgb(250, 169, 158);stroke-width:1;stroke:rgb(100, 100, 100)" />
-                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
-                                </svg>
-                            </li>
-                            <li class="list-inline-item">
-                                <svg width="200" height="100">
-                                    <rect width="200" height="100" style="fill:rgb(135, 255, 215);stroke-width:1;stroke:rgb(100, 100, 100)" />
-                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Grazeway</text>
-                                </svg>
-                            </li>
-                            <li class="list-inline-item">
-                                <svg width="200" height="100">
-                                    <rect width="200" height="100" style="fill:rgb(125, 145, 255);stroke-width:1;stroke:rgb(100, 100, 100)" />
-                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Cosmix</text>
-                                </svg>
-                            </li>
-                            <li class="list-inline-item">
-                                <svg width="200" height="100">
-                                    <rect width="200" height="100" style="fill:rgb(255, 244, 149);stroke-width:1;stroke:rgb(100, 100, 100)" />
-                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
-                                </svg>
-                            </li>
-                            <li class="list-inline-item">
-                                <svg width="200" height="100">
-                                    <rect width="200" height="100" style="fill:rgb(235, 158, 250);stroke-width:1;stroke:rgb(100, 100, 100)" />
-                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
-                                </svg>
-                            </li>
-                            <li class="list-inline-item">
-                                <svg width="200" height="100">
-                                    <rect width="200" height="100" style="fill:rgb(250, 169, 158);stroke-width:1;stroke:rgb(100, 100, 100)" />
-                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
-                                </svg>
-                            </li>
-                            <li class="list-inline-item">
-                                <svg width="200" height="100">
-                                    <rect width="200" height="100" style="fill:rgb(135, 255, 215);stroke-width:1;stroke:rgb(100, 100, 100)" />
-                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
-                                </svg>
-                            </li>
-                            <li class="list-inline-item">
-                                <svg width="200" height="100">
-                                    <rect width="200" height="100" style="fill:rgb(125, 145, 255);stroke-width:1;stroke:rgb(100, 100, 100)" />
-                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
-                                </svg>
-                            </li>
-                            <li class="list-inline-item">
-                                <svg width="200" height="100">
-                                    <rect width="200" height="100" style="fill:rgb(255, 244, 149);stroke-width:1;stroke:rgb(100, 100, 100)" />
-                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
-                                </svg>
-                            </li>
-                            <li class="list-inline-item">
-                                <svg width="200" height="100">
-                                    <rect width="200" height="100" style="fill:rgb(235, 158, 250);stroke-width:1;stroke:rgb(100, 100, 100)" />
-                                    <text x="100" y="50" text-anchor="middle" style="fill:rgb(22, 22, 22);">Astronaut</text>
-                                </svg>
-                            </li>
+                <div class="col-2">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white">
+                            Object Information
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="form-group row">
+                                    <label for="staticEmail" class="col-sm-2 col-form-label">x</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control form-control-sm text-center" id="txtObjectX" placeholder="x">
+                                    </div>
+                                    <label for="staticEmail" class="col-sm-2 col-form-label">y</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control form-control-sm text-center" id="txtObjectY" placeholder="y">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="staticEmail" class="col-sm-2 col-form-label">w</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control form-control-sm text-center" id="txtObjectW" placeholder="w">
+                                    </div>
+                                    <label for="staticEmail" class="col-sm-2 col-form-label">h</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control form-control-sm text-center" id="txtObjectH" placeholder="h">
+                                    </div>
+                                </div>
 
-                        </ul>
+                                    <button type="button" class="btn btn-sm btn-success float-left">Save Object</button>
+                                    <button type="button" class="btn  btn-sm btn-warning float-right">Delete Object</button>
 
+
+                            </form>
+                        </div>
                     </div>
+                </div>
+                <div class="col-10">
+                    <div class="row">
 
+                        <div class="col">
+                            <div class="mCustomScrollbar content-device" data-mcs-theme="dark">
+                                <ul class="list-inline devices draggable">
+                                    <li class="list-inline-item">
+                                        <div class="align-middle" style="background-color:rgb(250, 169, 158);border:1px solid rgb(100, 100, 100)">
+                                            Astronaut
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(135, 255, 215);border:1px solid rgb(100, 100, 100)">
+                                            Grazeway
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(125, 145, 255);border:1px solid rgb(100, 100, 100)">
+                                            Cosmix
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(255, 244, 149);border:1px solid rgb(100, 100, 100)">
+                                            Central Unit
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(250, 169, 158);border:1px solid rgb(100, 100, 100)">
+                                            Astronaut
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(135, 255, 215);border:1px solid rgb(100, 100, 100)">
+                                            Grazeway
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(125, 145, 255);border:1px solid rgb(100, 100, 100)">
+                                            Cosmix
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(255, 244, 149);border:1px solid rgb(100, 100, 100)">
+                                            Central Unit
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(250, 169, 158);border:1px solid rgb(100, 100, 100)">
+                                            Astronaut
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(135, 255, 215);border:1px solid rgb(100, 100, 100)">
+                                            Grazeway
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(125, 145, 255);border:1px solid rgb(100, 100, 100)">
+                                            Cosmix
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div style="background-color:rgb(255, 244, 149);border:1px solid rgb(100, 100, 100)">
+                                            Central Unit
+                                        </div>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col canvas-col">
+                            <div class="drop-zone w-100"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col canvas-col">
-                    <div class="drop-container w-100" style="position: relative;height: 300px;bottom:0;right: 0;left:0; border:1px solid #000000;"></div>
-                </div>
-            </div>
-
         </div>
     </div>
     <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
     <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script type="text/javascript" src="assets/js/modules.js"></script>
+
     <script type="text/javascript">
 
-        $(".content-device").mCustomScrollbar({
-            axis: "x",
-            theme: "dark-thin",
-            autoExpandScrollbar: true,
-            advanced: { autoExpandHorizontalScroll: true }
-        });
+        (function () {
+            farmGraphModule.init();
+        })();
 
-        $(".draggable svg").draggable({
-            cursor: "move",
-            revert: "invalid",
-            appendTo: 'body',
-            helper: 'clone'
-        });
-
-        var counter = 1;
-        $(".drop-container").droppable({
-            accept: '.draggable svg',
-            refreshPositions: true,
-            drop: function (event, ui) {
-                var cloned = $(ui.helper).clone();
-                cloned.attr("id", "clonedElem" + counter);
-
-                var draggableOffset = ui.helper.offset(),
-                    droppableOffset = $(this).offset(),
-                    left = draggableOffset.left - droppableOffset.left,
-                    thisTop = draggableOffset.top - droppableOffset.top;
-
-                cloned.css({
-                    "position": "absolute",
-                    "left": left,
-                    "top": thisTop
-                });
-
-                cloned.attr("visible", "true");
-
-
-                cloned.draggable({
-                    appendTo: 'body',
-                    containment:'.drop-container',
-                    refreshPositions: true,
-                    stop: function (ev, ui) {
-                        console.log("aqui");
-                    }
-                });
-
-                cloned.appendTo(this);
-                counter++;
-
-            }
-        });
     </script>
 </body>
 
