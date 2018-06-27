@@ -1,9 +1,3 @@
-var $ = require('jquery');
-window.jQuery = $;
-
- require("jquery-ui"),
- require('bootstrap/dist/js/bootstrap.bundle.js'),
- require('malihu-custom-scrollbar-plugin');
 
  var elements,
   farmGraphModule = {
