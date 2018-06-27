@@ -5,10 +5,17 @@
   "main": "server.js",
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "build": "webpack --entry ./src/js/modules.js --output-filename ./bundle.js"
+    },
   "dependencies": {
     "bootstrap": "^4.1.1",
     "jquery": "^3.3.1",
+    "jquery-ui": "^1.12.1",
     "jquery-ui-dist": "^1.12.1",
     "malihu-custom-scrollbar-plugin": "^3.1.5"
+  },
+  "devDependencies": {
+    "webpack": "^4.12.2"
   }
 }

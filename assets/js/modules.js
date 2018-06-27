@@ -1,4 +1,11 @@
-var elements,
+var $ = require('jquery');
+window.jQuery = $;
+
+ require("jquery-ui"),
+ require('bootstrap/dist/js/bootstrap.bundle.js'),
+ require('malihu-custom-scrollbar-plugin');
+
+ var elements,
   farmGraphModule = {
     elements: {
       customScrollBar: $(".content-device"),
@@ -17,7 +24,7 @@ var elements,
           txtObjectX: $("#txtObjectX"),
           txtObjectY: $('#txtObjectY'),
           txtObjectW: $('#txtObjectW'),
-          txtObjectH: $('#txtObjectX')
+          txtObjectH: $('#txtObjectH')
         }
       }
     },
@@ -48,6 +55,13 @@ var elements,
         return location;
       }
 
+      setToolObjectPosition = function (objectValues) {
+        elements.tool.object.txtObjectX.val(objectValues.X);
+        elements.tool.object.txtObjectY.val(objectValues.Y);
+        elements.tool.object.txtObjectW.val(objectValues.W);
+        elements.tool.object.txtObjectH.val(objectValues.H);
+      }
+
       elements.dropElements.dropObject.droppable({
         // refreshPositions: true,
         drop: function (event, ui) {
@@ -56,6 +70,7 @@ var elements,
           if (cloned.hasClass(elements.dropElements.cloneSelector))
             return;
 
+          console.log(ui.helper.outerWidth());
           var location = calculatePosition(ui.helper.offset(), droppingObject.offset());
           cloned
             .attr("id", elements.dropElements.cloneIdPrefix + elements.dropElements.conunter)
@@ -70,8 +85,8 @@ var elements,
               revert: "invalid",
               drag: function (event, ui) {
                 var location = calculatePosition(ui.helper.offset(), droppingObject.offset());
-                elements.tool.object.txtObjectX.val(location.left - 1);
-                elements.tool.object.txtObjectY.val(location.top - 1);
+                var objectValue = { X: location.left, Y: location.top, W: 0, H: 0 };
+                setToolObjectPosition(objectValue);
               }
             })
             .resizable({
