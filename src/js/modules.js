@@ -1,15 +1,8 @@
-// var $ = require('jquery');
-// window.jQuery = $;
-
-// require("jquery-ui"),
-//   require('bootstrap/dist/js/bootstrap.bundle.js'),
-//   require('malihu-custom-scrollbar-plugin');
-
 
 import * as $ from "jquery";
-import "jquery-ui-dist/jquery-ui.min.js";
-import "bootstrap/dist/js/bootstrap.bundle.js";
-import "malihu-custom-scrollbar-plugin";
+import 'jquery-ui-dist/jquery-ui';
+import "bootstrap/dist/js/bootstrap.bundle";
+import "malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js";
 
 var elements;
 window.farmGraphModule = {
@@ -69,7 +62,6 @@ window.farmGraphModule = {
     }
 
     elements.dropElements.dropObject.droppable({
-      // refreshPositions: true,
       drop: function (event, ui) {
         var droppingObject = $(this);
         var cloned = $(ui.helper).clone();
@@ -79,7 +71,7 @@ window.farmGraphModule = {
         console.log(ui.helper.outerWidth());
         var location = calculatePosition(ui.helper.offset(), droppingObject.offset());
         cloned
-          .attr("id", elements.dropElements.cloneIdPrefix + elements.dropElements.conunter)
+          .attr("id", elements.dropElements.cloneIdPrefix + elements.dropElements.counter)
           .addClass(elements.dropElements.cloneSelector)
           .css({
             "left": location.left,
@@ -96,12 +88,10 @@ window.farmGraphModule = {
             }
           })
           .resizable({
-            // helper: "resizable-helper",
-            // autoHide: true,
             containment: elements.dropElements.selector,
           })
           .appendTo(this);
-        elements.dropElements.conunter++;
+        elements.dropElements.counter++;
       }
     })
   },
