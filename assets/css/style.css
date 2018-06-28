@@ -7,9 +7,30 @@ html,body,.main{
     height: 100%;
 }
 
+.content-device {
+    max-height: 125px !important;
+    /* width: 100% !important; */
+  }
+  .drop-zone-area{
+      max-height: 600px !important;
+      min-height: 600px !important;
+      height: 200px;
+  }
 .canvas-col{
     position: relative;
 }
+
+.mcs-horizontal-example{
+    white-space: nowrap;
+}
+
+.drop-zone-area .mCSB_container {
+    width: 2500px !important;
+    height: 700px !important;
+}
+
+
+
 /* .draggable{position: relative;} */
 .draggable svg,.cloneItem{
     -webkit-touch-callout: none; /* iOS Safari */
