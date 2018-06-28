@@ -103,7 +103,6 @@ farmGraphModule = {
               var location = calculatePosition(this,ui.helper.offset(), droppingObject.offset());
               var objectValue = { X: location.left, Y: location.top, W: 0, H: 0 };
               setToolObjectPosition(objectValue);
-
               elements.customScroll.mCustomScrollbar("scrollTo",  [200,200]);
             }
           })
