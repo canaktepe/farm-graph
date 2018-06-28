@@ -1,16 +1,15 @@
 var elements;
 farmGraphModule = {
-
-
-  
   elements: {
-    farmObjects : $(".farm-objects"),
-    farm:$(".farm"),
-    farmDraggableItem :$(".farm-item > svg"),
+    customScrollBar: $(".content-device"),
+    customScroll: $('.drop-zone-area'),
+    draggableElements: {
+      dragObjects: $('.draggable div')
+    },
     dropElements: {
       counter: 1,
-      selector: "#drop-zone-area",
-      farmDropZone : $("#drop-zone-area"),
+      selector: ".drop-zone-area",
+      dropObject: $(".drop-zone-area"),
       cloneSelector: 'cloneItem',
       cloneIdPrefix: 'elementId_'
     },
@@ -24,7 +23,7 @@ farmGraphModule = {
     }
   },
   bindCustomScrollBar: function () {
-   elements.farmObjects.mCustomScrollbar({
+    elements.customScrollBar.mCustomScrollbar({
       autoDraggerLength: true,
       autoHideScrollbar: true,
       axis: "x",
@@ -32,7 +31,7 @@ farmGraphModule = {
       autoExpandScrollbar: true,
       advanced: { autoExpandHorizontalScroll: true }
     });
-    elements.farm.mCustomScrollbar({
+    elements.customScroll.mCustomScrollbar({
       autoDraggerLength: true,
       autoHideScrollbar: true,
       keyboard: { enable: true },
@@ -47,39 +46,27 @@ farmGraphModule = {
     });
   },
   bindDraggableObjecs: function () {
-    elements.farmDraggableItem.draggable({
+    elements.draggableElements.dragObjects.draggable({
       cursor: 'move',
       revert: 'invalid',
       helper: 'clone',
-      appendTo:'body',
-      drag: function (event, ui) {
-        var location = calculatePosition(this,ui.helper.offset(), elements.dropElements.farmDropZone.offset());
-        var objectValue = { X: location.left, Y: location.top, W: 0, H: 0 };
-        setToolObjectPosition(objectValue);
-        // elements.farm.mCustomScrollbar("scrollTo",  [200,200]);
-      }
+      containment: elements.dropElements.selector
     });
   },
   bindDroppableObjects: function () {
-
-    // elements.farmDropZone.droppable({
-    //   drop: function (event, ui) {
-    //     var cloned = $(ui.helper).clone();
-
-    //     cloned.appendTo(this);
-    //   }
-    // })
     //this private function use for calculating droppable elements location
     calculatePosition = function (draggableOffset, droppableOffset) {
 
-      var draggerV = elements.farm.find(".mCSB_dragger[id$='vertical']"),
-        draggerH = elements.farm.find(".mCSB_dragger[id$='horizontal']");
+      var draggerV = elements.customScroll.find(".mCSB_dragger[id$='vertical']"),
+        draggerH = elements.customScroll.find(".mCSB_dragger[id$='horizontal']");
       scrollTop = draggerV.position().top
       scrollLeft = draggerH.position().left;
 
+      console.log("left", draggerH.position().left);
+
       var location = {
-        left: /*scrollLeft +*/ parseInt(draggableOffset.left - droppableOffset.left),
-        top: /* scrollTop +*/ parseInt(draggableOffset.top - droppableOffset.top)
+        left: scrollLeft + parseInt(draggableOffset.left - droppableOffset.left),
+        top: scrollTop + parseInt(draggableOffset.top - droppableOffset.top)
       }
       return location;
     }
@@ -91,7 +78,7 @@ farmGraphModule = {
       elements.tool.object.txtObjectH.val(objectValues.H);
     }
 
-    elements.dropElements.farmDropZone.droppable({
+    elements.dropElements.dropObject.droppable({
       drop: function (event, ui) {
         var droppingObject = $(this);
         var cloned = $(ui.helper).clone();
@@ -99,13 +86,15 @@ farmGraphModule = {
           return;
 
         var location = calculatePosition(ui.helper.offset(), droppingObject.offset());
-        cloned.attr("id", elements.dropElements.cloneIdPrefix + elements.dropElements.counter)
+        cloned
+          .attr("id", elements.dropElements.cloneIdPrefix + elements.dropElements.conunter)
           .addClass(elements.dropElements.cloneSelector)
           .css({
             "left": location.left,
             "top": location.top
           })
           .draggable({
+            refreshPositions: true,
             scroll: true,
             cursor: 'move',
             containment: elements.dropElements.selector,
@@ -114,14 +103,14 @@ farmGraphModule = {
               var location = calculatePosition(this,ui.helper.offset(), droppingObject.offset());
               var objectValue = { X: location.left, Y: location.top, W: 0, H: 0 };
               setToolObjectPosition(objectValue);
-              // elements.farm.mCustomScrollbar("scrollTo",  [200,200]);
+              elements.customScroll.mCustomScrollbar("scrollTo",  [200,200]);
             }
           })
           .resizable({
             containment: elements.dropElements.selector,
           })
-          .appendTo(this);
-        elements.dropElements.counter++;
+          .appendTo($(this).find('.mCSB_container'));
+        elements.dropElements.conunter++;
       }
     })
   },
