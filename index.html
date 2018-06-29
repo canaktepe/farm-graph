@@ -15,118 +15,96 @@
 
     <div class="container-fluid">
         <div class="row h-100">
-            <div class="col-xl-2 col-lg-4 col-md-4 col-sm- col-xs-"><div class="card">
-                <div class="card-header bg-danger text-white">
-                    Object Information
+            <div class="col-xl-2 col-lg-4 col-md-4 col-sm- col-xs-">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        Object Information
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="staticEmail" class="col-sm-2 col-form-label">x</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control form-control-sm text-center" id="txtObjectX" placeholder="x">
+                                </div>
+                                <label for="staticEmail" class="col-sm-2 col-form-label">y</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control form-control-sm text-center" id="txtObjectY" placeholder="y">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="staticEmail" class="col-sm-2 col-form-label">w</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control form-control-sm text-center" id="txtObjectW" placeholder="w">
+                                </div>
+                                <label for="staticEmail" class="col-sm-2 col-form-label">h</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control form-control-sm text-center" id="txtObjectH" placeholder="h">
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-sm btn-success float-left">Save Object</button>
+                            <button type="button" class="btn  btn-sm btn-warning float-right">Delete Object</button>
+
+
+                        </form>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form>
-                        <div class="form-group row">
-                            <label for="staticEmail" class="col-sm-2 col-form-label">x</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control form-control-sm text-center" id="txtObjectX" placeholder="x">
-                            </div>
-                            <label for="staticEmail" class="col-sm-2 col-form-label">y</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control form-control-sm text-center" id="txtObjectY" placeholder="y">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="staticEmail" class="col-sm-2 col-form-label">w</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control form-control-sm text-center" id="txtObjectW" placeholder="w">
-                            </div>
-                            <label for="staticEmail" class="col-sm-2 col-form-label">h</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control form-control-sm text-center" id="txtObjectH" placeholder="h">
-                            </div>
-                        </div>
-
-                        <button type="button" class="btn btn-sm btn-success float-left">Save Object</button>
-                        <button type="button" class="btn  btn-sm btn-warning float-right">Delete Object</button>
-
-
-                    </form>
-                </div>
-            </div></div>
+            </div>
             <div class="col-xl-10 col-lg-8 col-md-8 col-sm- col-xs-">
                 <div class="farm-objects">
                     <ul class="list-inline">
                         <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Astronaut</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(255, 125, 93);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
+                            <div class="text-center pb-1 ">Astronaut</div>
+                            <div class="dragElement" style="background-color:rgb(255, 125, 93);border:1px solid rgb(160, 160, 160)"></div>
                         </li>
                         <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Grazeway</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(185, 155, 255);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
+                            <div class="text-center pb-1 ">Grazeway</div>
+                            <div class="dragElement" style="background-color:rgb(185, 155, 255);border:1px solid rgb(160, 160, 160)"></div>
                         </li>
                         <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Cosmix</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(255, 135, 135);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
+                            <div class="text-center pb-1 ">Cosmix</div>
+                            <div class="dragElement" style="background-color:rgb(255, 135, 135);border:1px solid rgb(160, 160, 160)"></div>
                         </li>
                         <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Central Unit</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(92, 252, 177);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
+                            <div class="text-center pb-1 ">Central Unit</div>
+                            <div class="dragElement" style="background-color:rgb(92, 252, 177);border:1px solid rgb(160, 160, 160)"></div>
                         </li>
                         <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Astronaut</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(255, 125, 93);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Grazeway</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(185, 155, 255);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Cosmix</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(255, 135, 135);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Central Unit</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(92, 252, 177);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Astronaut</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(255, 125, 93);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Grazeway</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(185, 155, 255);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Cosmix</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(255, 135, 135);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1">Central Unit</div>
-                            <svg width="200" height="100">
-                                <rect width="200" height="100" style="fill:rgb(92, 252, 177);stroke-width:3;stroke:rgb(160, 160, 160)" />
-                            </svg>
-                        </li>
+                                <div class="text-center pb-1 ">Astronaut</div>
+                                <div class="dragElement" style="background-color:rgb(255, 125, 93);border:1px solid rgb(160, 160, 160)"></div>
+                            </li>
+                            <li class="list-inline-item farm-item">
+                                <div class="text-center pb-1 ">Grazeway</div>
+                                <div class="dragElement" style="background-color:rgb(185, 155, 255);border:1px solid rgb(160, 160, 160)"></div>
+                            </li>
+                            <li class="list-inline-item farm-item">
+                                <div class="text-center pb-1 ">Cosmix</div>
+                                <div class="dragElement" style="background-color:rgb(255, 135, 135);border:1px solid rgb(160, 160, 160)"></div>
+                            </li>
+                            <li class="list-inline-item farm-item">
+                                <div class="text-center pb-1 ">Central Unit</div>
+                                <div class="dragElement" style="background-color:rgb(92, 252, 177);border:1px solid rgb(160, 160, 160)"></div>
+                            </li>   <li class="list-inline-item farm-item">
+                                    <div class="text-center pb-1 ">Astronaut</div>
+                                    <div class="dragElement" style="background-color:rgb(255, 125, 93);border:1px solid rgb(160, 160, 160)"></div>
+                                </li>
+                                <li class="list-inline-item farm-item">
+                                    <div class="text-center pb-1 ">Grazeway</div>
+                                    <div class="dragElement" style="background-color:rgb(185, 155, 255);border:1px solid rgb(160, 160, 160)"></div>
+                                </li>
+                                <li class="list-inline-item farm-item">
+                                    <div class="text-center pb-1 ">Cosmix</div>
+                                    <div class="dragElement" style="background-color:rgb(255, 135, 135);border:1px solid rgb(160, 160, 160)"></div>
+                                </li>
+                                <li class="list-inline-item farm-item">
+                                    <div class="text-center pb-1 ">Central Unit</div>
+                                    <div class="dragElement" style="background-color:rgb(92, 252, 177);border:1px solid rgb(160, 160, 160)"></div>
+                                </li>
+                 
                     </ul>
                 </div>
-                <div class="farm">
+                <div class="farm mt-5">
                     <div id="drop-zone-area">
 
                     </div>
@@ -145,16 +123,15 @@
     <script type="text/javascript">
 
         (function () {
-
+            var gridSize = [50,50];
             $(".farm > #drop-zone-area").gridBuilder({
                 color: '#ccc',    // color of the primary gridlines
                 secondaryColor: '#ccc', // color of the secondary gridlines
-                vertical: 100,        // height of the vertical rhythm
-                horizontal: 100,       // width of horizontal strokes
+                horizontal: gridSize[0],       // width of horizontal strokes
+                vertical: gridSize[1],        // height of the vertical rhythm
                 gutter: 0,        // width of the gutter between strokes
             });
-
-            farmGraphModule.init();
+            farmGraphModule.init(gridSize);
         })();
 
     </script>

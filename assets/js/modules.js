@@ -1,12 +1,17 @@
 var elements;
 farmGraphModule = {
-
-
-  
   elements: {
+    grid : { 
+      _size: [],
+      get size() { return elements.grid._size; },
+      set size(size) { elements.grid._size = [size[0]/2,size[1]/2]; },
+      getGridPosition : function(pos){
+        return  pos == 'x' ? elements.grid._size[0] : elements. grid._size[1]
+      }
+    },
     farmObjects : $(".farm-objects"),
     farm:$(".farm"),
-    farmDraggableItem :$(".farm-item > svg"),
+    farmDraggableItem :$(".farm-item > svg,.farm-item > div"),
     dropElements: {
       counter: 1,
       selector: "#drop-zone-area",
@@ -47,39 +52,30 @@ farmGraphModule = {
     });
   },
   bindDraggableObjecs: function () {
+    console.log(elements.grid._size);
     elements.farmDraggableItem.draggable({
       cursor: 'move',
       revert: 'invalid',
       helper: 'clone',
       appendTo:'body',
+      grid: elements.grid._size,
       drag: function (event, ui) {
-        var location = calculatePosition(this,ui.helper.offset(), elements.dropElements.farmDropZone.offset());
+        var location = calculatePosition(ui.helper.offset(), elements.dropElements.farmDropZone.offset());
+
+     
         var objectValue = { X: location.left, Y: location.top, W: 0, H: 0 };
         setToolObjectPosition(objectValue);
-        // elements.farm.mCustomScrollbar("scrollTo",  [200,200]);
       }
     });
   },
   bindDroppableObjects: function () {
-
-    // elements.farmDropZone.droppable({
-    //   drop: function (event, ui) {
-    //     var cloned = $(ui.helper).clone();
-
-    //     cloned.appendTo(this);
-    //   }
-    // })
     //this private function use for calculating droppable elements location
     calculatePosition = function (draggableOffset, droppableOffset) {
-
-      var draggerV = elements.farm.find(".mCSB_dragger[id$='vertical']"),
-        draggerH = elements.farm.find(".mCSB_dragger[id$='horizontal']");
-      scrollTop = draggerV.position().top
-      scrollLeft = draggerH.position().left;
-
+      var xOffset = parseInt(draggableOffset.left - droppableOffset.left);
+      var yOffset  =parseInt(draggableOffset.top - droppableOffset.top);
       var location = {
-        left: /*scrollLeft +*/ parseInt(draggableOffset.left - droppableOffset.left),
-        top: /* scrollTop +*/ parseInt(draggableOffset.top - droppableOffset.top)
+        left: /*scrollLeft +*/ Math.round( xOffset/ elements.grid.getGridPosition('x')) * elements.grid.getGridPosition('x'),
+        top: /* scrollTop +*/  Math.round( yOffset/ elements.grid.getGridPosition('y')) * elements.grid.getGridPosition('y')
       }
       return location;
     }
@@ -94,31 +90,37 @@ farmGraphModule = {
     elements.dropElements.farmDropZone.droppable({
       drop: function (event, ui) {
         var droppingObject = $(this);
-        var cloned = $(ui.helper).clone();
+        var cloned = $(ui.helper).clone(true);
         if (cloned.hasClass(elements.dropElements.cloneSelector))
           return;
 
         var location = calculatePosition(ui.helper.offset(), droppingObject.offset());
+
+
         cloned.attr("id", elements.dropElements.cloneIdPrefix + elements.dropElements.counter)
           .addClass(elements.dropElements.cloneSelector)
           .css({
+            'position':'absolute',
+            'border':'none',
             "left": location.left,
             "top": location.top
           })
           .draggable({
+            refreshPositions: true,
             scroll: true,
             cursor: 'move',
             containment: elements.dropElements.selector,
             revert: "invalid",
+            grid: elements.grid._size,
             drag: function (event, ui) {
-              var location = calculatePosition(this,ui.helper.offset(), droppingObject.offset());
+            var  location = calculatePosition(ui.helper.offset(), droppingObject.offset());
               var objectValue = { X: location.left, Y: location.top, W: 0, H: 0 };
               setToolObjectPosition(objectValue);
-              // elements.farm.mCustomScrollbar("scrollTo",  [200,200]);
             }
           })
           .resizable({
-            containment: elements.dropElements.selector,
+            grid: elements.grid._size,
+            containment: elements.dropElements.selector
           })
           .appendTo(this);
         elements.dropElements.counter++;
@@ -130,13 +132,13 @@ farmGraphModule = {
       return this.substr(1, this.length);
     };
   },
-  init: function () {
+  init: function (gridSize) {
     elements = this.elements;
+    elements.grid.size =gridSize;
     this.bindExtensionMethods();
     this.bindCustomScrollBar();
     this.bindDraggableObjecs();
     this.bindDroppableObjects()
-
   }
 };
 
