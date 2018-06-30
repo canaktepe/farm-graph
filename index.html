@@ -12,102 +12,96 @@
 </head>
 
 <body>
+    <div class="container-fluid pt-3 pb-3">
+        <!-- Modal -->
+        <div class="modal fade" id="elementModal" tabindex="-1" role="dialog" aria-labelledby="elementModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="elementModalLongTitle">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="saveDevice" type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal end-->
 
-    <div class="container-fluid">
         <div class="row h-100">
             <div class="col-xl-2 col-lg-4 col-md-4 col-sm- col-xs-">
                 <div class="card">
-                    <div class="card-header bg-danger text-white">
-                        Object Information
+                    <div class="card-header bg-light text-dark">
+                        <i class="fas fa-arrows-alt"></i>
+                        <strong> Object Information</strong>
                     </div>
                     <div class="card-body">
-                        <form>
-                            <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">x</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control form-control-sm text-center" id="txtObjectX" placeholder="x">
-                                </div>
-                                <label for="staticEmail" class="col-sm-2 col-form-label">y</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control form-control-sm text-center" id="txtObjectY" placeholder="y">
-                                </div>
+                        <div class="form-group row">
+                            <label for="objectName" class="col-sm-3 col-form-label font-weight-bold pr-0">object</label>
+                            <label class="col-sm-9 col-form-label">Astronaut</label>
+                        </div>
+                        <div class="form-group row">
+                            <label for="staticEmail" class="col-sm-2 col-form-label font-weight-bold pr-0">X</label>
+                            <div class="col-sm-4 pl-0">
+                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center" id="txtObjectX" value="0" placeholder="x">
                             </div>
-                            <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">w</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control form-control-sm text-center" id="txtObjectW" placeholder="w">
-                                </div>
-                                <label for="staticEmail" class="col-sm-2 col-form-label">h</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control form-control-sm text-center" id="txtObjectH" placeholder="h">
-                                </div>
+                            <label for="staticEmail" class="col-sm-2 col-form-label font-weight-bold pr-0">Y</label>
+                            <div class="col-sm-4 pl-0">
+                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center" id="txtObjectY" value="0" placeholder="y">
                             </div>
-
-                            <button type="button" class="btn btn-sm btn-success float-left">Save Object</button>
-                            <button type="button" class="btn  btn-sm btn-warning float-right">Delete Object</button>
-
-
-                        </form>
+                        </div>
+                        <div class="form-group row">
+                            <label for="staticEmail" class="col-sm-2 col-form-label font-weight-bold pr-0">W</label>
+                            <div class="col-sm-4 pl-0">
+                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center" id="txtObjectW" value="0" placeholder="w">
+                            </div>
+                            <label for="staticEmail" class="col-sm-2 col-form-label font-weight-bold pr-0">H</label>
+                            <div class="col-sm-4 pl-0">
+                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center" id="txtObjectH" value="0" placeholder="h">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-md btn-success float-left font-weight-bold">Save Object</button>
+                        <button type="button" class="btn  btn-md btn-danger float-right font-weight-bold">Delete Object</button>
                     </div>
                 </div>
             </div>
             <div class="col-xl-10 col-lg-8 col-md-8 col-sm- col-xs-">
-                <div class="farm-objects">
-                    <ul class="list-inline">
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Astronaut</div>
-                            <div class="dragElement" style="background-color:rgb(255, 125, 93);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Grazeway</div>
-                            <div class="dragElement" style="background-color:rgb(185, 155, 255);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Cosmix</div>
-                            <div class="dragElement" style="background-color:rgb(255, 135, 135);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Central Unit</div>
-                            <div class="dragElement" style="background-color:rgb(92, 252, 177);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Astronaut</div>
-                            <div class="dragElement" style="background-color:rgb(255, 125, 93);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Grazeway</div>
-                            <div class="dragElement" style="background-color:rgb(185, 155, 255);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Cosmix</div>
-                            <div class="dragElement" style="background-color:rgb(255, 135, 135);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Central Unit</div>
-                            <div class="dragElement" style="background-color:rgb(92, 252, 177);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Astronaut</div>
-                            <div class="dragElement" style="background-color:rgb(255, 125, 93);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Grazeway</div>
-                            <div class="dragElement" style="background-color:rgb(185, 155, 255);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Cosmix</div>
-                            <div class="dragElement" style="background-color:rgb(255, 135, 135);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
-                        <li class="list-inline-item farm-item">
-                            <div class="text-center pb-1 ">Central Unit</div>
-                            <div class="dragElement" style="background-color:rgb(92, 252, 177);border:1px solid rgb(160, 160, 160)"></div>
-                        </li>
+                <div id="elementsAccordion">
+                    <div class="card">
+                        <div class="card-header bg-light accordionHeader" id="headingDevice">
+                            <button class="btn btn-link pl-0 pt-0 pb-0 text-dark accordionBtn nodecor" data-toggle="collapse" data-target="#collapseDevice"
+                                aria-expanded="false" aria-controls="collapseDevice">
+                                <strong>Farm Devices</strong>
+                            </button>
 
-                    </ul>
+                        </div>
+                        <div id="collapseDevice" class="collapse" aria-labelledby="headingDevice" data-parent="#elementsAccordion">
+                            <div class="card-body">
+                                <div class="farm-objects">
+                                    <ul id="devices" class="list-inline"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="farm mt-5">
-                    <div id="drop-zone-area">
 
+                <div class="card mt-3">
+                    <div class="card-header  bg-light text-dark">
+                        <strong> Farm Design Canvas</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="farm">
+                            <div id="drop-zone-area">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
