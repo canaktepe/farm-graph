@@ -14,6 +14,7 @@ farmGraphModule = {
       }
     },
     farmDevices: [],
+    activeDeviceSelector: ".activeDevice",
     farmObjectDragger: $(".farm-objects"),
     farm: $(".farm"),
     farmDraggableItem: $(".dragElement"),
@@ -21,10 +22,14 @@ farmGraphModule = {
       counter: 1,
       selector: "#drop-zone-area",
       farmDropZone: $("#drop-zone-area"),
-      cloneSelector: "cloneItem",
+      cloneSelector: ".cloneItem",
       cloneIdPrefix: "elementId_"
     },
-    deviceModal: $("#elementModal"),
+    deviceModal:{ 
+      selector: $("#elementModal"),
+      deleteObjectButton: $("#deleteObject"),
+      saveobjectButton :$("#saveObject")
+    },
     tool: {
       object: {
         txtObjectX: $("#txtObjectX"),
@@ -33,6 +38,23 @@ farmGraphModule = {
         txtObjectH: $("#txtObjectH")
       }
     }
+  },
+  buttonBindings: function() {
+    elements.deviceModal.deleteObjectButton.confirmation({
+      rootSelector: "[data-toggle=confirmation]",
+      onConfirm: function(value) {
+        $(elements.activeDeviceSelector).remove();
+        if ($(elements.activeDeviceSelector).length==0){
+          elements.deviceModal.deleteObjectButton.prop("disabled", true);
+          elements.deviceModal.saveobjectButton.prop("disabled", true);
+        }
+      }
+    });
+
+    elements.deviceModal.deleteObjectButton.click(function(e) {
+      var activeElements = $(elements.activeDeviceSelector);
+      if (activeElements.length == 0) return;
+    });
   },
   guid: function() {
     function s4() {
@@ -61,32 +83,34 @@ farmGraphModule = {
       return dialogModal.attributes;
     };
 
-    $("#saveDevice").click(function(){
-      elements.deviceModal.modal("hide");
-      elements.deviceModal.attr("data-update",true);
-    })
+    $("#saveDevice").click(function() {
+      elements.deviceModal.selector.modal("hide");
+      elements.deviceModal.selector.attr("data-update", true);
+    });
 
     //modal show event
-    elements.deviceModal.on("shown.bs.modal", function(e) {
+    elements.deviceModal.selector.on("shown.bs.modal", function(e) {
       console.log("dialog show");
-      
+
       var attributes = getModalAttributes(e);
       var update = attributes["data-update"].value === "true";
-      var title = update ? "Update ":"Add New "  + attributes["data-title"].value;
+      var title = update
+        ? "Update "
+        : "Add New " + attributes["data-title"].value;
 
       $(this)
         .find(".modal-title")
         .text(title);
     });
 
-    elements.deviceModal.on("hidden.bs.modal", function(e) {
+    elements.deviceModal.selector.on("hidden.bs.modal", function(e) {
       var attributes = getModalAttributes(e);
       var update = attributes["data-update"].value === "true";
 
       // delete the element if the form is new and the close button is pressed
       if (update == false)
         $(
-          "div." +
+          "div" +
             elements.dropElements.cloneSelector +
             "[id=" +
             attributes["data-id"].value +
@@ -128,16 +152,15 @@ farmGraphModule = {
       textStatus,
       XMLHttpRequest
     ) {
-      elements.deviceModal.attr({
-        "data-update": update,
-        "data-title": device.name,
-        "data-id": device.id,
-        "data-guid": device.guid
-      });
-      // .find(".modal-title")
-      // .text("Add New " + device.name);
-      console.log(elements.deviceModal);
-      elements.deviceModal.modal({ show: true });
+      if (XMLHttpRequest.status == 200) {
+        elements.deviceModal.selector.attr({
+          "data-update": update,
+          "data-title": device.name,
+          "data-id": device.id,
+          "data-guid": device.guid
+        });
+        elements.deviceModal.selector.modal({ show: true });
+      }
     });
   },
   bindCustomScrollBar: function() {
@@ -200,11 +223,13 @@ farmGraphModule = {
     };
 
     setToolObject = function(ui, droppingObject) {
+      var helper = ui.type == "click" ? $(ui.currentTarget) : ui.helper;
       var location = calculatePosition(
-        ui.helper.offset(),
+        helper.offset(),
         droppingObject.offset()
       );
-      var size = calculateSize(ui.helper);
+
+      var size = calculateSize(helper);
       var objectValues = {
         X: location.left,
         Y: location.top,
@@ -221,19 +246,41 @@ farmGraphModule = {
       elements.tool.object.txtObjectH.val(objectValues.H);
     };
 
+    clearActive = function(clicked) {
+      if (clicked) {
+        var object = $(clicked.currentTarget);
+        if (object.hasClass(elements.activeDeviceSelector.getClass())) {
+          return;
+        } else {
+          clearActive();
+          object.addClass(elements.activeDeviceSelector.getClass());
+          return;
+        }
+      }
+      var active = $(elements.dropElements.cloneSelector);
+      if (!active) return;
+      active.removeClass(elements.activeDeviceSelector.getClass());
+    };
+
     elements.dropElements.farmDropZone.droppable({
       drop: function(event, ui) {
         var droppingObject = $(this);
         var cloned = $(ui.helper).clone(true);
 
-        if (cloned.hasClass(elements.dropElements.cloneSelector)) return;
+        //if has cloned element perevent re-clone
+        if (cloned.hasClass(elements.dropElements.cloneSelector.getClass()))
+          return;
 
-        //cloned item generate new guid
+        //clear active element
+        clearActive();
+
+        //set drag-drop element position
         var location = calculatePosition(
           ui.helper.offset(),
           droppingObject.offset()
         );
 
+        //generate element guid and id
         var elementId =
             elements.dropElements.cloneIdPrefix + elements.dropElements.counter,
           guid = farmGraphModule.guid();
@@ -244,13 +291,27 @@ farmGraphModule = {
             //cloned item generate new guid
             "data-gid": guid
           })
-          .addClass(elements.dropElements.cloneSelector)
+          //add clone class selector
+          .addClass(elements.dropElements.cloneSelector.getClass())
+          //add active class selector last drag element
+          .addClass(elements.activeDeviceSelector.getClass())
           .css({
             position: "absolute",
             border: "none",
             left: location.left,
             top: location.top
           })
+          //bind click element / select active element
+          .click(function(e) {
+            clearActive(e);
+            setToolObject(e, elements.dropElements.farmDropZone);
+            elements.deviceModal.deleteObjectButton.prop("disabled", false);
+            elements.deviceModal.saveobjectButton.prop("disabled", false);
+          })
+          .focusout(function(e) {
+            console.log("sex");
+          })
+          //bind re-drag element on farm canvas
           .draggable({
             refreshPositions: true,
             scroll: true,
@@ -262,10 +323,14 @@ farmGraphModule = {
               setToolObject(ui, droppingObject);
             }
           })
+          //binding resize device elements
           .resizable({
             autoHide: true,
             grid: elements.grid._size,
             containment: elements.dropElements.selector,
+            start: function(event, ui) {
+              // $(ui.helper).removeClass('activeDevice');
+            },
             resize: function(event, ui) {
               setToolObject(ui, droppingObject);
             }
@@ -275,9 +340,12 @@ farmGraphModule = {
         var device = ui.helper.device;
         device.id = elementId;
         device.guid = guid;
+        //open device modal dialog form
         farmGraphModule.openDeviceModal(false, device, ui);
-
+        //id is being increased
         elements.dropElements.counter++;
+        elements.deviceModal.deleteObjectButton.prop("disabled", false);
+        elements.deviceModal.saveobjectButton.prop("disabled", false);
       }
     });
   },
@@ -286,6 +354,7 @@ farmGraphModule = {
       return this.substr(1, this.length);
     };
   },
+  //load device items from json file
   loadDeviceItems: function() {
     $.getJSON("/assets/devices.json")
       .done(function(data) {
@@ -301,6 +370,7 @@ farmGraphModule = {
     elements.grid.size = gridSize;
 
     this.loadDeviceItems();
+    this.buttonBindings();
     this.bindExtensionMethods();
     this.bindCustomScrollBar();
     this.bindDraggableObjecs();
