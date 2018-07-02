@@ -24,7 +24,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        ...
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -37,9 +36,8 @@
 
         <div class="row h-100">
             <div class="col-xl-2 col-lg-4 col-md-4 col-sm- col-xs-">
-                <div class="card">
+                <div  id="objectInfCard"  class="card">
                     <div class="card-header bg-light text-dark">
-                        <i class="fas fa-arrows-alt"></i>
                         <strong> Object Information</strong>
                     </div>
                     <div class="card-body">
@@ -67,9 +65,15 @@
                                 <input min="0" step="25" type="number" class="form-control form-control-sm text-center" id="txtObjectH" value="0" placeholder="h">
                             </div>
                         </div>
-                        <button id="saveObject" disabled type="button" class="btn btn-md btn-success float-left font-weight-bold">Save Object</button>
-                        <button id="deleteObject" disabled type="button" class="btn btn-md btn-danger float-right font-weight-bold" data-toggle="confirmation">Delete Object</button>
+
+                        <div class="btn-group d-flex" role="group" aria-label="Basic example">
+                            <button id="saveObject" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold">Save</button>
+                            <button id="deleteObject" disabled type="button" class="btn btn-md btn-danger w-100 font-weight-bold" data-toggle="confirmation">Delete</button>
+                        </div>
+
+
                     </div>
+
                 </div>
             </div>
             <div class="col-xl-10 col-lg-8 col-md-8 col-sm- col-xs-">
@@ -93,8 +97,8 @@
 
                 </div>
 
-                <div class="card mt-3">
-                    <div class="card-header  bg-light text-dark">
+                <div id="designCard" class="card mt-3">
+                    <div class="card-header bg-light">
                         <strong> Farm Design Canvas</strong>
                     </div>
                     <div class="card-body">
@@ -128,7 +132,7 @@
                 gutter: 0,        // width of the gutter between strokes
             });
 
-            
+
             farmGraphModule.init(gridSize);
         })();
 

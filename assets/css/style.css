@@ -65,3 +65,16 @@ body {
 .accordionBtn[aria-expanded="true"] > :before {
   content: "\f077"; /* fa-chevron-up */
 }
+
+#designCard .card-header > strong::before{
+    font-family: "Font Awesome 5 Free" !important;
+    padding-right: 10px;
+    color: #dc3545;
+    content: "\f247"; /* fa-chevron-up */
+}
+#objectInfCard .card-header > strong::before{
+    font-family: "Font Awesome 5 Free" !important;
+    padding-right: 10px;
+    color: #dc3545;
+    content: "\f0b2"; /* fa-chevron-up */
+}
