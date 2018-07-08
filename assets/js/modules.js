@@ -11,7 +11,7 @@ farmGraphModule = {
       set size(size) {
         elements.grid._size = [size[0] / 2, size[1] / 2];
       },
-      getGridPosition: function (pos) {
+      getGridPosition: function(pos) {
         return pos == "x" ? elements.grid._size[0] : elements.grid._size[1];
       }
     },
@@ -41,10 +41,10 @@ farmGraphModule = {
       }
     }
   },
-  buttonBindings: function () {
+  buttonBindings: function() {
     elements.deviceModal.deleteObjectButton.confirmation({
       rootSelector: "[data-toggle=confirmation]",
-      onConfirm: function (value) {
+      onConfirm: function(value) {
         $(elements.activeDeviceSelector).remove();
         if ($(elements.activeDeviceSelector).length == 0) {
           elements.deviceModal.deleteObjectButton.prop("disabled", true);
@@ -53,12 +53,12 @@ farmGraphModule = {
       }
     });
 
-    elements.deviceModal.deleteObjectButton.click(function (e) {
+    elements.deviceModal.deleteObjectButton.click(function(e) {
       var activeElements = $(elements.activeDeviceSelector);
       if (activeElements.length == 0) return;
     });
   },
-  guid: function () {
+  guid: function() {
     function s4() {
       return Math.floor((1 + Math.random()) * 0x10000)
         .toString(16)
@@ -79,19 +79,19 @@ farmGraphModule = {
       s4()
     );
   },
-  bindFarmDeviceElements: function () {
-    getModalAttributes = function (e) {
+  bindFarmDeviceElements: function() {
+    getModalAttributes = function(e) {
       var dialogModal = e.currentTarget;
       return dialogModal.attributes;
     };
 
-    $("#saveDevice").click(function () {
+    $("#saveDevice").click(function() {
       elements.deviceModal.selector.modal("hide");
       elements.deviceModal.selector.attr("data-update", true);
     });
 
     //modal show event
-    elements.deviceModal.selector.on("shown.bs.modal", function (e) {
+    elements.deviceModal.selector.on("shown.bs.modal", function(e) {
       console.log("dialog show");
 
       var attributes = getModalAttributes(e);
@@ -105,7 +105,7 @@ farmGraphModule = {
         .text(title);
     });
 
-    elements.deviceModal.selector.on("hidden.bs.modal", function (e) {
+    elements.deviceModal.selector.on("hidden.bs.modal", function(e) {
       var attributes = getModalAttributes(e);
       var update = attributes["data-update"].value === "true";
 
@@ -113,14 +113,14 @@ farmGraphModule = {
       if (update == false)
         $(
           "div" +
-          elements.dropElements.cloneSelector +
-          "[id=" +
-          attributes["data-id"].value +
-          "]"
+            elements.dropElements.cloneSelector +
+            "[id=" +
+            attributes["data-id"].value +
+            "]"
         ).remove();
     });
 
-    $.each(elements.farmDevices, function (i, device) {
+    $.each(elements.farmDevices, function(i, device) {
       var deviceElement = $("<div>", { class: "list-inline-item farm-item" });
       var caption = $("<div>", { class: "text-center pb-1" })
         .appendTo(deviceElement)
@@ -136,10 +136,10 @@ farmGraphModule = {
           helper: "clone",
           appendTo: "body",
           grid: elements.grid._size,
-          start: function (event, ui) {
+          start: function(event, ui) {
             ui.helper.device = device;
           },
-          drag: function (event, ui) {
+          drag: function(event, ui) {
             setToolObject(ui, elements.dropElements.farmDropZone);
           }
         })
@@ -147,9 +147,9 @@ farmGraphModule = {
       $("#devices").append(deviceElement);
     });
   },
-  openDeviceModal: function (update, device, ui) {
+  openDeviceModal: function(update, device, ui) {
     update ? console.log("update mode") : console.log("insert mode");
-    $(".modal-body").load("/device_forms/" + device.pageTemplate, function (
+    $(".modal-body").load("/device_forms/" + device.pageTemplate, function(
       responseText,
       textStatus,
       XMLHttpRequest
@@ -165,7 +165,7 @@ farmGraphModule = {
       }
     });
   },
-  bindCustomScrollBar: function () {
+  bindCustomScrollBar: function() {
     elements.farmObjectDragger.mCustomScrollbar({
       autoDraggerLength: true,
       autoHideScrollbar: true,
@@ -191,21 +191,21 @@ farmGraphModule = {
       theme: "dark-thin"
     });
   },
-  bindDraggableObjecs: function () {
+  bindDraggableObjecs: function() {
     elements.farmDraggableItem.draggable({
       cursor: "move",
       revert: "invalid",
       helper: "clone",
       appendTo: "body",
       grid: elements.grid._size,
-      drag: function (event, ui) {
+      drag: function(event, ui) {
         setToolObject(ui, elements.dropElements.farmDropZone);
       }
     });
   },
-  bindDroppableObjects: function () {
+  bindDroppableObjects: function() {
     //this private function use for calculating droppable elements location
-    calculatePosition = function (draggableOffset, droppableOffset) {
+    calculatePosition = function(draggableOffset, droppableOffset) {
       var xOffset = parseInt(draggableOffset.left - droppableOffset.left);
       var yOffset = parseInt(draggableOffset.top - droppableOffset.top);
       var location = {
@@ -219,7 +219,7 @@ farmGraphModule = {
       return location;
     };
 
-    calculateSize = function (helper) {
+    calculateSize = function(helper) {
       var size = {
         width: $(helper).outerWidth(true),
         height: $(helper).outerHeight(true)
@@ -227,7 +227,7 @@ farmGraphModule = {
       return size;
     };
 
-    setToolObject = function (ui, droppingObject) {
+    setToolObject = function(ui, droppingObject) {
       var helper = ui.type == "click" ? $(ui.currentTarget) : ui.helper;
       var location = calculatePosition(
         helper.offset(),
@@ -251,7 +251,7 @@ farmGraphModule = {
       elements.tool.object.txtObjectH.val(objectValues.H);
     };
 
-    clearActive = function (clicked) {
+    clearActive = function(clicked) {
       if (clicked) {
         var object = $(clicked.currentTarget);
         if (object.hasClass(elements.activeDeviceSelector.getClass())) {
@@ -268,7 +268,7 @@ farmGraphModule = {
     };
 
     elements.dropElements.farmDropZone.droppable({
-      drop: function (event, ui) {
+      drop: function(event, ui) {
         var droppingObject = $(this);
         var cloned = $(ui.helper).clone(true);
 
@@ -287,7 +287,7 @@ farmGraphModule = {
 
         //generate element guid and id
         var elementId =
-          elements.dropElements.cloneIdPrefix + elements.dropElements.counter,
+            elements.dropElements.cloneIdPrefix + elements.dropElements.counter,
           guid = farmGraphModule.guid();
 
         cloned
@@ -307,40 +307,71 @@ farmGraphModule = {
             top: location.top
           })
           //bind click element / select active element
-          .click(function (e) {
+          .click(function(e) {
             clearActive(e);
             setToolObject(e, elements.dropElements.farmDropZone);
             elements.deviceModal.deleteObjectButton.prop("disabled", false);
             elements.deviceModal.saveobjectButton.prop("disabled", false);
           })
-          .focusout(function (e) {
-            console.log("sex");
-          })
           //bind re-drag element on farm canvas
-          .draggable({
-            refreshPositions: true,
-            scroll: true,
-            cursor: "move",
-            containment: elements.dropElements.selector,
-            revert: "invalid",
-            grid: elements.grid._size,
-            drag: function (event, ui) {
-              setToolObject(ui, droppingObject);
-            }
-          })
+          // .draggable({
+          //   refreshPositions: true,
+          //   scroll: true,
+          //   cursor: "move",
+          //   containment: elements.dropElements.selector,
+          //   revert: "invalid",
+          //   grid: elements.grid._size,
+          //   drag: function(event, ui) {
+          //     setToolObject(ui, droppingObject);
+          //   }
+          // })
           //binding resize device elements
           .resizable({
             autoHide: true,
             grid: elements.grid._size,
             containment: elements.dropElements.selector,
-            start: function (event, ui) {
+            start: function(event, ui) {
               // $(ui.helper).removeClass('activeDevice');
             },
-            resize: function (event, ui) {
+            resize: function(event, ui) {
               setToolObject(ui, droppingObject);
+              jsPlumb.revalidate(ui.helper);
             }
           })
           .appendTo(this);
+
+        jsPlumb.addEndpoint(cloned, {
+          anchor: ["Top"],
+        //  anchor: ["Perimeter", { shape: "Rectangle" }],
+          isTarget: true,
+          isSource: true
+          
+        });
+
+        jsPlumb.addEndpoint(cloned, {
+          // anchor: ["Perimeter", { shape: "Rectangle" }],
+          isTarget: true,
+          isSource: true
+        });
+
+        jsPlumb.draggable(elementId, {
+          // refreshPositions: true,
+          // scroll: true,
+          filter:".ui-resizable-handle",
+          cursor: "move",
+          containment: elements.dropElements.selector,
+          revert: "invalid",
+          grid: elements.grid._size,
+          drag: function(event, ui) {
+            // console.log(event);
+            // setToolObject(ui, droppingObject);
+          }
+        });
+
+        jsPlumb.bind("jsPlumbConnection", function(ci) { // ci is connection info.
+          var s=ci.sourceId,t=ci.targetId;
+          console.log(s+" -> "+t);
+      });
 
         var device = ui.helper.device;
         device.id = elementId;
@@ -354,23 +385,23 @@ farmGraphModule = {
       }
     });
   },
-  bindExtensionMethods: function () {
-    String.prototype.getClass = function () {
+  bindExtensionMethods: function() {
+    String.prototype.getClass = function() {
       return this.substr(1, this.length);
     };
   },
   //load device items from json file
-  loadDeviceItems: function () {
+  loadDeviceItems: function() {
     $.getJSON("/assets/devices.json")
-      .done(function (data) {
+      .done(function(data) {
         elements.farmDevices = data;
         farmGraphModule.bindFarmDeviceElements();
       })
-      .fail(function (jqxhr, textStatus, error) {
+      .fail(function(jqxhr, textStatus, error) {
         console.log("Request Failed: " + error);
       });
   },
-  init: function (gridSize) {
+  init: function(gridSize) {
     elements = this.elements;
     elements.grid.size = gridSize;
 

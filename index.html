@@ -36,7 +36,7 @@
 
         <div class="row h-100">
             <div class="col-xl-2 col-lg-4 col-md-4 col-sm- col-xs-">
-                <div  id="objectInfCard"  class="card">
+                <div id="objectInfCard" class="card">
                     <div class="card-header bg-light text-dark">
                         <strong> Object Information</strong>
                     </div>
@@ -119,10 +119,35 @@
     <script type="text/javascript" src="node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
 
     <script type="text/javascript" src="/assets/js/gridBuilder.js"></script>
+
+    <script src="https://jsplumbtoolkit.com/community/demo/draggableConnectors/lib/jsplumb.js"></script>
+
     <script type="text/javascript" src="/assets/js/modules.js"></script>
     <script type="text/javascript">
 
         (function () {
+
+            jsPlumb.ready(function () {
+
+            });
+
+            jsPlumb.importDefaults({
+                PaintStyle: {
+                    strokeWidth: 5,
+                    stroke: 'rgba(200,0,0,0.5)'
+                },
+                DragOptions: { cursor: "crosshair" },
+                Endpoints: [["Dot", { radius: 7 }], ["Dot", { radius: 5 }]],
+                EndpointStyles: [{ fill: "red" }, { fill: "red" }],
+                overlays:[ 
+                    ["Arrow" , { width:12, length:12, location:0.67 }]
+                ]
+            });
+
+    
+
+
+
             var gridSize = [50, 50];
             $(".farm > #drop-zone-area").gridBuilder({
                 color: '#ccc',    // color of the primary gridlines
@@ -134,6 +159,9 @@
 
 
             farmGraphModule.init(gridSize);
+
+
+
         })();
 
     </script>
