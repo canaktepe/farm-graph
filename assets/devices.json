@@ -1,123 +1,255 @@
-[
-  {
-    "type": 100,
-    "color": "rgb(255, 125, 93)",
-    "name": "Astronaut",
-    "pageTemplate": "astronaut.html",
-    "resizable" : false,
-    "endPoints" : [
-      {
-        "anchor":["Top"],
-        "isTarget":true,
-        "isSource":true
+{
+  "farmMain": [
+    {
+      "type": 10,
+      "color": "rgb(206, 206, 206)",
+      "name": "Barn",
+      "size": {
+        "width": 500,
+        "height": 350
       },
-      {
-        "anchor":["Bottom"],
-        "isTarget":true,
-        "isSource":true
-      }
-    ]
-  },
-  {
-    "type": 101,
-    "color": "rgb(185, 155, 255)",
-    "name": "Grazeway",
-    "pageTemplate": "grazeway.html",
-    "resizable" : false,
-    "endPoints" : [
-      {
-        "anchor":["Left"],
-        "isTarget":true,
-        "isSource":true
-      },
-      {
-        "anchor":["Right"],
-        "isTarget":true,
-        "isSource":true
-      }
-    ]
-  },
-  {
-    "type": 102,
-    "color": "rgb(255, 135, 135)",
-    "name": "Cosmix",
-    "pageTemplate": "cosmix.html",
-    "resizable" : true,
-    "endPoints" : [
-      {
-        "anchor":["Left"],
-        "isTarget":true,
-        "isSource":true
-      },
-      {
-        "anchor":["Right"],
-        "isTarget":true,
-        "isSource":true
-      }
-    ]
-  },
-  {
-    "type": 103,
-    "color": "rgb(92, 252, 177)",
-    "name": "Central Unit",
-    "pageTemplate": "centralunit.html",
-    "resizable" : true
-  },
-  {
-    "type": 104,
-    "color": "rgb(255, 125, 93)",
-    "name": "Astronaut",
-    "pageTemplate": "astronaut.html",
-    "resizable" : true
-  },
-  {
-    "type": 105,
-    "color": "rgb(185, 155, 255)",
-    "name": "Grazeway",
-    "pageTemplate": "grazeway.html",
-    "resizable" : true
-  },
-  {
-    "type": 106,
-    "color": "rgb(255, 135, 135)",
-    "name": "Cosmix",
-    "pageTemplate": "cosmix.html",
-    "resizable" : true
-  },
-  {
-    "type": 107,
-    "color": "rgb(92, 252, 177)",
-    "name": "Central Unit",
-    "pageTemplate": "centralunit.html",
-    "resizable" : true
-  },
-  {
-    "type": 108,
-    "color": "rgb(255, 125, 93)",
-    "name": "Astronaut",
-    "pageTemplate": "astronaut.html",
-    "resizable" : true
-  },
-  {
-    "type": 109,
-    "color": "rgb(185, 155, 255)",
-    "name": "Grazeway",
-    "pageTemplate": "grazeway.html",
-    "resizable" : true
-  },
-  {
-    "type": 110,
-    "color": "rgb(255, 135, 135)",
-    "name": "Cosmix",
-    "pageTemplate": "cosmix.html",
-    "resizable" : true
-  },
-  {
-    "type": 111,
-    "color": "rgb(92, 252, 177)",
-    "name": "Central Unit",
-    "pageTemplate": "centralunit.html",
-    "resizable" : true
-  }
-]
-  
+      "resizable": true
+    },
+    {
+      "type": 11,
+      "color": "rgb(221, 255, 198)",
+      "name": "Area",
+      "resizable": true
+    },
+    {
+      "type": 12,
+      "color": "rgb(212, 243, 255)",
+      "name": "Pen",
+      "resizable": true,
+      "endPoints": [
+        {
+          "anchor": [
+            "Right"
+          ],
+          "isTarget": true,
+          "isSource": true
+        }
+      ]
+    }
+  ],
+  "devices": [
+    {
+      "type": 100,
+      "color": "rgb(255, 125, 93)",
+      "name": "Astronaut",
+      "pageTemplate": "astronaut.html",
+      "resizable": false,
+      "endPoints": [
+        {
+          "anchor": [
+            "Top"
+          ],
+          "isTarget": true,
+          "isSource": true
+        },
+        {
+          "anchor": [
+            "Bottom"
+          ],
+          "isTarget": true,
+          "isSource": true
+        }
+      ]
+    },
+    {
+      "type": 101,
+      "color": "rgb(185, 155, 255)",
+      "name": "Grazeway",
+      "pageTemplate": "grazeway.html",
+      "resizable": false,
+      "endPoints": [
+        {
+          "anchor": [
+            "Left"
+          ],
+          "isTarget": true,
+          "isSource": true
+        },
+        {
+          "anchor": [
+            "Right"
+          ],
+          "isTarget": true,
+          "isSource": true
+        }
+      ]
+    },
+    {
+      "type": 102,
+      "color": "rgb(255, 135, 135)",
+      "name": "Cosmix",
+      "pageTemplate": "cosmix.html",
+      "resizable": true,
+      "endPoints": [
+        {
+          "anchor": [
+            "Left"
+          ],
+          "isTarget": true,
+          "isSource": true
+        },
+        {
+          "anchor": [
+            "Right"
+          ],
+          "isTarget": true,
+          "isSource": true
+        }
+      ]
+    },
+    {
+      "type": 103,
+      "color": "rgb(92, 252, 177)",
+      "name": "Central Unit",
+      "pageTemplate": "centralunit.html",
+      "resizable": true
+    },
+    {
+      "type": 104,
+      "color": "rgb(255, 125, 93)",
+      "name": "Astronaut",
+      "pageTemplate": "astronaut.html",
+      "resizable": true
+    },
+    {
+      "type": 105,
+      "color": "rgb(185, 155, 255)",
+      "name": "Grazeway",
+      "pageTemplate": "grazeway.html",
+      "resizable": true
+    },
+    {
+      "type": 106,
+      "color": "rgb(255, 135, 135)",
+      "name": "Cosmix",
+      "pageTemplate": "cosmix.html",
+      "resizable": true
+    },
+    {
+      "type": 107,
+      "color": "rgb(92, 252, 177)",
+      "name": "Central Unit",
+      "pageTemplate": "centralunit.html",
+      "resizable": true
+    },
+    {
+      "type": 108,
+      "color": "rgb(255, 125, 93)",
+      "name": "Astronaut",
+      "pageTemplate": "astronaut.html",
+      "resizable": true
+    },
+    {
+      "type": 109,
+      "color": "rgb(185, 155, 255)",
+      "name": "Grazeway",
+      "pageTemplate": "grazeway.html",
+      "resizable": true
+    },
+    {
+      "type": 110,
+      "color": "rgb(255, 135, 135)",
+      "name": "Cosmix",
+      "pageTemplate": "cosmix.html",
+      "resizable": true
+    },
+    {
+      "type": 111,
+      "color": "rgb(92, 252, 177)",
+      "name": "Central Unit",
+      "pageTemplate": "centralunit.html",
+      "resizable": true
+    }
+  ],
+  "otherDevices": [
+    {
+      "type": 100,
+      "color": "rgb(255, 125, 93)",
+      "name": "Astronaut",
+      "pageTemplate": "astronaut.html",
+      "resizable": false
+    },
+    {
+      "type": 101,
+      "color": "rgb(185, 155, 255)",
+      "name": "Grazeway",
+      "pageTemplate": "grazeway.html",
+      "resizable": false
+    },
+    {
+      "type": 102,
+      "color": "rgb(255, 135, 135)",
+      "name": "Cosmix",
+      "pageTemplate": "cosmix.html",
+      "resizable": true
+    },
+    {
+      "type": 103,
+      "color": "rgb(92, 252, 177)",
+      "name": "Central Unit",
+      "pageTemplate": "centralunit.html",
+      "resizable": true
+    },
+    {
+      "type": 104,
+      "color": "rgb(255, 125, 93)",
+      "name": "Astronaut",
+      "pageTemplate": "astronaut.html",
+      "resizable": true
+    },
+    {
+      "type": 105,
+      "color": "rgb(185, 155, 255)",
+      "name": "Grazeway",
+      "pageTemplate": "grazeway.html",
+      "resizable": true
+    },
+    {
+      "type": 106,
+      "color": "rgb(255, 135, 135)",
+      "name": "Cosmix",
+      "pageTemplate": "cosmix.html",
+      "resizable": true
+    },
+    {
+      "type": 107,
+      "color": "rgb(92, 252, 177)",
+      "name": "Central Unit",
+      "pageTemplate": "centralunit.html",
+      "resizable": true
+    },
+    {
+      "type": 108,
+      "color": "rgb(255, 125, 93)",
+      "name": "Astronaut",
+      "pageTemplate": "astronaut.html",
+      "resizable": true
+    },
+    {
+      "type": 109,
+      "color": "rgb(185, 155, 255)",
+      "name": "Grazeway",
+      "pageTemplate": "grazeway.html",
+      "resizable": true
+    },
+    {
+      "type": 110,
+      "color": "rgb(255, 135, 135)",
+      "name": "Cosmix",
+      "pageTemplate": "cosmix.html",
+      "resizable": true
+    },
+    {
+      "type": 111,
+      "color": "rgb(92, 252, 177)",
+      "name": "Central Unit",
+      "pageTemplate": "centralunit.html",
+      "resizable": true
+    }
+  ]
+}

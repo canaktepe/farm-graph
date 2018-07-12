@@ -15,10 +15,16 @@ farmGraphModule = {
         return pos == "x" ? elements.grid._size[0] : elements.grid._size[1];
       }
     },
+    farmMainTool: $("#farmMain"),
     devicesTool: $("#devices"),
+    otherDevicesTool: $("#others"),
+    farmMainElements: [],
     farmDevices: [],
+    otherElements: [],
     activeDeviceSelector: ".activeDevice",
-    farmObjectDragger: $(".farm-objects"),
+    farmObjectDragger: $(".farm-main-objects"),
+    farmMainObjectDragger: $(".farm-objects"),
+    otherObjectDragger: $(".other-objects"),
     farm: $(".farm"),
     farmDraggableItem: $(".dragElement"),
     dropElements: {
@@ -83,33 +89,45 @@ farmGraphModule = {
     );
   },
   bindFarmDeviceElements: function () {
-    $.each(elements.farmDevices, function (i, device) {
-      var deviceElement = $("<div>", { class: "list-inline-item farm-item" });
-      var caption = $("<div>", { class: "text-center pb-1" })
-        .appendTo(deviceElement)
-        .text(device.name);
-      var object = $("<div>", {
-        class: "dragElement",
-        css: { backgroundColor: device.color },
-        attr: { "data-type": device.type, "data-title": device.name, "data-resizable": device.resizable, "data-endpoints": JSON.stringify(device.endPoints) }
-      })
-        // this step first draggable bind for device tool elements
-        .draggable({
-          cursor: "move",
-          revert: "invalid",
-          helper: "clone",
-          appendTo: "body",
-          grid: elements.grid._size,
-          start: function (event, ui) {
-            ui.helper.device = device;
-          },
-          drag: function (event, ui) {
-            setToolObject(ui, elements.dropElements.farmDropZone);
-          }
+
+    // pushes the data from the json datum into the corresponding element
+    bindElements = function (json, pushEl) {
+      $.each(json, function (i, fep) {
+        var fe = $("<div>", { class: "list-inline-item farm-item" });
+        $("<div>", { class: "text-center pb-1" })
+          .appendTo(fe)
+          .text(fep.name);
+        $("<div>", {
+          class: "dragElement",
+          css: { backgroundColor: fep.color },
+          attr: { "data-type": fep.type, "data-title": fep.name, "data-resizable": fep.resizable, "data-endpoints": JSON.stringify(fep.endPoints) }
         })
-        .appendTo(deviceElement);
-      elements.devicesTool.append(deviceElement);
-    });
+          // this step first draggable bind for device tool elements
+          .draggable({
+            cursor: "move",
+            revert: "invalid",
+            helper: "clone",
+            appendTo: "body",
+            grid: elements.grid._size,
+            start: function (event, ui) {
+              ui.helper.device = fep;
+            },
+            drag: function (event, ui) {
+              setToolObject(ui, elements.dropElements.farmDropZone);
+            }
+          })
+          .appendTo(fe);
+        pushEl.append(fe);
+      });
+    }
+
+    //bind barn Elements
+    bindElements(elements.farmMainElements, elements.farmMainTool);
+    //bind farm Devices
+    bindElements(elements.farmDevices, elements.devicesTool);
+    //bind farm other Devices
+    bindElements(elements.otherDevices, elements.otherDevicesTool);
+
 
     getModalAttributes = function (e) {
       var dialogModal = e.currentTarget;
@@ -178,9 +196,9 @@ farmGraphModule = {
         });
         elements.deviceModal.selector.modal({ show: true });
       }
-      else if(XMLHttpRequest.status==404){
-        alert(device.pageTemplate+" Page Not Found");
-        console.log(device.pageTemplate+" Page Not Found");
+      else if (XMLHttpRequest.status == 404) {
+        alert(device.pageTemplate + " Page Not Found");
+        console.log(device.pageTemplate + " Page Not Found");
         $(
           "div" +
           elements.dropElements.cloneSelector +
@@ -193,20 +211,16 @@ farmGraphModule = {
   },
 
   bindDeviceEndpoints: function (deviceElement, endpoints) {
-    // TODO: bind endpoints for device element
     var endpointArr = JSON.parse(endpoints);
     if (endpointArr.length > 0) {
       console.log("endpoint add " + deviceElement);
 
-
       $.each(endpointArr, function (i, endpoint) {
-
         jsPlumb.addEndpoint(deviceElement, {
           anchor: endpoint.anchor,
           isTarget: endpoint.isTarget,
           isSource: endpoint.isSource
         })
-
       })
 
       jsPlumb.draggable(deviceElement, {
@@ -226,6 +240,14 @@ farmGraphModule = {
   },
 
   bindCustomScrollBar: function () {
+    elements.farmMainObjectDragger.mCustomScrollbar({
+      autoDraggerLength: true,
+      autoHideScrollbar: true,
+      axis: "x",
+      theme: "dark-thin",
+      autoExpandScrollbar: true,
+      advanced: { autoExpandHorizontalScroll: true }
+    });
     elements.farmObjectDragger.mCustomScrollbar({
       autoDraggerLength: true,
       autoHideScrollbar: true,
@@ -234,6 +256,15 @@ farmGraphModule = {
       autoExpandScrollbar: true,
       advanced: { autoExpandHorizontalScroll: true }
     });
+    elements.otherObjectDragger.mCustomScrollbar({
+      autoDraggerLength: true,
+      autoHideScrollbar: true,
+      axis: "x",
+      theme: "dark-thin",
+      autoExpandScrollbar: true,
+      advanced: { autoExpandHorizontalScroll: true }
+    });
+
     elements.farm.mCustomScrollbar({
       autoDraggerLength: true,
       autoHideScrollbar: true,
@@ -350,6 +381,16 @@ farmGraphModule = {
           elements.dropElements.cloneIdPrefix + elements.dropElements.counter,
           guid = farmGraphModule.guid();
 
+        // get device json data
+        var device = ui.helper.device;
+        device.id = elementId;
+        device.guid = guid;
+
+        // set size when element has specific size
+        if (device.size != undefined) {
+          cloned.css({ width: device.size.width, height: device.size.height });
+        }
+
         cloned
           .attr({
             id: elementId,
@@ -409,12 +450,10 @@ farmGraphModule = {
           })
         }
 
-        // get device json data
-        var device = ui.helper.device;
-        device.id = elementId;
-        device.guid = guid;
         //open device modal dialog form
-        farmGraphModule.openDeviceModal(false, device, ui);
+        if (device.pageTemplate !== undefined)
+          farmGraphModule.openDeviceModal(false, device, ui);
+
         //id is being increased
         elements.dropElements.counter++;
         elements.deviceModal.deleteObjectButton.prop("disabled", false);
@@ -429,15 +468,18 @@ farmGraphModule = {
   },
   //load device items from json file
   loadDeviceItems: function () {
-    $.getJSON("/assets/devices.json")
+    $.getJSON("/assets/devices.json", { tags: "devices", })
       .done(function (data) {
-        elements.farmDevices = data;
+        elements.farmDevices = data.devices;
+        elements.farmMainElements = data.farmMain;
+        elements.otherDevices = data.otherDevices;
         farmGraphModule.bindFarmDeviceElements();
       })
       .fail(function (jqxhr, textStatus, error) {
         console.log("Request Failed: " + error);
       });
   },
+
   init: function (gridSize) {
     elements = this.elements;
     elements.grid.size = gridSize;

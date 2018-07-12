@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>FarmGraph Management</title>
+    <link href="/favicon.ico" rel="icon" type="image/x-icon" />
     <link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.min.css" />
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
@@ -84,12 +85,19 @@
                                 aria-expanded="false" aria-controls="collapseDevice">
                                 <strong>Farm Devices</strong>
                             </button>
-
                         </div>
                         <div id="collapseDevice" class="collapse" aria-labelledby="headingDevice" data-parent="#elementsAccordion">
                             <div class="card-body">
-                                <div class="farm-objects">
-                                    <ul id="devices" class="list-inline"></ul>
+                                <div class="row">
+                                    <div class="farm-main-objects col-xl-4 col-lg-12 col-md-12">
+                                        <ul id="farmMain" class="list-inline"></ul>
+                                    </div>
+                                    <div class="farm-objects col-xl-4 col-lg-12 col-md-12">
+                                        <ul id="devices" class="list-inline"></ul>
+                                    </div>
+                                    <div class="other-objects col-xl-4 col-lg-12 col-md-12">
+                                        <ul id="others" class="list-inline"></ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -139,12 +147,12 @@
                 DragOptions: { cursor: "crosshair" },
                 Endpoints: [["Dot", { radius: 7 }], ["Dot", { radius: 5 }]],
                 EndpointStyles: [{ fill: "red" }, { fill: "red" }],
-                overlays:[ 
-                    ["Arrow" , { width:12, length:12, location:0.67 }]
+                overlays: [
+                    ["Arrow", { width: 12, length: 12, location: 0.67 }]
                 ]
             });
 
-    
+
 
 
 

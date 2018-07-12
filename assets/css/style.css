@@ -33,7 +33,7 @@ body {
   width: 2000px;
   height: 800px;
 }
-.farm-objects {
+.farm-objects,.farm-main-objects,.other-objects {
   white-space: nowrap;
 }
 
@@ -77,4 +77,8 @@ body {
     padding-right: 10px;
     color: #dc3545;
     content: "\f0b2"; /* fa-chevron-up */
+}
+
+.list-inline-item:not(:last-child) {
+  margin-right: 0.6rem !important;
 }
