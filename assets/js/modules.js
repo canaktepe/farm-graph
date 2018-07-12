@@ -89,7 +89,7 @@ farmGraphModule = {
       var object = $("<div>", {
         class: "dragElement",
         css: { backgroundColor: device.color },
-        attr: { "data-type": device.type, "data-title": device.name, "data-resizable": device.resizable }
+        attr: { "data-type": device.type, "data-title": device.name, "data-resizable": device.resizable, "data-endpoints": JSON.stringify(device.endPoints) }
       })
         // this step first draggable bind for device tool elements
         .draggable({
@@ -114,13 +114,17 @@ farmGraphModule = {
       return dialogModal.attributes;
     };
 
-    $("#saveDevice").click(function () {
+    $("#saveDevice").click(function (e) {
+
+      console.log(1001, elements.deviceModal.selector.attr("data-id"));
+
       elements.deviceModal.selector.modal("hide");
       elements.deviceModal.selector.attr("data-update", true);
 
       //if click save button binding endpoints for device elements
       var endpoints = elements.deviceModal.selector.attr("data-endpoints");
-      farmGraphModule.bindDeviceEndpoints(endpoints);
+      var endpointElementToAdd = elements.deviceModal.selector.attr("data-id");
+      farmGraphModule.bindDeviceEndpoints(endpointElementToAdd, endpoints);
     });
 
     //modal show event
@@ -178,11 +182,37 @@ farmGraphModule = {
     });
   },
 
-  bindDeviceEndpoints: function (endpoints) {
+  bindDeviceEndpoints: function (deviceElement, endpoints) {
     // TODO: bind endpoints for device element
     var endpointArr = JSON.parse(endpoints);
-    if (endpointArr.length > 0)
-      alert("endpoint add");
+    if (endpointArr.length > 0) {
+      console.log("endpoint add " + deviceElement);
+
+
+      $.each(endpointArr, function (i, endpoint) {
+
+        jsPlumb.addEndpoint(deviceElement, {
+          anchor: endpoint.anchor,
+          isTarget: endpoint.isTarget,
+          isSource: endpoint.isSource
+        })
+
+      })
+
+      jsPlumb.draggable(deviceElement, {
+        // refreshPositions: true,
+        // scroll: true,
+        filter: ".ui-resizable-handle",
+        cursor: "move",
+        containment: elements.dropElements.selector,
+        revert: "invalid",
+        grid: elements.grid._size,
+        drag: function (event, ui) {
+          // console.log(event);
+          // setToolObject(ui, droppingObject);
+        }
+      });
+    }
   },
 
   bindCustomScrollBar: function () {
@@ -333,26 +363,26 @@ farmGraphModule = {
             elements.deviceModal.deleteObjectButton.prop("disabled", false);
             elements.deviceModal.saveobjectButton.prop("disabled", false);
           })
-          //bind re-drag element on farm canvas
-          // .draggable({
-          //   refreshPositions: true,
-          //   scroll: true,
-          //   cursor: "move",
-          //   containment: elements.dropElements.selector,
-          //   revert: "invalid",
-          //   grid: elements.grid._size,
-          //   drag: function(event, ui) {
-          //     setToolObject(ui, droppingObject);
-          //   }
-          // })
-          //binding resize device elements
-
           .appendTo(this);
 
-
-
         var clonedProperties = {
-          resizable: cloned.attr("data-resizable") == "true",
+          resizable: cloned.attr("data-resizable") === "true",
+          elementHasEndpoint: cloned.attr("data-endpoints") === undefined ? false : true
+        }
+
+        if (!clonedProperties.elementHasEndpoint) {
+          //bind re-drag element on farm canvas
+          cloned.draggable({
+            refreshPositions: true,
+            scroll: true,
+            cursor: "move",
+            containment: elements.dropElements.selector,
+            revert: "invalid",
+            grid: elements.grid._size,
+            drag: function (event, ui) {
+              setToolObject(ui, droppingObject);
+            }
+          })
         }
 
         //if element resizable property true binding
@@ -367,33 +397,6 @@ farmGraphModule = {
             }
           })
         }
-
-        jsPlumb.addEndpoint(cloned, {
-          anchor: ["Top"],
-          //  anchor: ["Perimeter", { shape: "Rectangle" }],
-          isTarget: true,
-          isSource: true
-        });
-
-        jsPlumb.addEndpoint(cloned, {
-          // anchor: ["Perimeter", { shape: "Rectangle" }],
-          isTarget: true,
-          isSource: true
-        });
-
-        jsPlumb.draggable(elementId, {
-          // refreshPositions: true,
-          // scroll: true,
-          filter: ".ui-resizable-handle",
-          cursor: "move",
-          containment: elements.dropElements.selector,
-          revert: "invalid",
-          grid: elements.grid._size,
-          drag: function (event, ui) {
-            // console.log(event);
-            // setToolObject(ui, droppingObject);
-          }
-        });
 
         // get device json data
         var device = ui.helper.device;

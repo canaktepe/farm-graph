@@ -4,7 +4,7 @@
     "color": "rgb(255, 125, 93)",
     "name": "Astronaut",
     "pageTemplate": "astronaut.html",
-    "resizable" : true,
+    "resizable" : false,
     "endPoints" : [
       {
         "anchor":["Top"],
@@ -23,7 +23,19 @@
     "color": "rgb(185, 155, 255)",
     "name": "Grazeway",
     "pageTemplate": "grazeway.html",
-    "resizable" : false
+    "resizable" : false,
+    "endPoints" : [
+      {
+        "anchor":["Left"],
+        "isTarget":true,
+        "isSource":true
+      },
+      {
+        "anchor":["Right"],
+        "isTarget":true,
+        "isSource":true
+      }
+    ]
   },
   {
     "type": 102,
