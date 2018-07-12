@@ -42,7 +42,19 @@
     "color": "rgb(255, 135, 135)",
     "name": "Cosmix",
     "pageTemplate": "cosmix.html",
-    "resizable" : true
+    "resizable" : true,
+    "endPoints" : [
+      {
+        "anchor":["Left"],
+        "isTarget":true,
+        "isSource":true
+      },
+      {
+        "anchor":["Right"],
+        "isTarget":true,
+        "isSource":true
+      }
+    ]
   },
   {
     "type": 103,

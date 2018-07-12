@@ -46,7 +46,9 @@ farmGraphModule = {
     elements.deviceModal.deleteObjectButton.confirmation({
       rootSelector: "[data-toggle=confirmation]",
       onConfirm: function (value) {
-        $(elements.activeDeviceSelector).remove();
+        var activeElement = $(elements.activeDeviceSelector);
+        activeElement.remove();
+        jsPlumb.removeAllEndpoints(activeElement.data("id"));
         if ($(elements.activeDeviceSelector).length == 0) {
           elements.deviceModal.deleteObjectButton.prop("disabled", true);
           elements.deviceModal.saveobjectButton.prop("disabled", true);
@@ -115,7 +117,6 @@ farmGraphModule = {
     };
 
     $("#saveDevice").click(function (e) {
-
       console.log(1001, elements.deviceModal.selector.attr("data-id"));
 
       elements.deviceModal.selector.modal("hide");
@@ -159,8 +160,6 @@ farmGraphModule = {
           "]"
         ).remove();
     });
-
-
   },
   openDeviceModal: function (update, device, ui) {
     update ? console.log("update mode") : console.log("insert mode");
@@ -178,6 +177,17 @@ farmGraphModule = {
           "data-endpoints": JSON.stringify(device.endPoints)
         });
         elements.deviceModal.selector.modal({ show: true });
+      }
+      else if(XMLHttpRequest.status==404){
+        alert(device.pageTemplate+" Page Not Found");
+        console.log(device.pageTemplate+" Page Not Found");
+        $(
+          "div" +
+          elements.dropElements.cloneSelector +
+          "[id=" +
+          device.id +
+          "]"
+        ).remove();
       }
     });
   },
@@ -344,7 +354,8 @@ farmGraphModule = {
           .attr({
             id: elementId,
             //cloned item generate new guid
-            "data-gid": guid
+            "data-gid": guid,
+            "data-id": elementId
           })
           //add clone class selector
           .addClass(elements.dropElements.cloneSelector.getClass())
