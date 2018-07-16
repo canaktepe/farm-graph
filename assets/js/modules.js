@@ -22,9 +22,7 @@ farmGraphModule = {
     farmDevices: [],
     otherElements: [],
     activeDeviceSelector: ".activeDevice",
-    farmObjectDragger: $(".farm-main-objects"),
-    farmMainObjectDragger: $(".farm-objects"),
-    otherObjectDragger: $(".other-objects"),
+    farmScrollerObjects: $(".farm-object-scroller"),
     farm: $(".farm"),
     farmDraggableItem: $(".dragElement"),
     dropElements: {
@@ -89,9 +87,10 @@ farmGraphModule = {
     );
   },
   bindFarmDeviceElements: function () {
-
     // pushes the data from the json datum into the corresponding element
     bindElements = function (json, pushEl) {
+      //elements sort by order prop
+      json.sort((a, b) => a.order - b.order);
       $.each(json, function (i, fep) {
         var fe = $("<div>", { class: "list-inline-item farm-item" });
         $("<div>", { class: "text-center pb-1" })
@@ -128,15 +127,12 @@ farmGraphModule = {
     //bind farm other Devices
     bindElements(elements.otherDevices, elements.otherDevicesTool);
 
-
     getModalAttributes = function (e) {
       var dialogModal = e.currentTarget;
       return dialogModal.attributes;
     };
 
     $("#saveDevice").click(function (e) {
-      console.log(1001, elements.deviceModal.selector.attr("data-id"));
-
       elements.deviceModal.selector.modal("hide");
       elements.deviceModal.selector.attr("data-update", true);
 
@@ -211,6 +207,8 @@ farmGraphModule = {
   },
 
   bindDeviceEndpoints: function (deviceElement, endpoints) {
+    if (endpoints === undefined) return;
+
     var endpointArr = JSON.parse(endpoints);
     if (endpointArr.length > 0) {
       console.log("endpoint add " + deviceElement);
@@ -240,30 +238,17 @@ farmGraphModule = {
   },
 
   bindCustomScrollBar: function () {
-    elements.farmMainObjectDragger.mCustomScrollbar({
-      autoDraggerLength: true,
-      autoHideScrollbar: true,
-      axis: "x",
-      theme: "dark-thin",
-      autoExpandScrollbar: true,
-      advanced: { autoExpandHorizontalScroll: true }
-    });
-    elements.farmObjectDragger.mCustomScrollbar({
-      autoDraggerLength: true,
-      autoHideScrollbar: true,
-      axis: "x",
-      theme: "dark-thin",
-      autoExpandScrollbar: true,
-      advanced: { autoExpandHorizontalScroll: true }
-    });
-    elements.otherObjectDragger.mCustomScrollbar({
-      autoDraggerLength: true,
-      autoHideScrollbar: true,
-      axis: "x",
-      theme: "dark-thin",
-      autoExpandScrollbar: true,
-      advanced: { autoExpandHorizontalScroll: true }
-    });
+    //farmScrollerObjects bind customscrollbar
+    $.each(elements.farmScrollerObjects, function (i, scroller) {
+      $(scroller).mCustomScrollbar({
+        autoDraggerLength: true,
+        autoHideScrollbar: true,
+        axis: "x",
+        theme: "dark-thin",
+        autoExpandScrollbar: true,
+        advanced: { autoExpandHorizontalScroll: true }
+      });
+    })
 
     elements.farm.mCustomScrollbar({
       autoDraggerLength: true,
@@ -359,14 +344,30 @@ farmGraphModule = {
     };
 
     elements.dropElements.farmDropZone.droppable({
+      greedy: true,
       drop: function (event, ui) {
-        var droppingObject = $(this);
+        var droppingObject = elements.dropElements.farmDropZone;
+
         var cloned = $(ui.helper).clone(true);
 
         //if has cloned element perevent re-clone
-        if (cloned.hasClass(elements.dropElements.cloneSelector.getClass()))
+        var clonedHas = cloned.hasClass(elements.dropElements.cloneSelector.getClass());
+        if (clonedHas)
           return;
 
+        // get device json data
+        var device = ui.helper.device;
+
+
+        if ((device.acceptable === undefined || $.inArray(0, device.acceptable))) {
+          setTimeout(function () {
+            $(ui.draggable).promise().done(function () {
+              $(ui.draggable).effect('shake', {}, 500);
+            });
+          }, 150);
+
+          return;
+        }
         //clear active element
         clearActive();
 
@@ -375,21 +376,17 @@ farmGraphModule = {
           ui.helper.offset(),
           droppingObject.offset()
         );
-
         //generate element guid and id
         var elementId =
           elements.dropElements.cloneIdPrefix + elements.dropElements.counter,
           guid = farmGraphModule.guid();
 
-        // get device json data
-        var device = ui.helper.device;
+        // set device id and guid json data
         device.id = elementId;
         device.guid = guid;
 
         // set size when element has specific size
-        if (device.size != undefined) {
-          cloned.css({ width: device.size.width, height: device.size.height });
-        }
+        if (device.size != undefined) cloned.css({ width: device.size.width, height: device.size.height });
 
         cloned
           .attr({
@@ -415,7 +412,15 @@ farmGraphModule = {
             elements.deviceModal.deleteObjectButton.prop("disabled", false);
             elements.deviceModal.saveobjectButton.prop("disabled", false);
           })
-          .appendTo(this);
+          .appendTo(droppingObject);
+
+        cloned.droppable({
+          greedy: true,
+          drop: function (cEvent, cUi) {
+            //TODO: Acceptable object
+            console.log(this);
+          }
+        })
 
         var clonedProperties = {
           resizable: cloned.attr("data-resizable") === "true",
