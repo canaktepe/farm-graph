@@ -50,9 +50,15 @@ farmGraphModule = {
     elements.deviceModal.deleteObjectButton.confirmation({
       rootSelector: "[data-toggle=confirmation]",
       onConfirm: function (value) {
+        // debugger;
         var activeElement = $(elements.activeDeviceSelector);
+        $.each(activeElement.find(elements.dropElements.cloneSelector), function (i, child) {
+          console.log(child);
+          jsPlumb.removeAllEndpoints(child.id);
+        })
+
+        jsPlumb.removeAllEndpoints(activeElement)
         activeElement.remove();
-        jsPlumb.removeAllEndpoints(activeElement.data("id"));
         if ($(elements.activeDeviceSelector).length == 0) {
           elements.deviceModal.deleteObjectButton.prop("disabled", true);
           elements.deviceModal.saveobjectButton.prop("disabled", true);
@@ -207,6 +213,22 @@ farmGraphModule = {
   },
 
   bindDeviceEndpoints: function (deviceElement, endpoints) {
+
+    jsPlumb.draggable(deviceElement, {
+      // refreshPositions: true,
+      // scroll: true,
+      filter: ".ui-resizable-handle",
+      cursor: "move",
+      containment: 'parent',
+      revert: "invalid",
+      grid: elements.grid._size,
+      drag: function (info) {
+        // console.log(event);
+        // setToolObject(ui, droppingObject);
+        jsPlumb.repaintEverything();
+      }
+    });
+
     if (endpoints === undefined) return;
 
     var endpointArr = JSON.parse(endpoints);
@@ -221,19 +243,7 @@ farmGraphModule = {
         })
       })
 
-      jsPlumb.draggable(deviceElement, {
-        // refreshPositions: true,
-        // scroll: true,
-        filter: ".ui-resizable-handle",
-        cursor: "move",
-        containment: elements.dropElements.selector,
-        revert: "invalid",
-        grid: elements.grid._size,
-        drag: function (event, ui) {
-          // console.log(event);
-          // setToolObject(ui, droppingObject);
-        }
-      });
+
     }
   },
 
@@ -329,7 +339,7 @@ farmGraphModule = {
 
     clearActive = function (clicked) {
       if (clicked) {
-        var object = $(clicked.currentTarget);
+        var object = $(clicked.target);
         if (object.hasClass(elements.activeDeviceSelector.getClass())) {
           return;
         } else {
@@ -338,133 +348,165 @@ farmGraphModule = {
           return;
         }
       }
-      var active = $(elements.dropElements.cloneSelector);
+      var active = $(elements.activeDeviceSelector);
       if (!active) return;
       active.removeClass(elements.activeDeviceSelector.getClass());
     };
 
     elements.dropElements.farmDropZone.droppable({
+      tolerance: "fit",
       greedy: true,
+      over: function (event, ui) {
+        $(event.target).addClass("active-drop-box");
+        $("div[data-active]").removeAttr('data-active');
+        $(event.target).attr("data-active", true);
+      },
+      out: function (event, ui) {
+        $(event.target).removeClass("active-drop-box");
+      },
       drop: function (event, ui) {
-        var droppingObject = elements.dropElements.farmDropZone;
-
-        var cloned = $(ui.helper).clone(true);
-
-        //if has cloned element perevent re-clone
-        var clonedHas = cloned.hasClass(elements.dropElements.cloneSelector.getClass());
-        if (clonedHas)
-          return;
-
-        // get device json data
-        var device = ui.helper.device;
-
-
-        if ((device.acceptable === undefined || $.inArray(0, device.acceptable))) {
-          setTimeout(function () {
-            $(ui.draggable).promise().done(function () {
-              $(ui.draggable).effect('shake', {}, 500);
-            });
-          }, 150);
-
-          return;
-        }
-        //clear active element
-        clearActive();
-
-        //set drag-drop element position
-        var location = calculatePosition(
-          ui.helper.offset(),
-          droppingObject.offset()
-        );
-        //generate element guid and id
-        var elementId =
-          elements.dropElements.cloneIdPrefix + elements.dropElements.counter,
-          guid = farmGraphModule.guid();
-
-        // set device id and guid json data
-        device.id = elementId;
-        device.guid = guid;
-
-        // set size when element has specific size
-        if (device.size != undefined) cloned.css({ width: device.size.width, height: device.size.height });
-
-        cloned
-          .attr({
-            id: elementId,
-            //cloned item generate new guid
-            "data-gid": guid,
-            "data-id": elementId
-          })
-          //add clone class selector
-          .addClass(elements.dropElements.cloneSelector.getClass())
-          //add active class selector last drag element
-          .addClass(elements.activeDeviceSelector.getClass())
-          .css({
-            position: "absolute",
-            border: "none",
-            left: location.left,
-            top: location.top
-          })
-          //bind click element / select active element
-          .click(function (e) {
-            clearActive(e);
-            setToolObject(e, elements.dropElements.farmDropZone);
-            elements.deviceModal.deleteObjectButton.prop("disabled", false);
-            elements.deviceModal.saveobjectButton.prop("disabled", false);
-          })
-          .appendTo(droppingObject);
-
-        cloned.droppable({
-          greedy: true,
-          drop: function (cEvent, cUi) {
-            //TODO: Acceptable object
-            console.log(this);
-          }
-        })
-
-        var clonedProperties = {
-          resizable: cloned.attr("data-resizable") === "true",
-          elementHasEndpoint: cloned.attr("data-endpoints") === undefined ? false : true
-        }
-
-        if (!clonedProperties.elementHasEndpoint) {
-          //bind re-drag element on farm canvas
-          cloned.draggable({
-            refreshPositions: true,
-            scroll: true,
-            cursor: "move",
-            containment: elements.dropElements.selector,
-            revert: "invalid",
-            grid: elements.grid._size,
-            drag: function (event, ui) {
-              setToolObject(ui, droppingObject);
-            }
-          })
-        }
-
-        //if element resizable property true binding
-        if (clonedProperties.resizable) {
-          cloned.resizable({
-            autoHide: true,
-            grid: elements.grid._size,
-            containment: elements.dropElements.selector,
-            resize: function (event, ui) {
-              setToolObject(ui, droppingObject);
-              jsPlumb.revalidate(ui.helper);
-            }
-          })
-        }
-
-        //open device modal dialog form
-        if (device.pageTemplate !== undefined)
-          farmGraphModule.openDeviceModal(false, device, ui);
-
-        //id is being increased
-        elements.dropElements.counter++;
-        elements.deviceModal.deleteObjectButton.prop("disabled", false);
-        elements.deviceModal.saveobjectButton.prop("disabled", false);
+        $(event.target).removeClass("active-drop-box");
+        dropEvent(event, ui);
       }
     });
+
+    dropEvent = function (event, ui) {
+      var dropbox = $(event.target);
+      if (dropbox.attr("data-active") === undefined)
+        return;
+
+      var cloned = $(ui.helper).clone(true);
+
+      //if has cloned element perevent re-clone
+      var clonedHas = cloned.hasClass(elements.dropElements.cloneSelector.getClass());
+      if (clonedHas)
+        return;
+
+      // get device json data
+      var device = ui.helper.device;
+
+      //clear active element
+      clearActive();
+
+      //set drag-drop element position
+      var location = calculatePosition(
+        ui.helper.offset(),
+        dropbox.offset()
+      );
+
+      //generate element guid and id
+      var elementId =
+        elements.dropElements.cloneIdPrefix + elements.dropElements.counter,
+        guid = farmGraphModule.guid();
+
+      // set device id and guid json data
+      device.id = elementId;
+      device.guid = guid;
+
+      // set size when element has specific size
+      if (device.size != undefined) cloned.css({ width: device.size.width, height: device.size.height });
+
+      cloned
+        .attr({
+          id: elementId,
+          //cloned item generate new guid
+          "data-gid": guid,
+          "data-id": elementId
+        })
+        //add clone class selector
+        .addClass(elements.dropElements.cloneSelector.getClass())
+        .addClass(elements.activeDeviceSelector.getClass())
+        .css({
+          position: "absolute",
+          border: "none",
+          left: location.left,
+          top: location.top
+        })
+        .droppable({
+          tolerance: "fit",
+          over: function (cevent, cui) {
+            $(cevent.target).addClass("active-drop-box");
+            $("div[data-active]").removeAttr('data-active');
+            $(cevent.target).attr("data-active", true);
+          },
+          out: function (cevent, cui) {
+            $(cevent.target).removeClass("active-drop-box");
+          },
+          drop: function (cevent, cui) {
+            $(cevent.target).removeClass("active-drop-box");
+            var access = hasAccess(cui.helper, ui.helper);
+            if (!access)
+              return;
+
+            if ($(cevent.target).attr("data-active") === undefined)
+              return;
+
+            dropEvent(cevent, cui);
+          }
+        })
+        //bind click element / select active element
+        .click(function (e) {
+          clearActive(e);
+          setToolObject(e, elements.dropElements.farmDropZone);
+          elements.deviceModal.deleteObjectButton.prop("disabled", false);
+          elements.deviceModal.saveobjectButton.prop("disabled", false);
+        })
+        .appendTo(dropbox)
+
+      var clonedProperties = {
+        resizable: cloned.data("resizable"),
+        elementHasEndpoint: cloned.attr("data-endpoints") === undefined ? false : true
+      }
+
+      // if (!clonedProperties.elementHasEndpoint) {
+      //   //bind re-drag element on farm canvas
+      //   cloned.draggable({
+      //     refreshPositions: true,
+      //     scroll: true,
+      //     cursor: "move",
+      //     containment: 'parent',
+      //     revert: "invalid",
+      //     grid: elements.grid._size,
+      //     drag: function (event, ui) {
+      //       setToolObject(ui, dropbox);
+      //     }
+      //   })
+      // }
+
+      //if element resizable property true binding
+      if (clonedProperties.resizable) {
+        cloned.resizable({
+          autoHide: true,
+          grid: elements.grid._size,
+          containment: 'parent',
+          resize: function (event, ui) {
+            setToolObject(ui, dropbox);
+            jsPlumb.repaintEverything();
+          }
+        })
+      }
+
+      //open device modal dialog form
+      if (device.pageTemplate !== undefined)
+        farmGraphModule.openDeviceModal(false, device, ui);
+
+      //id is being increased
+      elements.dropElements.counter++;
+      elements.deviceModal.deleteObjectButton.prop("disabled", false);
+      elements.deviceModal.saveobjectButton.prop("disabled", false);
+
+    }
+
+    hasAccess = function (helper, dropbox) {
+
+      if (helper.device === undefined) return;
+
+      var device = helper.device;
+      var type = device.type;
+      var accepts = dropbox.device.acceptable;
+      return $.inArray(parseInt(type), accepts) >= 0;
+    }
+
   },
   bindExtensionMethods: function () {
     String.prototype.getClass = function () {
