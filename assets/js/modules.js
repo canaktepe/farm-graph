@@ -53,7 +53,6 @@ farmGraphModule = {
         // debugger;
         var activeElement = $(elements.activeDeviceSelector);
         $.each(activeElement.find(elements.dropElements.cloneSelector), function (i, child) {
-          console.log(child);
           jsPlumb.removeAllEndpoints(child.id);
         })
 
@@ -213,7 +212,6 @@ farmGraphModule = {
   },
 
   bindDeviceEndpoints: function (deviceElement, endpoints) {
-
     jsPlumb.draggable(deviceElement, {
       // refreshPositions: true,
       // scroll: true,
