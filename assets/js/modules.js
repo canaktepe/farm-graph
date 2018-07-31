@@ -476,14 +476,14 @@ farmGraphModule = {
             dropEvent(cevent, cui);
           }
         })
-      //bind click element / select active element
-      cloned.click(function (e) {
-        clearActive(e);
-        setToolObject(e, elements.dropElements.farmDropZone);
-        elements.deviceModal.deleteObjectButton.prop("disabled", false);
-        elements.deviceModal.saveobjectButton.prop("disabled", false);
-        e.stopPropagation();
-      })
+        //bind click element / select active element
+        .click(function (e) {
+          clearActive(e);
+          setToolObject(e, elements.dropElements.farmDropZone);
+          elements.deviceModal.deleteObjectButton.prop("disabled", false);
+          elements.deviceModal.saveobjectButton.prop("disabled", false);
+          e.stopPropagation();
+        })
         .appendTo(dropbox)
 
       var clonedProperties = {
