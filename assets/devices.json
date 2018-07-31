@@ -45,8 +45,8 @@
       "name": "Area",
       "pageTemplate": "area.html",
       "size": {
-        "width": 200,
-        "height": 200
+        "width": 300,
+        "height": 300
       },
       "resizable": true,
       "acceptable": [4]
