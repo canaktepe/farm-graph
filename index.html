@@ -9,6 +9,7 @@
     <link href="/favicon.ico" rel="icon" type="image/x-icon" />
     <link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.min.css" />
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="node_modules/jsplumb/css/jsplumbtoolkit-defaults.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
@@ -123,35 +124,44 @@
     <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="node_modules/bootstrap-confirmation2/dist/bootstrap-confirmation.min.js"></script>
     <script type="text/javascript" src="node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script type="text/javascript" src="node_modules/jsplumb/dist/js/jsplumb.min.js"></script>
 
     <script type="text/javascript" src="/assets/js/gridBuilder.js"></script>
 
-    <script src="https://jsplumbtoolkit.com/lib/jsplumb.min.js"></script>
 
     <script type="text/javascript" src="/assets/js/modules.js"></script>
     <script type="text/javascript">
 
         (function () {
 
-            jsPlumb.ready(function () {
 
-            });
 
             jsPlumb.importDefaults({
+                // default drag options
+                DragOptions: { cursor: 'pointer', zIndex: 2000 },
+
+                // the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
+                // case it returns the 'labelText' member that we set on each connection in the 'init' method below.
+                ConnectionOverlays: [
+                    ["PlainArrow", { location: 0.5 }],
+                    // [ "Label", { label:"foo", location:0.25, id:"myLabel" } ]
+                ],
+                ConnectorZIndex: 5,
+                Connector: ['Flowchart', {
+                    stub: [25, 25],
+                    cornerRadius: 10,
+                    alwaysRespectStubs: true
+                }],
+                // Endpoint : "Dot",
+                EndpointStyle: { fill: "rgba(200,0,0,0.5)" },
+                // PaintStyle : { strokeWidth : 3, stroke : "red" },
                 PaintStyle: {
                     strokeWidth: 5,
                     stroke: 'rgba(200,0,0,0.5)'
                 },
-                DragOptions: { cursor: "crosshair" },
-                Endpoints: [["Dot", { radius: 7 }], ["Dot", { radius: 5 }]],
-                EndpointStyles: [{ fill: "red" }, { fill: "red" }],
-                overlays: [
-                    ["Arrow", { width: 12, length: 12, location: 0.67 }]
-                ]
+
+
             });
-
-
-
 
 
             var gridSize = [50, 50];

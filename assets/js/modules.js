@@ -293,11 +293,7 @@ farmGraphModule = {
       console.log("endpoint add " + deviceElement);
 
       $.each(endpointArr, function (i, endpoint) {
-        jsPlumb.addEndpoint(deviceElement, {
-          anchor: endpoint.anchor,
-          isTarget: endpoint.isTarget,
-          isSource: endpoint.isSource
-        })
+        jsPlumb.addEndpoint(deviceElement, endpoint)
       })
     }
   },
@@ -458,6 +454,7 @@ farmGraphModule = {
         dropbox.offset()
       );
 
+
       //generate element guid and id
       var elementId =
         elements.dropElements.cloneIdPrefix + elements.dropElements.counter,
@@ -545,7 +542,29 @@ farmGraphModule = {
 
       //if element resizable property true binding
       if (clonedProperties.resizable) {
+
+
+        $("<div>", { class: "ui-resizable-handle ui-resizable-nw", attr: { id: "nwgrip" } }).appendTo(cloned);
+        $("<div>", { class: "ui-resizable-handle ui-resizable-ne", attr: { id: "negrip" } }).appendTo(cloned);
+        $("<div>", { class: "ui-resizable-handle ui-resizable-sw", attr: { id: "swgrip" } }).appendTo(cloned);
+        $("<div>", { class: "ui-resizable-handle ui-resizable-se", attr: { id: "segrip" } }).appendTo(cloned);
+
+        $("<div>", { class: "ui-resizable-handle ui-resizable-n", attr: { id: "ngrip" } }).appendTo(cloned);
+        $("<div>", { class: "ui-resizable-handle ui-resizable-e", attr: { id: "egrip" } }).appendTo(cloned);
+        $("<div>", { class: "ui-resizable-handle ui-resizable-s", attr: { id: "sgrip" } }).appendTo(cloned);
+        $("<div>", { class: "ui-resizable-handle ui-resizable-w", attr: { id: "wgrip" } }).appendTo(cloned);
+
         cloned.resizable({
+          handles: {
+            'nw': '#nwgrip',
+            'ne': '#negrip',
+            'sw': '#swgrip',
+            'se': '#segrip',
+            'n': '#ngrip',
+            'e': '#egrip',
+            's': '#sgrip',
+            'w': '#wgrip'
+          },
           autoHide: true,
           grid: elements.grid._size,
           containment: 'parent',
@@ -555,6 +574,8 @@ farmGraphModule = {
           }
         })
       }
+
+
 
       //open device modal dialog form
       if (device.pageTemplate !== undefined)

@@ -11,19 +11,9 @@
         "height": 400
       },
       "resizable": true,
-      "endPoints": [
-        {
-          "anchor": [
-            "Perimeter",
-            {
-              "shape": "Rectangle"
-            }
-          ],
-          "isTarget": true,
-          "isSource": true
-        }
-      ],
-      "acceptable": [2]
+      "acceptable": [
+        2
+      ]
     },
     {
       "type": 2,
@@ -36,7 +26,10 @@
         "height": 350
       },
       "resizable": true,
-      "acceptable": [3]
+      "acceptable": [
+        3,
+        4
+      ]
     },
     {
       "type": 3,
@@ -48,8 +41,13 @@
         "width": 300,
         "height": 300
       },
-      "resizable": true,
-      "acceptable": [4]
+      "endPoints": [
+        {
+          "isTarget": true,
+          "isSource": true
+        }
+      ],
+      "resizable": true
     }
   ],
   "devices": [
