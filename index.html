@@ -9,7 +9,6 @@
     <link href="/favicon.ico" rel="icon" type="image/x-icon" />
     <link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.min.css" />
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="node_modules/jsplumb/css/jsplumbtoolkit-defaults.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
@@ -29,15 +28,57 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button id="saveDevice" type="button" class="btn btn-success">Save changes</button>
+                        <button id="saveObject" type="button" class="btn btn-success">Save changes</button>
+                        <button id="nextStep" type="button" class="btn btn-default">Next</button>
+                        <button id="backStep" type="button" class="btn btn-default">Back</button>
                     </div>
                 </div>
             </div>
         </div>
         <!--Modal end-->
-
         <div class="row h-100">
+            <div class="col-xl-10 col-lg-8 col-md-8 col-sm- col-xs-">
+                <div id="elementsAccordion" hidden>
+                    <div class="card">
+                        <div class="card-header bg-light accordionHeader" id="headingDevice">
+                            <button class="btn btn-link pl-0 pt-0 pb-0 text-dark accordionBtn nodecor" data-toggle="collapse" data-target="#collapseDevice"
+                                aria-expanded="false" aria-controls="collapseDevice">
+                                <strong>Farm Devices</strong>
+                            </button>
+                        </div>
+                        <div id="collapseDevice" class="collapse" aria-labelledby="headingDevice" data-parent="#elementsAccordion">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="farm-main-objects farm-object-scroller col-xl-4 col-lg-12 col-md-12">
+                                        <ul id="farmMain" class="list-inline"></ul>
+                                    </div>
+                                    <div class="farm-objects farm-object-scroller col-xl-4 col-lg-12 col-md-12">
+                                        <ul id="devices" class="list-inline"></ul>
+                                    </div>
+                                    <div class="other-objects farm-object-scroller col-xl-4 col-lg-12 col-md-12">
+                                        <ul id="others" class="list-inline"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="designCard" class="card h-100">
+                    <div class="card-header bg-light">
+                        <strong> Farm Design Canvas</strong>
+                    </div>
+                    <div class="card-body h-100">
+                        <div class="farm h-100">
+                            <div id="draw-area"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="col-xl-2 col-lg-4 col-md-4 col-sm- col-xs-">
+                <button type="button" id="draw" class="btn btn-primary btn-md btn-block mb-3">
+                    <i class="fa fa-pen-nib" aria-hidden="true"></i>
+                    Draw New Item
+                </button>
                 <div id="objectInfCard" class="card">
                     <div class="card-header bg-light text-dark">
                         <strong> Object Information</strong>
@@ -69,49 +110,8 @@
                         </div>
 
                         <div class="btn-group d-flex" role="group" aria-label="Basic example">
-                            <button id="saveObject" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold">Save</button>
+                            <button id="updateObject" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold">Save</button>
                             <button id="deleteObject" disabled type="button" class="btn btn-md btn-danger w-100 font-weight-bold" data-toggle="confirmation">Delete</button>
-                        </div>
-
-
-                    </div>
-
-                </div>
-            </div>
-            <div class="col-xl-10 col-lg-8 col-md-8 col-sm- col-xs-">
-                <div id="elementsAccordion">
-                    <div class="card">
-                        <div class="card-header bg-light accordionHeader" id="headingDevice">
-                            <button class="btn btn-link pl-0 pt-0 pb-0 text-dark accordionBtn nodecor" data-toggle="collapse" data-target="#collapseDevice"
-                                aria-expanded="false" aria-controls="collapseDevice">
-                                <strong>Farm Devices</strong>
-                            </button>
-                        </div>
-                        <div id="collapseDevice" class="collapse" aria-labelledby="headingDevice" data-parent="#elementsAccordion">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="farm-main-objects farm-object-scroller col-xl-4 col-lg-12 col-md-12">
-                                        <ul id="farmMain" class="list-inline"></ul>
-                                    </div>
-                                    <div class="farm-objects farm-object-scroller col-xl-4 col-lg-12 col-md-12">
-                                        <ul id="devices" class="list-inline"></ul>
-                                    </div>
-                                    <div class="other-objects farm-object-scroller col-xl-4 col-lg-12 col-md-12">
-                                        <ul id="others" class="list-inline"></ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="designCard" class="card mt-3">
-                    <div class="card-header bg-light">
-                        <strong> Farm Design Canvas</strong>
-                    </div>
-                    <div class="card-body">
-                        <div class="farm">
-                            <div id="drop-zone-area">
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -124,62 +124,23 @@
     <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="node_modules/bootstrap-confirmation2/dist/bootstrap-confirmation.min.js"></script>
     <script type="text/javascript" src="node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script type="text/javascript" src="node_modules/jsplumb/dist/js/jsplumb.min.js"></script>
-
-    <script type="text/javascript" src="/assets/js/gridBuilder.js"></script>
-
-
+    <script type="text/javascript" src="http://knockoutjs.com/downloads/knockout-3.4.2.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.farmdraw.js"></script>
     <script type="text/javascript" src="/assets/js/modules.js"></script>
     <script type="text/javascript">
+
+       
+
 
         (function () {
 
 
 
-            jsPlumb.importDefaults({
-                // default drag options
-                DragOptions: { cursor: 'pointer', zIndex: 2000 },
-
-                // the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
-                // case it returns the 'labelText' member that we set on each connection in the 'init' method below.
-                ConnectionOverlays: [
-                    ["PlainArrow", { location: 0.5 }],
-                    // [ "Label", { label:"foo", location:0.25, id:"myLabel" } ]
-                ],
-                ConnectorZIndex: 5,
-                Connector: ['Flowchart', {
-                    stub: [25, 25],
-                    cornerRadius: 10,
-                    alwaysRespectStubs: true
-                }],
-                // Endpoint : "Dot",
-                EndpointStyle: { fill: "rgba(200,0,0,0.5)" },
-                // PaintStyle : { strokeWidth : 3, stroke : "red" },
-                PaintStyle: {
-                    strokeWidth: 5,
-                    stroke: 'rgba(200,0,0,0.5)'
-                },
-
-
-            });
-
-
-            var gridSize = [50, 50];
-            $(".farm > #drop-zone-area").gridBuilder({
-                color: '#ccc',    // color of the primary gridlines
-                secondaryColor: '#ccc', // color of the secondary gridlines
-                horizontal: gridSize[0],       // width of horizontal strokes
-                vertical: gridSize[1],        // height of the vertical rhythm
-                gutter: 0,        // width of the gutter between strokes
-            });
-
-
-            farmGraphModule.init(gridSize);
+            farmGraphModule.init();
 
 
 
         })();
-
     </script>
 </body>
 

@@ -1,0 +1,66 @@
+<div class="row">
+    <div class="col">
+        <h5 class="border border-primary border-top-0 border-right-0 border-left-0"> Devices</h5>
+        <div class="form type-form" data-bind="foreach:devices">
+            <div class="form-check">
+                <input class="form-check-input" data-bind="attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox" disabled>
+                <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+$data.id }"></label>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <h5 class="border border-success border-top-0 border-right-0 border-left-0">Physicals</h5>
+        <div class="form type-form" data-bind="foreach:physicals">
+            <div class="form-check">
+                <input class="form-check-input" data-bind="attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox">
+                <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+$data.id }"></label>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <h5 class="border border-danger border-top-0 border-right-0 border-left-0">Objects</h5>
+        <div class="form type-form" data-bind="foreach:objects">
+            <div class="form-check">
+                <input class="form-check-input" data-bind="attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox" disabled>
+                <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+$data.id }"></label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var typeModel = function () {
+        var self = this;
+        self.devices = ko.observableArray([]);
+        self.physicals = ko.observableArray([]);
+        self.objects = ko.observableArray([]);
+        
+
+        
+
+
+
+
+        self.loadFarmElements = function () {
+            $.getJSON("/assets/devices.json")
+                .done(function (data) {
+                    self.devices(data.devices);
+                    self.physicals(data.physicals);
+                    self.objects(data.objects);
+                })
+                .fail(function (jqxhr, textStatus, error) {
+                    console.log("Request Failed: " + error);
+                });
+        }
+        self.loadFarmElements();
+    }
+
+    var typeForms = $('.type-form');
+
+    $.each(typeForms, function (i, form) {
+        vm = new typeModel();
+        ko.applyBindings(vm, form);
+    })
+
+
+</script>

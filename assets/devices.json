@@ -1,168 +1,226 @@
 {
-  "farmMain": [
+  "devices": [
     {
+      "id": 1,
       "type": 1,
       "order": 1,
       "color": "rgb(206, 206, 206)",
-      "name": "Barn",
-      "pageTemplate": "barn.html",
-      "size": {
-        "width": 400,
-        "height": 400
-      },
-      "resizable": true,
-      "acceptable": [
-        2
-      ]
+      "name": "Astronaut A5",
+      "pageTemplate": "astronaut.html",
+      "resizable": true
     },
     {
+      "id": 2,
       "type": 2,
       "order": 2,
       "color": "rgb(212, 243, 255)",
-      "name": "Pen",
-      "pageTemplate": "pen.html",
-      "size": {
-        "width": 350,
-        "height": 350
-      },
-      "resizable": true,
-      "acceptable": [
-        3,
-        4
-      ]
+      "name": "Astronaut A4",
+      "pageTemplate": "astronaut.html",
+      "resizable": true
     },
     {
+      "id": 3,
       "type": 3,
       "order": 3,
       "color": "rgb(255, 205, 68)",
-      "name": "Area",
-      "pageTemplate": "area.html",
-      "size": {
-        "width": 300,
-        "height": 300
-      },
-      "endPoints": [
-        {
-          "isTarget": true,
-          "isSource": true
-        }
-      ],
-      "resizable": true
-    }
-  ],
-  "devices": [
-    {
-      "type": 4,
-      "order": 1,
-      "color": "rgb(255, 125, 93)",
-      "name": "Astronaut",
+      "name": "Astronaut A3",
       "pageTemplate": "astronaut.html",
-      "resizable": false,
-      "endPoints": [
-        {
-          "anchor": [
-            "Top"
-          ],
-          "isTarget": true,
-          "isSource": true
-        },
-        {
-          "anchor": [
-            "Bottom"
-          ],
-          "isTarget": true,
-          "isSource": true
-        }
-      ]
+      "resizable": true
     },
     {
-      "type": 4,
-      "order": 2,
-      "color": "rgb(185, 155, 255)",
-      "name": "Grazeway",
-      "pageTemplate": "grazeway.html",
-      "resizable": false,
-      "endPoints": [
-        {
-          "anchor": [
-            "Left"
-          ],
-          "isTarget": true,
-          "isSource": true
-        },
-        {
-          "anchor": [
-            "Right"
-          ],
-          "isTarget": true,
-          "isSource": true
-        }
-      ]
-    },
-    {
-      "type": 4,
+      "id": 4,
+      "type": 3,
       "order": 3,
-      "color": "rgb(255, 135, 135)",
-      "name": "Cosmix",
-      "pageTemplate": "cosmix.html",
-      "resizable": true,
-      "endPoints": [
-        {
-          "anchor": [
-            "Left"
-          ],
-          "isTarget": true,
-          "isSource": true
-        },
-        {
-          "anchor": [
-            "Right"
-          ],
-          "isTarget": true,
-          "isSource": true
-        }
-      ]
-    },
-    {
-      "type": 4,
-      "order": 4,
-      "color": "rgb(92, 252, 177)",
+      "color": "rgb(255, 205, 68)",
       "name": "Central Unit",
       "pageTemplate": "centralunit.html",
       "resizable": true
-    }
-  ],
-  "otherDevices": [
-    {
-      "type": 5,
-      "order": 1,
-      "color": "rgb(255, 125, 93)",
-      "name": "Astronaut",
-      "pageTemplate": "astronaut.html",
-      "resizable": false
     },
     {
-      "type": 5,
-      "order": 2,
-      "color": "rgb(185, 155, 255)",
-      "name": "Grazeway",
-      "pageTemplate": "grazeway.html",
-      "resizable": false
-    },
-    {
-      "type": 5,
+      "id": 5,
+      "type": 3,
       "order": 3,
-      "color": "rgb(255, 135, 135)",
+      "color": "rgb(255, 205, 68)",
       "name": "Cosmix",
       "pageTemplate": "cosmix.html",
       "resizable": true
     },
     {
+      "id": 6,
+      "type": 3,
+      "order": 3,
+      "color": "rgb(255, 205, 68)",
+      "name": "Grazeway",
+      "pageTemplate": "grazeway.html",
+      "resizable": true
+    },
+    {
+      "id": 7,
+      "type": 3,
+      "order": 3,
+      "color": "rgb(255, 205, 68)",
+      "name": "ID Station",
+      "pageTemplate": "idstation.html",
+      "resizable": true
+    },
+    {
+      "id": 8,
+      "type": 3,
+      "order": 3,
+      "color": "rgb(255, 205, 68)",
+      "name": "Qwes LD Receiver",
+      "pageTemplate": "qwesldreciever.html",
+      "resizable": true
+    },
+    {
+      "id": 9,
+      "type": 3,
+      "order": 3,
+      "color": "rgb(255, 205, 68)",
+      "name": "Qwes ISO LD Receiver",
+      "pageTemplate": "qwesisoldreceiver.html",
+      "resizable": true
+    },
+    {
+      "id": 10,
+      "type": 3,
+      "order": 3,
+      "color": "rgb(255, 205, 68)",
+      "name": "Qwes ISO VPU",
+      "pageTemplate": "qwesisovpu.html",
+      "resizable": true
+    },
+    {
+      "id": 11,
+      "type": 3,
+      "order": 3,
+      "color": "rgb(255, 205, 68)",
+      "name": "Vector",
+      "pageTemplate": "vector.html",
+      "resizable": true
+    },
+    {
+      "id": 12,
+      "type": 3,
+      "order": 3,
+      "color": "rgb(255, 205, 68)",
+      "name": "CRS+",
+      "pageTemplate": "crsplus.html",
+      "resizable": true
+    },
+    {
+      "id": 13,
+      "type": 3,
+      "order": 3,
+      "color": "rgb(255, 205, 68)",
+      "name": "CRS M3",
+      "pageTemplate": "crsm3.html",
+      "resizable": true
+    },
+    {
+      "id": 14,
+      "type": 3,
+      "order": 3,
+      "color": "rgb(255, 205, 68)",
+      "name": "Light",
+      "pageTemplate": "light.html",
+      "resizable": true
+    }
+  ],
+  "physicals": [
+    {
+      "id": 15,
+      "type": 4,
+      "order": 1,
+      "color": "rgb(255, 125, 93)",
+      "name": "Barn",
+      "pageTemplate": "barn.html",
+      "resizable": false,
+      "acceptable": [
+        0
+      ]
+    },
+    {
+      "id": 16,
+      "type": 4,
+      "order": 2,
+      "color": "rgb(185, 155, 255)",
+      "name": "Location",
+      "pageTemplate": "location.html",
+      "resizable": false
+    },
+    {
+      "id": 17,
+      "type": 4,
+      "order": 3,
+      "color": "rgb(255, 135, 135)",
+      "name": "Fence",
+      "pageTemplate": "fence.html",
+      "resizable": true
+    },
+    {
+      "id": 18,
+      "type": 4,
+      "order": 4,
+      "color": "rgb(92, 252, 177)",
+      "name": "Area:strawpen",
+      "pageTemplate": "area-strawpen.html",
+      "resizable": true
+    },
+    {
+      "id": 19,
+      "type": 4,
+      "order": 4,
+      "color": "rgb(92, 252, 177)",
+      "name": "Area:sep.room",
+      "pageTemplate": "area-seproom.html",
+      "resizable": true
+    },
+    {
+      "id": 20,
+      "type": 4,
+      "order": 4,
+      "color": "rgb(92, 252, 177)",
+      "name": "Area:Grazing A",
+      "pageTemplate": "area-grazinga.html",
+      "resizable": true
+    }
+  ],
+  "objects": [
+    {
+      "id": 21,
+      "type": 5,
+      "order": 1,
+      "color": "rgb(255, 125, 93)",
+      "name": "Cubicle",
+      "pageTemplate": "cubicle.html",
+      "resizable": false
+    },
+    {
+      "id": 22,
+      "type": 5,
+      "order": 2,
+      "color": "rgb(185, 155, 255)",
+      "name": "Feed Area",
+      "pageTemplate": "feedarea.html",
+      "resizable": false
+    },
+    {
+      "id": 23,
+      "type": 5,
+      "order": 3,
+      "color": "rgb(255, 135, 135)",
+      "name": "Wall",
+      "pageTemplate": "wall.html",
+      "resizable": true
+    },
+    {
+      "id": 24,
       "type": 5,
       "order": 4,
       "color": "rgb(92, 252, 177)",
-      "name": "Central Unit",
-      "pageTemplate": "centralunit.html",
+      "name": "Bulk Tank",
+      "pageTemplate": "bulktank.html",
       "resizable": true
     }
   ]

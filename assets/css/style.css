@@ -24,107 +24,71 @@ body {
   height: 100%;
 }
 
-.farm {
-  width: 100%;
-  height: 550px;
+.farm-draw-zone{
+  border:1px solid #333333;
+  position: relative;
+  background-repeat: no-repeat
 }
-
-.farm #drop-zone-area {
-  width: 2000px;
-  height: 800px;
+.rect{
+  position: absolute;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
-.farm-objects,.farm-main-objects,.other-objects {
-  white-space: nowrap;
+.rect.active{
+  border:1px dashed #b4b4b4;
+  background-color: yellow !important;
 }
-
-/* .draggable{position: relative;} */
-.cloneItem,
-.dragElement {
-  width: 200px;
-  height: 100px;
-}
-.activeDevice {
-  outline: 1px dashed #dc3545;
-  overflow: hidden;
-    box-sizing: border-box;
-}
-
-.nodecor,
-.nodecor:hover,
-.nodecor:active,
-.nodecor:focus {
-  text-decoration: none;
-}
-
-.accordionBtn > :before {
-  content: "\f078"; /* fa-chevron-up */
-  font-family: "Font Awesome 5 Free" !important;
-  padding-right: 10px;
-  color: #dc3545;
-}
-
-.accordionBtn[aria-expanded="true"] > :before {
-  content: "\f077"; /* fa-chevron-up */
-}
-
-#designCard .card-header > strong::before{
-    font-family: "Font Awesome 5 Free" !important;
-    padding-right: 10px;
-    color: #dc3545;
-    content: "\f247"; /* fa-chevron-up */
-}
-#objectInfCard .card-header > strong::before{
-    font-family: "Font Awesome 5 Free" !important;
-    padding-right: 10px;
-    color: #dc3545;
-    content: "\f0b2"; /* fa-chevron-up */
-}
-
-.list-inline-item:not(:last-child) {
-  margin-right: 0.6rem !important;
-}
-
-.active-drop-box{
-  opacity: .7;
-  filter:alpha(opacity=70);
-}
-
 
 #nwgrip, #negrip, #swgrip, #segrip, #ngrip, #egrip, #sgrip, #wgrip {
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
   background-color: #ffffff;
   border: 1px solid #9e9e9e;
+  position: absolute;
 }
 #nwgrip {
   left: -5px;
   top: -5px;
+  cursor: nw-resize;
 }
 #negrip{
    top: -5px;
    right: -5px;
+   cursor: ne-resize;
 }
 #swgrip{
   bottom: -5px;
   left: -5px;
+  cursor: sw-resize;
 }
 #segrip{
    bottom: -5px;
   right:-5px;
+  cursor: se-resize;
 }
 #ngrip{
    top: -5px;
   left:50%;
+  cursor: n-resize;
 }
 #sgrip{
    bottom: -5px;
   left: 50%;
+  cursor: s-resize;
 }
 #wgrip{
    left:-5px;
    top:50%;
+   cursor: w-resize;
 }
 #egrip{
    right:-5px;
    top:50%;
+   cursor:e-resize;
+}
+#saveObject,#backStep{
+  display: none;
 }
