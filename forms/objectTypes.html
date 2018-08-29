@@ -3,7 +3,8 @@
         <h5 class="border border-primary border-top-0 border-right-0 border-left-0"> Devices</h5>
         <div class="form type-form" data-bind="foreach:devices">
             <div class="form-check">
-                <input class="form-check-input" data-bind="attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox" disabled>
+                <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox"
+                    disabled>
                 <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+$data.id }"></label>
             </div>
         </div>
@@ -12,7 +13,7 @@
         <h5 class="border border-success border-top-0 border-right-0 border-left-0">Physicals</h5>
         <div class="form type-form" data-bind="foreach:physicals">
             <div class="form-check">
-                <input class="form-check-input" data-bind="attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox">
+                <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox">
                 <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+$data.id }"></label>
             </div>
         </div>
@@ -21,7 +22,8 @@
         <h5 class="border border-danger border-top-0 border-right-0 border-left-0">Objects</h5>
         <div class="form type-form" data-bind="foreach:objects">
             <div class="form-check">
-                <input class="form-check-input" data-bind="attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox" disabled>
+                <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox"
+                    disabled>
                 <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+$data.id }"></label>
             </div>
         </div>
@@ -29,29 +31,26 @@
 </div>
 
 <script>
+
     var typeModel = function () {
         var self = this;
         self.devices = ko.observableArray([]);
         self.physicals = ko.observableArray([]);
         self.objects = ko.observableArray([]);
-        
 
-        
-
-
-
+        self.getTypeOptions = function (id) {
+            var data = self.devices().concat(self.physicals()).concat(self.objects());
+            return ko.utils.arrayFilter(data, function (type) {
+                return type.id == id;
+            })[0];
+        }
 
         self.loadFarmElements = function () {
-            $.getJSON("/assets/devices.json")
-                .done(function (data) {
-                    self.devices(data.devices);
-                    self.physicals(data.physicals);
-                    self.objects(data.objects);
-                })
-                .fail(function (jqxhr, textStatus, error) {
-                    console.log("Request Failed: " + error);
-                });
+            self.devices(farmGraphModule.elements.jsonElements.devices);
+            self.physicals(farmGraphModule.elements.jsonElements.physicals);
+            self.objects(farmGraphModule.elements.jsonElements.objects);
         }
+
         self.loadFarmElements();
     }
 
@@ -61,6 +60,5 @@
         vm = new typeModel();
         ko.applyBindings(vm, form);
     })
-
 
 </script>

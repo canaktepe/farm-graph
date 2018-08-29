@@ -32,8 +32,6 @@ For production, use either the minified jquery.farmdraw.min.js script or
 the production-ready jquery.farmdraw.min.js which contains the plugin 
 and dependencies (minified). 
 */
-
-
 (function ($) {
     $.fn.farmDraw = function (options) {
         var defaults = {
@@ -81,7 +79,7 @@ and dependencies (minified).
             return position;
         }
 
-        
+
         function drawBoxmouseOver(e) {
             drawingEnabled ? $(e.currentTarget).css("cursor", "crosshair") : $(e.currentTarget).css("cursor", "default")
         }
@@ -106,10 +104,10 @@ and dependencies (minified).
 
             if (settings.rectangle.selectable) {
                 el.on('click', function (cev) {
-                        e.drawingRect = $(cev.currentTarget);
-                         selectRect(e);
+                    e.drawingRect = $(cev.currentTarget);
+                    selectRect(e);
 
-                         cev.stopPropagation();
+                    cev.stopPropagation();
                 })
             }
 
@@ -166,7 +164,7 @@ and dependencies (minified).
             settings.onDraw.call(this, this);
         };
 
-function startDraw(e) {
+        function startDraw(e) {
 
 
 
@@ -207,7 +205,7 @@ function startDraw(e) {
                 this.drawingRect.remove();
             } else {
                 this.drawingRect.css(position);
-               selectRect(this);
+                selectRect(this);
 
                 drawEnableOrDisable();
                 dragEnableOrDisable();
@@ -221,14 +219,14 @@ function startDraw(e) {
             settings.onDrawComplete.call(this, this);
         };
 
- 
+
 
         function selectRect(drawBox) {
 
-           
-         
+
+
             if (!settings.rectangle.showActive) return;
-            
+
             drawBox.selectedRect && drawBox.selectedRect.removeClass(settings.rectangle.activeClass)
             drawBox.selectedRect = drawBox.drawingRect;
             $('.rect.active').removeClass('active');

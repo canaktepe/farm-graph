@@ -4,10 +4,11 @@
 
 var elements;
 farmGraphModule = {
+  jsonElements: [],
   elements: {
     farm: $(".farm"),
     drawArea: $("#draw-area"),
-    koForms : $('.type-form'),
+    koForms: $('.type-form'),
     elementModal: {
       selector: $("#elementModal"),
       deleteObjectButton: $("#deleteObject"),
@@ -82,7 +83,15 @@ farmGraphModule = {
   },
 
 
+
   openModal: function (update, drawedElement) {
+
+    // off button events
+    elements.elementModal.selector.off("shown.bs.modal");
+    elements.elementModal.selector.off("hidden.bs.modal");
+    elements.elementModal.saveobjectButton.off('click');
+    elements.elementModal.nextButton.off('click');
+    elements.elementModal.backButton.off('click');
 
     var pageTemplate = drawedElement.options != undefined ? drawedElement.options.pageTemplate : "objectTypes.html";
 
@@ -97,41 +106,71 @@ farmGraphModule = {
         // if (update)
         //   farmGraphModule.fillFormData(device);
         elements.elementModal.selector.modal({ show: true });
+        var title = !drawedElement.options ? "Select Type" : update
+          ? "Update "
+          : "Add New " + drawedElement.options.name;
+        elements.elementModal.selector.find('.modal-title').text(title)
       }
       else if (XMLHttpRequest.status == 404) {
         console.log(pageTemplate + " Page Not Found");
         drawedElement.remove();
+        alert(pageTemplate + " Page Not Found");
+        elements.elementModal.selector.modal('hide');
       }
     });
 
     elements.elementModal.saveobjectButton.on('click', function (e) {
-      console.log(e);
     })
 
     elements.elementModal.nextButton.on('click', function (e) {
-      console.log('next');
+      var selectedType = $('input[name="farmCheckBox"]:checked').val();
+      var elementOptions = vm.getTypeOptions(selectedType);
+      if (!elementOptions)
+        return;
+
+      drawedElement.options = elementOptions;
+      farmGraphModule.openModal(false, drawedElement);
+
+      //show back, hide next button
+      $(this).hide();
+      elements.elementModal.backButton.show();
+    })
+
+    elements.elementModal.backButton.on('click', function (e) {
+      drawedElement.options = undefined;
+      farmGraphModule.openModal(false, drawedElement);
+
+      //show next, hide back button
+      $(this).hide();
+      elements.elementModal.nextButton.show();
     })
 
     elements.elementModal.selector.on("shown.bs.modal", function (e) {
-      // var attributes = getModalAttributes(e);
-      // var update = attributes["data-update"].value === "true";
-      var title = drawedElement.options == undefined ? "Select Type" : update
-        ? "Update "
-        : "Add New " + attributes["data-title"].value;
 
-      $(this)
-        .find(".modal-title")
-        .text(title);
     });
 
     elements.elementModal.selector.on("hidden.bs.modal", function (e) {
       ko.cleanNode(elements.koForms);
       drawedElement.remove();
+      //show next, hide back button
+      elements.elementModal.nextButton.show();
+      elements.elementModal.backButton.hide();
     });
+  },
+
+  bindJsonElements: function () {
+    $.getJSON("/assets/devices.json")
+      .done(function (data) {
+        elements.jsonElements = data;
+      })
+      .fail(function (jqxhr, textStatus, error) {
+        console.log("Request Failed: " + error);
+      });
   },
 
   init: function () {
     elements = this.elements;
+    this.bindJsonElements();
     this.bindFarmDraw();
     this.bindExtensionMethods();
     this.bindCustomScrollBar();
