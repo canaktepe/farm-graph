@@ -1,18 +1,16 @@
 // TODO: farm canvas zoom in zoom out
 // TODO: farm canvas object double-click open modal
 
-
 var elements;
 farmGraphModule = {
-  jsonElements: [],
   elements: {
+    jsonElements: [],
     farm: $(".farm"),
     drawArea: $("#draw-area"),
     koForms: $('.type-form'),
     elementModal: {
       selector: $("#elementModal"),
-      deleteObjectButton: $("#deleteObject"),
-      saveobjectButton: $("#saveObject"),
+      saveButton: $("#saveElement"),
       nextButton: $("#nextStep"),
       backButton: $("#backStep")
     },
@@ -89,12 +87,13 @@ farmGraphModule = {
     // off button events
     elements.elementModal.selector.off("shown.bs.modal");
     elements.elementModal.selector.off("hidden.bs.modal");
-    elements.elementModal.saveobjectButton.off('click');
+    elements.elementModal.saveButton.off('click');
     elements.elementModal.nextButton.off('click');
     elements.elementModal.backButton.off('click');
 
-    var pageTemplate = drawedElement.options != undefined ? drawedElement.options.pageTemplate : "objectTypes.html";
+    elements.elementModal.selector.data('saved', false);
 
+    var pageTemplate = drawedElement.options != undefined ? drawedElement.options.pageTemplate : "objectTypes.html";
     update ? console.log("update mode") : console.log("insert mode");
 
     $(".modal-body").load("/forms/" + pageTemplate, function (
@@ -103,8 +102,6 @@ farmGraphModule = {
       XMLHttpRequest
     ) {
       if (XMLHttpRequest.status == 200) {
-        // if (update)
-        //   farmGraphModule.fillFormData(device);
         elements.elementModal.selector.modal({ show: true });
         var title = !drawedElement.options ? "Select Type" : update
           ? "Update "
@@ -113,13 +110,23 @@ farmGraphModule = {
       }
       else if (XMLHttpRequest.status == 404) {
         console.log(pageTemplate + " Page Not Found");
-        drawedElement.remove();
-        alert(pageTemplate + " Page Not Found");
         elements.elementModal.selector.modal('hide');
+        drawedElement.remove();
       }
     });
 
-    elements.elementModal.saveobjectButton.on('click', function (e) {
+
+    elements.elementModal.saveButton.on('click', function (e) {
+      elements.elementModal.selector.data('saved', true).modal('hide');
+      drawedElement.options.data = {
+        guid: farmGraphModule.guid()
+      }
+      var options = drawedElement.options;
+
+      // drawedElement.data(options);
+      drawedElement.css({
+        backgroundColor: options.color
+      })
     })
 
     elements.elementModal.nextButton.on('click', function (e) {
@@ -130,31 +137,34 @@ farmGraphModule = {
 
       drawedElement.options = elementOptions;
       farmGraphModule.openModal(false, drawedElement);
-
       //show back, hide next button
       $(this).hide();
       elements.elementModal.backButton.show();
+      elements.elementModal.saveButton.show();
     })
 
     elements.elementModal.backButton.on('click', function (e) {
       drawedElement.options = undefined;
       farmGraphModule.openModal(false, drawedElement);
-
       //show next, hide back button
       $(this).hide();
       elements.elementModal.nextButton.show();
+      elements.elementModal.saveButton.hide();
     })
 
-    elements.elementModal.selector.on("shown.bs.modal", function (e) {
+    elements.elementModal.selector.on("shown.bs.modal", function (e) { });
 
-    });
-
-    elements.elementModal.selector.on("hidden.bs.modal", function (e) {
+    elements.elementModal.selector.on("hidden.bs.modal", function (event) {
+      var saved = elements.elementModal.selector.data('saved');
       ko.cleanNode(elements.koForms);
-      drawedElement.remove();
+
+      if (!update && !saved) {
+        drawedElement.remove();
+      }
       //show next, hide back button
-      elements.elementModal.nextButton.show();
+      elements.elementModal.saveButton.hide();
       elements.elementModal.backButton.hide();
+      elements.elementModal.nextButton.show();
     });
   },
 
@@ -166,6 +176,28 @@ farmGraphModule = {
       .fail(function (jqxhr, textStatus, error) {
         console.log("Request Failed: " + error);
       });
+  },
+
+  guid: function () {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return (
+      s4() +
+      s4() +
+      "-" +
+      s4() +
+      "-" +
+      s4() +
+      "-" +
+      s4() +
+      "-" +
+      s4() +
+      s4() +
+      s4()
+    );
   },
 
   init: function () {

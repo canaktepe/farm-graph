@@ -5,7 +5,7 @@
             <div class="form-check">
                 <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox"
                     disabled>
-                <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+$data.id }"></label>
+                <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+ $data.id }"></label>
             </div>
         </div>
     </div>
@@ -13,8 +13,9 @@
         <h5 class="border border-success border-top-0 border-right-0 border-left-0">Physicals</h5>
         <div class="form type-form" data-bind="foreach:physicals">
             <div class="form-check">
-                <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox">
-                <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+$data.id }"></label>
+                <input class="form-check-input" data-bind="value:$data.id, enable :$parent.isEnable($data.acceptable) ,attr: { id:'chk_' + $data.id}"
+                    type="radio" name="farmCheckBox">
+                <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+ $data.id }"></label>
             </div>
         </div>
     </div>
@@ -24,41 +25,44 @@
             <div class="form-check">
                 <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox"
                     disabled>
-                <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+$data.id }"></label>
+                <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+ $data.id }"></label>
             </div>
         </div>
     </div>
 </div>
-
 <script>
+    $(document).ready(function () {
+        var typeModel = function () {
+            var self = this;
+            self.devices = ko.observableArray([]);
+            self.physicals = ko.observableArray([]);
+            self.objects = ko.observableArray([]);
 
-    var typeModel = function () {
-        var self = this;
-        self.devices = ko.observableArray([]);
-        self.physicals = ko.observableArray([]);
-        self.objects = ko.observableArray([]);
+            self.isEnable = function (acceptable) {
+                return true;
+            }
 
-        self.getTypeOptions = function (id) {
-            var data = self.devices().concat(self.physicals()).concat(self.objects());
-            return ko.utils.arrayFilter(data, function (type) {
-                return type.id == id;
-            })[0];
+            self.getTypeOptions = function (id) {
+                var data = self.devices().concat(self.physicals()).concat(self.objects());
+                return ko.utils.arrayFilter(data, function (type) {
+                    return type.id == id;
+                })[0];
+            }
+
+            self.loadFarmElements = function () {
+                self.devices(farmGraphModule.elements.jsonElements.devices);
+                self.physicals(farmGraphModule.elements.jsonElements.physicals);
+                self.objects(farmGraphModule.elements.jsonElements.objects);
+            }
+
+            self.loadFarmElements();
         }
 
-        self.loadFarmElements = function () {
-            self.devices(farmGraphModule.elements.jsonElements.devices);
-            self.physicals(farmGraphModule.elements.jsonElements.physicals);
-            self.objects(farmGraphModule.elements.jsonElements.objects);
-        }
+        var typeForms = $('.type-form');
 
-        self.loadFarmElements();
-    }
-
-    var typeForms = $('.type-form');
-
-    $.each(typeForms, function (i, form) {
-        vm = new typeModel();
-        ko.applyBindings(vm, form);
+        $.each(typeForms, function (i, form) {
+            vm = new typeModel();
+            ko.applyBindings(vm, form);
+        })
     })
-
 </script>

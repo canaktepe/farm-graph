@@ -89,6 +89,6 @@ body {
    top:50%;
    cursor:e-resize;
 }
-#saveObject,#backStep{
+#saveElement,#backStep{
   display: none;
 }
