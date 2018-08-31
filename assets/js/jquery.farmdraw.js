@@ -129,7 +129,6 @@ and dependencies (minified).
                 $("<div>", { class: "ui-resizable-handle ui-resizable-ne", attr: { id: "negrip" } }).appendTo(el);
                 $("<div>", { class: "ui-resizable-handle ui-resizable-sw", attr: { id: "swgrip" } }).appendTo(el);
                 $("<div>", { class: "ui-resizable-handle ui-resizable-se", attr: { id: "segrip" } }).appendTo(el);
-
                 $("<div>", { class: "ui-resizable-handle ui-resizable-n", attr: { id: "ngrip" } }).appendTo(el);
                 $("<div>", { class: "ui-resizable-handle ui-resizable-e", attr: { id: "egrip" } }).appendTo(el);
                 $("<div>", { class: "ui-resizable-handle ui-resizable-s", attr: { id: "sgrip" } }).appendTo(el);
@@ -165,18 +164,10 @@ and dependencies (minified).
         };
 
         function startDraw(e) {
-
-
-
             if (!drawingEnabled && settings.drawNewButton !== '') return;
 
-
-
             var target = $(e.target);
-
-
             var offset = target.offset();
-
             this.canvasOffsetLeft = offset.left;
             this.canvasOffsetTop = offset.top;
             this.drawStartX = e.pageX - this.canvasOffsetLeft;
@@ -193,10 +184,7 @@ and dependencies (minified).
             settings.onDrawStart.call(this, this);
         }
 
-
         function endDraw(e) {
-
-
             var currentX = e.pageX - this.canvasOffsetLeft;
             var currentY = e.pageY - this.canvasOffsetTop;
             var position = calcPosition(this.drawStartX, this.drawStartY, currentX, currentY);
@@ -215,18 +203,11 @@ and dependencies (minified).
             $(this).off('mousemove');
             $(this).off('mouseup');
 
-
             settings.onDrawComplete.call(this, this);
         };
 
-
-
         function selectRect(drawBox) {
-
-
-
             if (!settings.rectangle.showActive) return;
-
             drawBox.selectedRect && drawBox.selectedRect.removeClass(settings.rectangle.activeClass)
             drawBox.selectedRect = drawBox.drawingRect;
             $('.rect.active').removeClass('active');

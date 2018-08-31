@@ -137,7 +137,7 @@
       "pageTemplate": "barn.html",
       "resizable": false,
       "acceptable": [
-        0
+        16
       ]
     },
     {
@@ -147,7 +147,10 @@
       "color": "rgb(185, 155, 255)",
       "name": "Location",
       "pageTemplate": "location.html",
-      "resizable": false
+      "resizable": false,
+      "acceptable": [
+        1,2,3
+      ]
     },
     {
       "id": 17,

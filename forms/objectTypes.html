@@ -3,8 +3,8 @@
         <h5 class="border border-primary border-top-0 border-right-0 border-left-0"> Devices</h5>
         <div class="form type-form" data-bind="foreach:devices">
             <div class="form-check">
-                <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox"
-                    disabled>
+                <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id },enable:$data.status" type="radio"
+                    name="farmCheckBox" disabled>
                 <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+ $data.id }"></label>
             </div>
         </div>
@@ -13,8 +13,8 @@
         <h5 class="border border-success border-top-0 border-right-0 border-left-0">Physicals</h5>
         <div class="form type-form" data-bind="foreach:physicals">
             <div class="form-check">
-                <input class="form-check-input" data-bind="value:$data.id, enable :$parent.isEnable($data.acceptable) ,attr: { id:'chk_' + $data.id}"
-                    type="radio" name="farmCheckBox">
+                <input class="form-check-input" data-bind="value:$data.id ,attr: { id:'chk_' + $data.id},enable:$data.status" type="radio"
+                    name="farmCheckBox">
                 <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+ $data.id }"></label>
             </div>
         </div>
@@ -32,14 +32,34 @@
 </div>
 <script>
     $(document).ready(function () {
-        var typeModel = function () {
+
+
+        var viewModel = function () {
             var self = this;
             self.devices = ko.observableArray([]);
             self.physicals = ko.observableArray([]);
             self.objects = ko.observableArray([]);
+            self.createdElements = ko.observableArray([]);
 
-            self.isEnable = function (acceptable) {
+
+            self.setEnable = function (acceptable) {
+                var data = self.devices().concat(self.physicals()).concat(self.objects());
+                ko.utils.arrayForEach(data, function (el) {
+                    var i = ko.utils.arrayFilter(acceptable, function (acc) {
+                        if (acc == el.id) {
+                            el.status(true);
+                        }
+                    });
+                })
                 return true;
+            }
+
+            self.setDisableAllTypes=function(){
+                var data = self.devices().concat(self.physicals()).concat(self.objects());
+                ko.utils.arrayForEach(data, function (el) {
+                    el.status(false);
+                })
+                $('input[name="farmCheckBox"]').prop('checked',false);
             }
 
             self.getTypeOptions = function (id) {
@@ -50,19 +70,30 @@
             }
 
             self.loadFarmElements = function () {
-                self.devices(farmGraphModule.elements.jsonElements.devices);
-                self.physicals(farmGraphModule.elements.jsonElements.physicals);
-                self.objects(farmGraphModule.elements.jsonElements.objects);
+                ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.devices, function (el) {
+                    el.status = ko.observable(false);
+                    self.devices.push(el)
+                })
+
+                ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.physicals, function (el) {
+                    el.status = ko.observable(false);
+                    self.physicals.push(el)
+                })
+
+                 ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.objects, function (el) {
+                    el.status = ko.observable(false);
+                    self.objects.push(el)
+                })
+            }
+
+            self.pushElement = function (item) {
+                self.createdElements.push(item);
             }
 
             self.loadFarmElements();
         }
 
-        var typeForms = $('.type-form');
-
-        $.each(typeForms, function (i, form) {
-            vm = new typeModel();
-            ko.applyBindings(vm, form);
-        })
+        vm = new viewModel();
+        ko.applyBindings(vm);
     })
 </script>
