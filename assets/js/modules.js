@@ -68,13 +68,6 @@ farmGraphModule = {
         resizable: true
       },
       onDrawComplete(e) {
-        // var modal = $('#modal').modal('show');
-
-        // modal.data("drawObject", e);
-
-        // FarmModel.farmElements.push(e);
-
-
         farmGraphModule.openModal(false, e.drawingRect);
       }
     }
@@ -101,20 +94,20 @@ farmGraphModule = {
 
   elementUpdateEvent: function (e) {
     var clickedElement = $(e.currentTarget);
-
     var guid = clickedElement.attr('id');
-
     var data = ko.utils.arrayFilter(vm.createdElements(), function (elem) {
       return elem.guid == guid;
     })[0];
 
+    farmGraphModule.fillFormData(data);
+    farmGraphModule.openModal(true, data);
     e.stopPropagation();
   },
 
   setEnableElementsType: function (drawedElement) {
     var isChild = drawedElement.parent().hasClass('rect');
-    var  acceptable = elements.mainAcceptable;
-    if(isChild){
+    var acceptable = elements.mainAcceptable;
+    if (isChild) {
       var type = drawedElement.parent().data('type');
       var options = vm.getTypeOptions(type);
       acceptable = options.acceptable;
@@ -122,11 +115,11 @@ farmGraphModule = {
     vm.setEnable(acceptable);
   },
 
+  fillFormData: function (data) {
+    $("#Name").val(data.formData.Name);
+  },
+
   openModal: function (update, drawedElement) {
-
-    vm.setDisableAllTypes();
-    farmGraphModule.setEnableElementsType(drawedElement);
-
     // off button events
     elements.elementModal.selector.off("shown.bs.modal");
     elements.elementModal.selector.off("hidden.bs.modal");
@@ -135,36 +128,59 @@ farmGraphModule = {
     elements.elementModal.backButton.off('click');
     elements.elementModal.selector.data('saved', false);
 
-    elements.elementModal.contentBody.hide();
-    elements.elementModal.typesBody.show();
-
+    if (!update) {
+      //object Types page all types set disable
+      vm.setDisableAllTypes();
+      //object Types page set enabled according to drawed elements acceptable values
+      farmGraphModule.setEnableElementsType(drawedElement);
+      elements.elementModal.contentBody.hide();
+      elements.elementModal.typesBody.show();
+    }
+    else {
+      var title = "Update " + drawedElement.name;
+      elements.elementModal.selector.find('.modal-title').text(title)
+      elements.elementModal.typesBody.hide();
+      elements.elementModal.contentBody.show();
+      elements.elementModal.nextButton.hide();
+      elements.elementModal.saveButton.show();
+    }
+    
+    //modal showing
     elements.elementModal.selector.modal({ show: true });
 
+    //binding modal save button event
     elements.elementModal.saveButton.on('click', function (e) {
       elements.elementModal.selector.data('saved', true).modal('hide');
-
-      var guid = farmGraphModule.guid();
-
-      drawedElement.options.guid = guid;
-      var options = drawedElement.options;
-
       // get selected type forms input data
       var formData = $("form#controlData").serializeArray().reduce(function (m, o) { m[o.name] = o.value; return m; }, {});
-      options.formData = formData;
 
-      vm.pushElement(options);
+      var options;
+      if (update) {
+        options = drawedElement;
+        options.formData = formData;
+        vm.setElement(options);
+      }
+      else {
+        var guid = farmGraphModule.guid();
 
-      drawedElement
-        .attr({
-          id: guid,
-          'data-type':options.id
-        })
-        .css({
-          backgroundColor: options.color
-        })
-        .dblclick(farmGraphModule.elementUpdateEvent)
+        drawedElement.options.guid = guid;
+        options = $.extend(true, {}, drawedElement.options);
+        options.formData = formData;
+
+        vm.pushElement(options);
+        drawedElement
+          .attr({
+            id: guid,
+            'data-type': options.id
+          })
+          .css({
+            backgroundColor: options.color
+          })
+          .dblclick(farmGraphModule.elementUpdateEvent)
+      }
     })
 
+    //binding modal next button event
     elements.elementModal.nextButton.on('click', function (e) {
       var selectedType = $('input[name="farmCheckBox"]:checked').val();
       var elementOptions = vm.getTypeOptions(selectedType);
@@ -202,6 +218,7 @@ farmGraphModule = {
       elements.elementModal.contentBody.show();
     })
 
+    //binding modal back button event
     elements.elementModal.backButton.on('click', function (e) {
       drawedElement.options = undefined;
       //show next, hide back button
@@ -212,8 +229,12 @@ farmGraphModule = {
       elements.elementModal.typesBody.show();
     })
 
-    elements.elementModal.selector.on("shown.bs.modal", function (e) { });
+    //binding modal shown event
+    elements.elementModal.selector.on("shown.bs.modal", function (e) {
 
+    })
+
+    //binding modal hidden event
     elements.elementModal.selector.on("hidden.bs.modal", function (e) {
       var saved = elements.elementModal.selector.data('saved');
       if (!update && !saved) {
@@ -223,7 +244,7 @@ farmGraphModule = {
       elements.elementModal.saveButton.hide();
       elements.elementModal.backButton.hide();
       elements.elementModal.nextButton.show();
-    });
+    })
   },
 
   bindJsonElements: function () {

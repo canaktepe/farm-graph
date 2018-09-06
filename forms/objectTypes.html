@@ -90,6 +90,14 @@
                 self.createdElements.push(item);
             }
 
+            self.setElement = function(option){
+                return ko.utils.arrayFilter(self.createdElements(), function (type) {
+                    if(type.guid == option.guid){
+                        type.formData = option.formData;
+                    }
+                });
+            }
+
             self.loadFarmElements();
         }
 
