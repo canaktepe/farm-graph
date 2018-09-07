@@ -33,9 +33,6 @@
 <script>
     $(document).ready(function () {
 
-
-
-
         var viewModel = function () {
             var self = this;
             self.devices = ko.observableArray([]);
@@ -66,76 +63,42 @@
 
             self.getTypeOptions = function (id) {
                 var data = self.devices().concat(self.physicals()).concat(self.objects());
-                return ko.utils.arrayFilter(data, function (type) {
+                var el = ko.utils.arrayFilter(data, function (type) {
                     return type.id == id;
                 })[0];
+                el.children = ko.observableArray([]);
+                return $.extend(true, {}, el);;
             }
 
             self.loadFarmElements = function () {
                 ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.devices, function (el) {
-                    el.status = ko.observable(false);
-                    el.children = ko.observableArray([]);
-                    self.devices.push(el)
+                    var obj = $.extend(true, {}, el);
+                    obj.status = ko.observable(false);
+                    self.devices.push(obj)
                 })
 
                 ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.physicals, function (el) {
-                    el.status = ko.observable(false);
-                    el.children = ko.observableArray([]);
-                    self.physicals.push(el)
+                    var obj = $.extend(true, {}, el);
+                    obj.status = ko.observable(false);
+                    self.physicals.push(obj)
                 })
 
                 ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.objects, function (el) {
-                    el.status = ko.observable(false);
-                    el.children = ko.observableArray([]);
-                    self.objects.push(el)
+                    var obj = $.extend(true, {}, el);
+                    obj.status = ko.observable(false);
+                    self.objects.push(obj)
                 })
             }
 
-            self.pushElement = function (parentGuid, element, callback) {
+            self.pushElement = function (parentGuid, element) {
 
-                if (parentGuid == null) {
+                if (parentGuid == null) 
                     self.createdElements.push(element);
-                    return callback();
-                }
 
                 self.getCreatedElement(null, parentGuid, function (data) {
-
-                    console.log(element);
-
                     data.children.push(element);
-                    return callback();
                 })
-                // findElement(self.createdElements());
-
-                // findElement =  function(arr){
-                //     ko.utils.arrayFilter(arr,function(item){
-                //         if(item.guid==parentGuid){
-                //             item.children.push(element)
-                //         }
-                //     })
-                // }
-
-                // findOBject = function (arr) {
-                //     ko.utils.arrayFilter(arr, function (item) {
-                //         if (item.guid == parentGuid) {
-                //             item.children.push(element)
-                //         }
-                //         else {
-                //             if (item.children().length > 0)
-                //                 findOBject(item.children());
-
-                //         }
-                //     })
-                // }
-
-
-                // if (parentGuid == null) {
-                //     self.createdElements.push(element);
-                // }
-                // else {
-                //     var array = self.createdElements();
-                //     findOBject(array);
-                // }
+               
                 localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
             }
 
