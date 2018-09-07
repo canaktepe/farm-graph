@@ -92,15 +92,19 @@ farmGraphModule = {
   },
 
 
-  elementUpdateEvent: function (e) {
+  elementUpdatedblClick: function (e) {
     var clickedElement = $(e.currentTarget);
     var guid = clickedElement.attr('id');
-    var data = ko.utils.arrayFilter(vm.createdElements(), function (elem) {
-      return elem.guid == guid;
-    })[0];
+    // var data = ko.utils.arrayFilter(vm.createdElements(), function (elem) {
+    //   return elem.guid == guid;
+    // })[0];
 
-    farmGraphModule.fillFormData(data);
-    farmGraphModule.openModal(true, data);
+    vm.getCreatedElement(null, guid, function (data) {
+      farmGraphModule.fillFormData(data);
+      farmGraphModule.openModal(true, data);
+    });
+
+
     e.stopPropagation();
   },
 
@@ -144,7 +148,7 @@ farmGraphModule = {
       elements.elementModal.nextButton.hide();
       elements.elementModal.saveButton.show();
     }
-    
+
     //modal showing
     elements.elementModal.selector.modal({ show: true });
 
@@ -167,7 +171,9 @@ farmGraphModule = {
         options = $.extend(true, {}, drawedElement.options);
         options.formData = formData;
 
-        vm.pushElement(options);
+        var parentGuid = farmGraphModule.getParentGuid(drawedElement);
+
+        vm.pushElement(parentGuid, options,function(){});
         drawedElement
           .attr({
             id: guid,
@@ -176,7 +182,7 @@ farmGraphModule = {
           .css({
             backgroundColor: options.color
           })
-          .dblclick(farmGraphModule.elementUpdateEvent)
+          .dblclick(farmGraphModule.elementUpdatedblClick)
       }
     })
 
@@ -245,6 +251,13 @@ farmGraphModule = {
       elements.elementModal.backButton.hide();
       elements.elementModal.nextButton.show();
     })
+  },
+
+  getParentGuid: function (drawedElement) {
+    var parent = drawedElement.parent();
+    if (!parent.hasClass('rect')) return null;
+
+    return parent.attr('id');
   },
 
   bindJsonElements: function () {

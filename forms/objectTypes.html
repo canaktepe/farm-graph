@@ -3,8 +3,8 @@
         <h5 class="border border-primary border-top-0 border-right-0 border-left-0"> Devices</h5>
         <div class="form type-form" data-bind="foreach:devices">
             <div class="form-check">
-                <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id },enable:$data.status" type="radio"
-                    name="farmCheckBox" disabled>
+                <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id },enable:$data.status"
+                    type="radio" name="farmCheckBox" disabled>
                 <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+ $data.id }"></label>
             </div>
         </div>
@@ -13,8 +13,8 @@
         <h5 class="border border-success border-top-0 border-right-0 border-left-0">Physicals</h5>
         <div class="form type-form" data-bind="foreach:physicals">
             <div class="form-check">
-                <input class="form-check-input" data-bind="value:$data.id ,attr: { id:'chk_' + $data.id},enable:$data.status" type="radio"
-                    name="farmCheckBox">
+                <input class="form-check-input" data-bind="value:$data.id ,attr: { id:'chk_' + $data.id},enable:$data.status"
+                    type="radio" name="farmCheckBox">
                 <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+ $data.id }"></label>
             </div>
         </div>
@@ -23,8 +23,8 @@
         <h5 class="border border-danger border-top-0 border-right-0 border-left-0">Objects</h5>
         <div class="form type-form" data-bind="foreach:objects">
             <div class="form-check">
-                <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id }" type="radio" name="farmCheckBox"
-                    disabled>
+                <input class="form-check-input" data-bind="value:$data.id,attr: { id:'chk_' + $data.id }" type="radio"
+                    name="farmCheckBox" disabled>
                 <label class="form-check-label" data-bind="text:$data.name,attr: { for:'chk_'+ $data.id }"></label>
             </div>
         </div>
@@ -32,6 +32,8 @@
 </div>
 <script>
     $(document).ready(function () {
+
+
 
 
         var viewModel = function () {
@@ -54,12 +56,12 @@
                 return true;
             }
 
-            self.setDisableAllTypes=function(){
+            self.setDisableAllTypes = function () {
                 var data = self.devices().concat(self.physicals()).concat(self.objects());
                 ko.utils.arrayForEach(data, function (el) {
                     el.status(false);
                 })
-                $('input[name="farmCheckBox"]').prop('checked',false);
+                $('input[name="farmCheckBox"]').prop('checked', false);
             }
 
             self.getTypeOptions = function (id) {
@@ -72,27 +74,84 @@
             self.loadFarmElements = function () {
                 ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.devices, function (el) {
                     el.status = ko.observable(false);
+                    el.children = ko.observableArray([]);
                     self.devices.push(el)
                 })
 
                 ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.physicals, function (el) {
                     el.status = ko.observable(false);
+                    el.children = ko.observableArray([]);
                     self.physicals.push(el)
                 })
 
-                 ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.objects, function (el) {
+                ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.objects, function (el) {
                     el.status = ko.observable(false);
+                    el.children = ko.observableArray([]);
                     self.objects.push(el)
                 })
             }
 
-            self.pushElement = function (item) {
-                self.createdElements.push(item);
+            self.pushElement = function (parentGuid, element, callback) {
+
+                if (parentGuid == null) {
+                    self.createdElements.push(element);
+                    return callback();
+                }
+
+                self.getCreatedElement(null, parentGuid, function (data) {
+
+                    console.log(element);
+
+                    data.children.push(element);
+                    return callback();
+                })
+                // findElement(self.createdElements());
+
+                // findElement =  function(arr){
+                //     ko.utils.arrayFilter(arr,function(item){
+                //         if(item.guid==parentGuid){
+                //             item.children.push(element)
+                //         }
+                //     })
+                // }
+
+                // findOBject = function (arr) {
+                //     ko.utils.arrayFilter(arr, function (item) {
+                //         if (item.guid == parentGuid) {
+                //             item.children.push(element)
+                //         }
+                //         else {
+                //             if (item.children().length > 0)
+                //                 findOBject(item.children());
+
+                //         }
+                //     })
+                // }
+
+
+                // if (parentGuid == null) {
+                //     self.createdElements.push(element);
+                // }
+                // else {
+                //     var array = self.createdElements();
+                //     findOBject(array);
+                // }
+                localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
             }
 
-            self.setElement = function(option){
+            self.getCreatedElement = function (arr, guid, callback) {
+                if (arr == null) arr = self.createdElements();
+                ko.utils.arrayFilter(arr, function (item) {
+                    if (item.guid === guid) {
+                        return callback(item);
+                    }
+                    self.getCreatedElement(item.children(), guid, callback);
+                })
+            }
+
+            self.setElement = function (option) {
                 return ko.utils.arrayFilter(self.createdElements(), function (type) {
-                    if(type.guid == option.guid){
+                    if (type.guid == option.guid) {
                         type.formData = option.formData;
                     }
                 });
