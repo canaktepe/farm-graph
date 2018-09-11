@@ -132,10 +132,10 @@
       "id": 15,
       "type": 4,
       "order": 1,
-      "color": "rgb(255, 125, 93)",
+      "color": "rgb(232, 255, 241)",
       "name": "Barn",
       "pageTemplate": "barn.html",
-      "resizable": false,
+      "resizable": true,
       "acceptable": [
         16
       ]
@@ -144,10 +144,10 @@
       "id": 16,
       "type": 4,
       "order": 2,
-      "color": "rgb(185, 155, 255)",
+      "color": "rgb(251, 255, 204)",
       "name": "Location",
       "pageTemplate": "location.html",
-      "resizable": false,
+      "resizable": true,
       "acceptable": [
         1,2,3,6
       ]

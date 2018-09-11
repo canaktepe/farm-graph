@@ -30,7 +30,7 @@ body {
   background-repeat: no-repeat
 }
 .rect{
-  position: absolute;
+  position: absolute !important;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;

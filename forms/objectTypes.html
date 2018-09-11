@@ -33,13 +33,26 @@
 <script>
     $(document).ready(function () {
 
+        var jsonData = JSON.parse(localStorage.getItem('JSONData')) || [];
+
         var viewModel = function () {
             var self = this;
+
             self.devices = ko.observableArray([]);
             self.physicals = ko.observableArray([]);
             self.objects = ko.observableArray([]);
-            self.createdElements = ko.observableArray([]);
+            self.createdElements = ko.observableArray(jsonData);
 
+            // self.filterRoutableElements = ko.pureComputed(function(){
+            //     return ko.utils.arrayFilter(self.createdElements(),function(el){
+            //         return el 
+
+            //     })
+            // })
+            self.activeElement = ko.observable(null);
+            self.getActiveElement = ko.pureComputed(function () {
+                return self.activeElement() ? self.activeElement() : { name: "Not Selected", position: { x: 0, y: 0, w: 0, h: 0 } };
+            })
 
             self.setEnable = function (acceptable) {
                 var data = self.devices().concat(self.physicals()).concat(self.objects());
@@ -53,6 +66,28 @@
                 return true;
             }
 
+            self.deleteElement = function (item) {
+                var elem = self.activeElement();
+
+
+                if (elem) {
+
+                    self.getCreatedElement(null, elem.guid, function (item) {
+
+
+                        
+                        $("div[id=" + elem.guid + "]").remove();
+                        self.createdElements.remove(item);
+                        self.activeElement(null)
+                        localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                    })
+
+
+                }
+            }
+
+           
+
             self.setDisableAllTypes = function () {
                 var data = self.devices().concat(self.physicals()).concat(self.objects());
                 ko.utils.arrayForEach(data, function (el) {
@@ -62,6 +97,7 @@
             }
 
             self.getTypeOptions = function (id) {
+                if (!id) return;
                 var data = self.devices().concat(self.physicals()).concat(self.objects());
                 var el = ko.utils.arrayFilter(data, function (type) {
                     return type.id == id;
@@ -91,33 +127,40 @@
             }
 
             self.pushElement = function (parentGuid, element) {
-
-                if (parentGuid == null) 
+                if (parentGuid == null)
                     self.createdElements.push(element);
 
                 self.getCreatedElement(null, parentGuid, function (data) {
                     data.children.push(element);
                 })
-               
+
                 localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
             }
 
             self.getCreatedElement = function (arr, guid, callback) {
-                if (arr == null) arr = self.createdElements();
+                if (!guid) return;
+                if (arr == null) arr = self.createdElements()
+                if (typeof arr == "function") arr = arr();
                 ko.utils.arrayFilter(arr, function (item) {
-                    if (item.guid === guid) {
-                        return callback(item);
+                    if (item.guid == guid) callback(item);
+                    else {
+                        self.getCreatedElement(item.children, guid, callback)
                     }
-                    self.getCreatedElement(item.children(), guid, callback);
                 })
             }
 
             self.setElement = function (option) {
-                return ko.utils.arrayFilter(self.createdElements(), function (type) {
-                    if (type.guid == option.guid) {
-                        type.formData = option.formData;
-                    }
-                });
+                self.getCreatedElement(null, option.guid, function (callback) {
+                    callback.formData = option.formData;
+                    localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                })
+            }
+
+            self.selectElement = function (guid) {
+                if (!guid) return;
+                self.getCreatedElement(null, guid, function (item) {
+                    self.activeElement(item)
+                })
             }
 
             self.loadFarmElements();

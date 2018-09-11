@@ -61,7 +61,8 @@ and dependencies (minified).
             },
             onDrawStart: function (e) { },
             onDraw: function (e) { },
-            onDrawComplete: function (e) { }
+            onDrawComplete: function (e) { },
+            onSelectElement: function (e) { }
         };
 
         var settings = $.extend(true, {}, defaults, options);
@@ -212,6 +213,7 @@ and dependencies (minified).
             drawBox.selectedRect = drawBox.drawingRect;
             $('.rect.active').removeClass('active');
             drawBox.selectedRect.addClass(settings.rectangle.activeClass);
+            settings.onSelectElement.call(drawBox.selectedRect,drawBox.selectedRect);
         }
 
         function calcPosition(startX, startY, endX, endY) {

@@ -15,7 +15,8 @@
 <body>
     <div class="container-fluid pt-3 pb-3">
         <!-- Modal -->
-        <div class="modal fade" id="elementModal" tabindex="-1" role="dialog" aria-labelledby="elementModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="elementModal" tabindex="-1" role="dialog" aria-labelledby="elementModalCenterTitle"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -43,8 +44,8 @@
                 <div id="elementsAccordion" hidden>
                     <div class="card">
                         <div class="card-header bg-light accordionHeader" id="headingDevice">
-                            <button class="btn btn-link pl-0 pt-0 pb-0 text-dark accordionBtn nodecor" data-toggle="collapse" data-target="#collapseDevice"
-                                aria-expanded="false" aria-controls="collapseDevice">
+                            <button class="btn btn-link pl-0 pt-0 pb-0 text-dark accordionBtn nodecor" data-toggle="collapse"
+                                data-target="#collapseDevice" aria-expanded="false" aria-controls="collapseDevice">
                                 <strong>Farm Devices</strong>
                             </button>
                         </div>
@@ -71,50 +72,88 @@
                     </div>
                     <div class="card-body h-100">
                         <div class="farm h-100">
-                            <div id="draw-area"></div>
+                            <div id="draw-area">
+                                <!-- <div class="rect" data-bind="attr:{id:$data.guid,'data-type':$data.type},
+                                style:{ backgroundColor:$data.color,
+                                    width:$data.position.w+'px',height:$data.position.h+'px',
+                                    top:$data.position.y+'px',left:$data.position.x+'px' }"></div> -->
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-xl-2 col-lg-4 col-md-4 col-sm- col-xs-">
-                <button type="button" id="draw" class="btn btn-primary btn-md btn-block mb-3">
+                <button type="button" id="draw" class="btn btn-primary btn-md btn-block">
                     <i class="fa fa-pen-nib" aria-hidden="true"></i>
                     Draw New Item
                 </button>
-                <div id="objectInfCard" class="card">
+                <div id="objectInfCard" class="card mt-3">
                     <div class="card-header bg-light text-dark">
                         <strong> Object Information</strong>
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label for="objectName" class="col-sm-3 col-form-label font-weight-bold pr-0">object</label>
-                            <label id="lblObjectName" class="col-sm-9 col-form-label">Astronaut</label>
+                            <label for="objectType" class="col-sm-3 col-form-label font-weight-bold pr-0">Type</label>
+                            <label id="lblObjectType" class="col-sm-9 col-form-label" data-bind="text: getActiveElement().name"></label>
+                        </div>
+                        <div class="form-group row" data-bind="visible:activeElement">
+                            <label for="objectName" class="col-sm-3 col-form-label font-weight-bold pr-0">Name</label>
+                            <label id="lblObjectName" class="col-sm-9 col-form-label" data-bind="text: activeElement() ? getActiveElement().formData.Name:''"></label>
                         </div>
                         <div class="form-group row">
                             <label for="txtObjectX" class="col-sm-2 col-form-label font-weight-bold pr-0">X</label>
                             <div class="col-sm-4 pl-0">
-                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center" id="txtObjectX" value="0" placeholder="x">
+                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center"
+                                    id="txtObjectX" value="0" placeholder="x" data-bind="value: getActiveElement().position.x">
                             </div>
                             <label for="txtObjectY" class="col-sm-2 col-form-label font-weight-bold pr-0">Y</label>
                             <div class="col-sm-4 pl-0">
-                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center" id="txtObjectY" value="0" placeholder="y">
+                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center"
+                                    id="txtObjectY" value="0" placeholder="y" data-bind="value: getActiveElement().position.y">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="txtObjectW" class="col-sm-2 col-form-label font-weight-bold pr-0">W</label>
                             <div class="col-sm-4 pl-0">
-                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center" id="txtObjectW" value="0" placeholder="w">
+                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center"
+                                    id="txtObjectW" value="0" placeholder="w" data-bind="value: getActiveElement().position.w">
                             </div>
                             <label for="txtObjectH" class="col-sm-2 col-form-label font-weight-bold pr-0">H</label>
                             <div class="col-sm-4 pl-0">
-                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center" id="txtObjectH" value="0" placeholder="h">
+                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center"
+                                    id="txtObjectH" value="0" placeholder="h" data-bind="value: getActiveElement().position.h">
                             </div>
                         </div>
-
                         <div class="btn-group d-flex" role="group" aria-label="Basic example">
-                            <button id="updateObject" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold">Save</button>
-                            <button id="deleteObject" disabled type="button" class="btn btn-md btn-danger w-100 font-weight-bold" data-toggle="confirmation">Delete</button>
+                            <button id="updateObject" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold"
+                                data-bind="enable:activeElement">Save</button>
+                            <button id="deleteObject" disabled type="button" class="btn btn-md btn-danger w-100 font-weight-bold"
+                                data-toggle="confirmation" data-bind="enable:activeElement,click:deleteElement">Delete</button>
                         </div>
+                    </div>
+                </div>
+                <div id="objectRoutingCard" class="card mt-3" data-bind="visible:activeElement">
+                    <div class="card-header bg-light text-dark">
+                        <strong> Object Routing</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <select id="routingObject" name="routingObject" class="form-control form-control-sm">
+                                <option>Select Object</option>
+                                <!--ko foreach:createdElements-->
+                                <!--ko if:$data != vm.activeElement()-->
+                                <option data-bind="value:$data.guid,text:$data.formData.Name"></option>
+                                <!--/ko-->
+                                <!--ko foreach:$data.children-->
+                                <!--ko if:$data != vm.activeElement()-->
+                                <option data-bind="value:$data.guid,text:$data.formData.Name"></option>
+                                <!--/ko-->
+                                <!--/ko-->
+                                <!--/ko-->
+                            </select>
+                        </div>
+                        <button id="updateObject" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold"
+                            data-bind="enable:activeElement">Add Routing</button>
                     </div>
                 </div>
             </div>
@@ -131,7 +170,7 @@
     <script type="text/javascript" src="/assets/js/modules.js"></script>
     <script type="text/javascript">
 
-       
+
 
 
         (function () {
