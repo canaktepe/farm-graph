@@ -92,7 +92,7 @@
                         <strong> Object Information</strong>
                     </div>
                     <div class="card-body">
-                        <div class="form-group row">
+                        <div class="form-group row" data-bind="style:{backgroundColor:getActiveElement().color}">
                             <label for="objectType" class="col-sm-3 col-form-label font-weight-bold pr-0">Type</label>
                             <label id="lblObjectType" class="col-sm-9 col-form-label" data-bind="text: getActiveElement().name"></label>
                         </div>
@@ -126,7 +126,7 @@
                         </div>
                         <div class="btn-group d-flex" role="group" aria-label="Basic example">
                             <button id="updateObject" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold"
-                                data-bind="enable:activeElement">Save</button>
+                                data-bind="enable:activeElement,click:getActiveElement">Save</button>
                             <button id="deleteObject" disabled type="button" class="btn btn-md btn-danger w-100 font-weight-bold"
                                 data-toggle="confirmation" data-bind="enable:activeElement,click:deleteElement">Delete</button>
                         </div>

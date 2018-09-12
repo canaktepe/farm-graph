@@ -38,15 +38,6 @@ farmGraphModule = {
       nextButton: $("#nextStep"),
       backButton: $("#backStep")
     },
-    tool: {
-      object: {
-        lblObjectName: $("#lblObjectName"),
-        txtObjectX: $("#txtObjectX"),
-        txtObjectY: $("#txtObjectY"),
-        txtObjectW: $("#txtObjectW"),
-        txtObjectH: $("#txtObjectH")
-      }
-    },
     activeClass: 'active',
   },
 
@@ -342,6 +333,7 @@ farmGraphModule = {
   bindDbData: function (JSONData, parentObj) {
     if (JSONData == null) return;
     $.each(JSONData, function (i, elem) {
+
       var el = $('<div />')
         .attr({ 'id': elem.guid, 'data-type': elem.id })
         .css({ backgroundColor: elem.color, width: elem.position.w, height: elem.position.h, top: elem.position.y, left: elem.position.x })

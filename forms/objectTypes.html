@@ -43,9 +43,20 @@
             self.objects = ko.observableArray([]);
             self.createdElements = ko.observableArray(jsonData);
             self.activeElement = ko.observable(null);
-            self.getActiveElement = ko.pureComputed(function () {
-                return self.activeElement() ? self.activeElement() : { name: "Not Selected", position: { x: 0, y: 0, w: 0, h: 0 } };
+            self.getActiveElement = ko.computed({
+                read: function () {
+                    return self.activeElement() ? self.activeElement() : { name: "Not Selected", position: { x: 0, y: 0, w: 0, h: 0 } };
+                },
+                write: function () {
+                    self.activeElement().position.x = parseInt(self.activeElement().position.x);
+                    self.activeElement().position.y = parseInt(self.activeElement().position.y);
+                    self.activeElement().position.w = parseInt(self.activeElement().position.w);
+                    self.activeElement().position.h = parseInt(self.activeElement().position.h);
+                    localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                }
             })
+
+
 
             self.setEnable = function (acceptable) {
                 var data = self.devices().concat(self.physicals()).concat(self.objects());
@@ -70,7 +81,8 @@
                             localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
                             return true;
                         }
-                        return o.children && o.children.some(iter);
+                        var children = (typeof o.children) === "function" ? o.children() : o.children
+                        return children && children.some(iter);
                     });
                 }
             }
@@ -117,28 +129,26 @@
                 if (parentGuid == null)
                     self.createdElements.push(element);
 
-                self.getCreatedElement( parentGuid, function (data) {
+                self.getCreatedElement(parentGuid, function (data) {
                     data.children.push(element);
                 })
 
                 localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
             }
 
-            self.getCreatedElement = function ( guid, callback) {
+            self.getCreatedElement = function (guid, callback) {
                 if (!guid) return;
-               
                 self.createdElements().some(function iter(o, i, a) {
                     if (o.guid === guid) {
                         callback(o)
                     }
-
-                    var children = (typeof o.children)==="function" ? o.children() : o.children
+                    var children = (typeof o.children) === "function" ? o.children() : o.children
                     return children && children.some(iter);
                 });
             }
 
             self.setElement = function (option) {
-                self.getCreatedElement( option.guid, function (callback) {
+                self.getCreatedElement(option.guid, function (callback) {
                     callback.formData = option.formData;
                     localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
                 })
@@ -146,7 +156,7 @@
 
             self.selectElement = function (guid) {
                 if (!guid) return;
-                self.getCreatedElement( guid, function (item) {
+                self.getCreatedElement(guid, function (item) {
                     self.activeElement(item)
                 })
             }
