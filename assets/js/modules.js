@@ -19,11 +19,34 @@ farmGraphModule = {
         resizable: true
       },
       onDrawComplete(e) {
-        farmGraphModule.openModal(false, e.drawingRect, function () { });
+        farmGraphModule.openModal(false, e.drawingRect, function (item) {
+          if (typeof item === "object") {
+            var guid = item.attr('id');
+            vm.selectElement(guid);
+          }
+        });
       },
       onSelectElement(e) {
         var guid = $(e).attr('id');
-        vm.selectElement(guid)
+        vm.selectElement(guid);
+
+
+        var dragEl = $(e).draggable('option', 'drag', function (event, ui) {
+          var guid = $(e).attr('id');
+          vm.setElementPosition(ui.position);
+          vm.selectElement(guid);
+        });
+
+        $(e).resizable('option', 'resize', function (event, ui) {
+          guid = $(e).attr('id');
+          vm.setElementPosition(ui.size);
+          vm.selectElement(guid);
+        })
+        $(e).resizable('option', 'start', function (event, ui) {
+          guid = $(e).attr('id');
+          vm.selectElement(guid);
+        })
+
       }
     },
     jsonElements: [],
@@ -42,6 +65,9 @@ farmGraphModule = {
   },
 
   bindCustomScrollBar: function () {
+
+    $('.dropdown-scroller').mCustomScrollbar()
+
     elements.farm.mCustomScrollbar({
       autoDraggerLength: true,
       autoHideScrollbar: true,
@@ -186,6 +212,8 @@ farmGraphModule = {
           })
           .dblclick(farmGraphModule.elementUpdatedblClick);
       }
+
+      callback(drawedElement)
     });
 
     //binding modal next button event
@@ -256,6 +284,7 @@ farmGraphModule = {
 
     //binding modal hidden event
     elements.elementModal.selector.on("hidden.bs.modal", function (e) {
+
       var saved = elements.elementModal.selector.data("saved");
       if (!update && !saved) {
         drawedElement.remove();
@@ -264,6 +293,8 @@ farmGraphModule = {
       elements.elementModal.saveButton.hide();
       elements.elementModal.backButton.hide();
       elements.elementModal.nextButton.show();
+
+      vm.selectElement(drawedElement.guid);
     });
 
     if (!update) {
@@ -342,7 +373,12 @@ farmGraphModule = {
         .click(farmGraphModule.elementSelectClick)
         .draggable({
           containment: 'parent',
-          grid: elements.farmDrawPluginOptions.canvas.gridSize
+          grid: elements.farmDrawPluginOptions.canvas.gridSize,
+          drag: function (event, ui) {
+            var guid = $(ui.helper).attr('id');
+            vm.setElementPosition(ui.position)
+            vm.selectElement(guid);
+          }
         })
 
       if (elem.resizable) {
@@ -369,7 +405,12 @@ farmGraphModule = {
           minHeight: 30,
           containment: 'parent',
           autoHide: true,
-          grid: elements.farmDrawPluginOptions.canvas.gridSize
+          grid: elements.farmDrawPluginOptions.canvas.gridSize,
+          resize: function (event, ui) {
+            var guid = $(ui.helper).attr('id');
+            vm.setElementPosition(ui.size)
+            vm.selectElement(guid);
+          }
         })
 
         if (parentObj == null)

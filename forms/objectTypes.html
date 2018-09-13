@@ -43,6 +43,35 @@
             self.objects = ko.observableArray([]);
             self.createdElements = ko.observableArray(jsonData);
             self.activeElement = ko.observable(null);
+            self.selectedRoutingElement = ko.observable('Select Object');
+
+            self.selectRoutingElement = function () {
+                console.log('x');
+            }
+
+            self.searchElementKeyword = ko.observable('');
+
+            self.filteredCreatingElementsByRoutable = ko.observableArray([]);
+            self.RoutingSelectableElements = ko.computed(function () {
+                self.filteredCreatingElementsByRoutable([])
+
+                var filter = self.searchElementKeyword();
+
+                self.createdElements().some(function iter(o, i, a) {
+                    if (o !== self.activeElement()) {
+                        self.filteredCreatingElementsByRoutable.push(o)
+                    }
+                    var children = (typeof o.children) === "function" ? o.children() : o.children
+                    return children && children.some(iter);
+                });
+
+                if (filter) {
+                    self.filteredCreatingElementsByRoutable(ko.utils.arrayFilter(self.filteredCreatingElementsByRoutable(), function (item) {
+                        return item.formData.Name.indexOf(filter) > -1;
+                    }))
+                }
+            })
+
             self.getActiveElement = ko.computed({
                 read: function () {
                     return self.activeElement() ? self.activeElement() : { name: "Not Selected", position: { x: 0, y: 0, w: 0, h: 0 } };
@@ -53,10 +82,25 @@
                     self.activeElement().position.w = parseInt(self.activeElement().position.w);
                     self.activeElement().position.h = parseInt(self.activeElement().position.h);
                     localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+
+                    //set canvas element position
+                    $("div[id=" + self.activeElement().guid + "]").css({
+                        width: self.activeElement().position.w,
+                        height: self.activeElement().position.h,
+                        top: self.activeElement().position.y,
+                        left: self.activeElement().position.x,
+                    })
                 }
             })
 
-
+            self.setElementPosition = function (pos) {
+                self.getActiveElement().position = {
+                    x: pos.left || self.getActiveElement().position.x,
+                    y: pos.top || self.getActiveElement().position.y,
+                    w: pos.width || self.getActiveElement().position.w,
+                    h: pos.height || self.getActiveElement().position.h,
+                }
+            }
 
             self.setEnable = function (acceptable) {
                 var data = self.devices().concat(self.physicals()).concat(self.objects());
