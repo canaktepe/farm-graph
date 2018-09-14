@@ -52,7 +52,7 @@ farmGraphModule = {
     jsonElements: [],
     farm: $(".farm"),
     drawArea: $("#draw-area"),
-    mainAcceptable: [15],
+    mainAcceptable: ko.observableArray([15]),
     elementModal: {
       selector: $("#elementModal"),
       typesBody: $("#modalBodyTypes"),
@@ -113,6 +113,7 @@ farmGraphModule = {
     var clickedElement = $(e.currentTarget);
     var guid = clickedElement.attr("id");
     vm.getCreatedElement(guid, function (data) {
+
       farmGraphModule.openModal(true, data, function (cb) {
         farmGraphModule.fillFormData(data);
       });
@@ -122,21 +123,22 @@ farmGraphModule = {
   },
 
   setEnableElementsType: function (drawedElement) {
+
     var isChild = drawedElement.parent().hasClass("rect");
-    var acceptable = elements.mainAcceptable;
+    var acceptable = elements.mainAcceptable();
 
     if (isChild) {
       var type = drawedElement.parent().data("type");
       var options = vm.getTypeOptions(type);
-      acceptable = options.acceptable;
+      acceptable = options.acceptable();
     }
     vm.setEnable(acceptable);
   },
 
   fillFormData: function (data) {
 
-    $("#Name").val(data.formData.Name);
-    $("#Name2").val(data.formData.Name2);
+    $("#Name").val(data.formData().Name);
+    $("#Name2").val(data.formData().Name2);
   },
 
   getDrawedElementPosition: function (drawedElement) {
@@ -148,7 +150,7 @@ farmGraphModule = {
       position.y = parseInt(drawedElement.css('top'));
     }
     else {
-      var savedElement = $("div[id=" + drawedElement.guid + "]");
+      var savedElement = $("div[id=" + drawedElement.guid() + "]");
       if (savedElement) {
         position.w = parseInt(savedElement.css('width'));
         position.h = parseInt(savedElement.css('height'));
@@ -184,20 +186,22 @@ farmGraphModule = {
           return m;
         }, {});
 
+
       var position = farmGraphModule.getDrawedElementPosition(drawedElement);
 
       var options;
       if (update) {
         options = drawedElement;
-        options.position = position;
-        options.formData = formData;
+
+        options.position(position);
+        options.formData(formData);
         vm.setElement(options);
       } else {
         var guid = farmGraphModule.guid();
-        drawedElement.options.position = position;
-        drawedElement.options.guid = guid;
+        drawedElement.options.position(position);
+        drawedElement.options.guid(guid);
         options = drawedElement.options;
-        options.formData = formData;
+        options.formData(formData);
 
         var parentGuid = farmGraphModule.getParentGuid(drawedElement);
 
@@ -205,10 +209,10 @@ farmGraphModule = {
         drawedElement
           .attr({
             id: guid,
-            "data-type": options.id
+            "data-type": options.id()
           })
           .css({
-            backgroundColor: options.color
+            backgroundColor: options.color()
           })
           .dblclick(farmGraphModule.elementUpdatedblClick);
       }
@@ -220,13 +224,13 @@ farmGraphModule = {
     elements.elementModal.nextButton.on("click", function (e) {
       if (update) {
         console.log("update mode")
-        elements.elementModal.contentBody.load("/forms/" + drawedElement.pageTemplate, function (
+        elements.elementModal.contentBody.load("/forms/" + drawedElement.pageTemplate(), function (
           responseText,
           textStatus,
           XMLHttpRequest
         ) {
           if (XMLHttpRequest.status == 200) {
-            elements.elementModal.selector.find(".modal-title").text("Update " + drawedElement.name)
+            elements.elementModal.selector.find(".modal-title").text("Update " + drawedElement.name())
           } else if (XMLHttpRequest.status == 404) {
             console.log(pageTemplate + " Page Not Found");
             elements.elementModal.selector.modal("hide");
@@ -241,14 +245,14 @@ farmGraphModule = {
 
       console.log("insert mode");
       drawedElement.options = elementOptions;
-      var pageTemplate = drawedElement.options.pageTemplate;
+      var pageTemplate = drawedElement.options.pageTemplate();
       elements.elementModal.contentBody.load("/forms/" + pageTemplate, function (
         responseText,
         textStatus,
         XMLHttpRequest
       ) {
         if (XMLHttpRequest.status == 200) {
-          elements.elementModal.selector.find(".modal-title").text("Add New " + drawedElement.options.name);
+          elements.elementModal.selector.find(".modal-title").text("Add New " + drawedElement.options.name());
           $('form#controlData input:first').focus();
         } else if (XMLHttpRequest.status == 404) {
           console.log(pageTemplate + " Page Not Found");
@@ -294,7 +298,6 @@ farmGraphModule = {
       elements.elementModal.backButton.hide();
       elements.elementModal.nextButton.show();
 
-      vm.selectElement(drawedElement.guid);
     });
 
     if (!update) {
@@ -361,13 +364,44 @@ farmGraphModule = {
     e.stopPropagation();
   },
 
+  jsonToModel: function (data) {
+    var self = this;
+    self.acceptable = ko.observable(data.acceptable);
+    self.children = ko.observableArray();
+    if (data.children) {
+      if (data.children.length > 0) {
+        $.each(data.children, function (i, item) {
+          self.children.push(new farmGraphModule.jsonToModel(item));
+        })
+      }
+    }
+    self.color = ko.observable(data.color);
+    self.formData = ko.observable(data.formData);
+    self.guid = ko.observable(data.guid);
+    self.id = ko.observable(data.id);
+    self.name = ko.observable(data.name);
+    self.order = ko.observable(data.order);
+    self.pageTemplate = ko.observable(data.pageTemplate);
+    self.position = ko.observable(data.position);
+    self.resizable = ko.observable(data.resizable);
+
+    self.routing = ko.observableArray(data.routing);
+
+    self.status = ko.observable(data.status);
+    self.type = ko.observable(data.type);
+  },
+
   bindDbData: function (JSONData, parentObj) {
     if (JSONData == null) return;
     $.each(JSONData, function (i, elem) {
+      if (typeof elem.id == 'function') {
+        elem = ko.toJS(elem);
+      }
 
+      var elementModel = new farmGraphModule.jsonToModel(elem);
       var el = $('<div />')
-        .attr({ 'id': elem.guid, 'data-type': elem.id })
-        .css({ backgroundColor: elem.color, width: elem.position.w, height: elem.position.h, top: elem.position.y, left: elem.position.x })
+        .attr({ 'id': elem.guid, 'data-type': elementModel.id() })
+        .css({ backgroundColor: elementModel.color(), width: elementModel.position().w, height: elementModel.position().h, top: elementModel.position().y, left: elementModel.position().x })
         .addClass('rect')
         .dblclick(farmGraphModule.elementUpdatedblClick)
         .click(farmGraphModule.elementSelectClick)
@@ -418,8 +452,8 @@ farmGraphModule = {
         else
           parentObj.append(el);
 
-        if (elem.children.length > 0) {
-          farmGraphModule.bindDbData(elem.children, el);
+        if (elementModel.children().length > 0) {
+          farmGraphModule.bindDbData(elementModel.children(), el);
         }
       }
     })
