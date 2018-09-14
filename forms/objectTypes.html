@@ -35,6 +35,9 @@
 
         var jsonData = JSON.parse(localStorage.getItem('JSONData')) || [];
 
+
+        
+
         var viewModel = function () {
             var self = this;
 
@@ -43,20 +46,32 @@
             self.objects = ko.observableArray([]);
             self.createdElements = ko.observableArray(jsonData);
             self.activeElement = ko.observable(null);
-            self.selectedRoutingElement = ko.observable('Select Object');
+            self.selectedRoutingElement = ko.observable(null);
+            self.searchElementKeyword = ko.observable('');
+            self.filteredCreatingElementsByRoutable = ko.observableArray([]);
 
-            self.selectRoutingElement = function () {
-                console.log('x');
+            self.addRouting = function () {
+                if (!self.activeElement() || !self.selectedRoutingElement()) return;
+                // self.getCreatedElement(self.activeElement().guid, function (item) {
+                var route = { guid: self.selectedRoutingElement().guid, name: self.selectedRoutingElement().formData.Name };
+                // item.routing.push(route);
+                console.log(self.activeElement);
+                self.activeElement().routing.push(route)
+                localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                // })
+                self.selectedRoutingElement(null);
             }
 
-            self.searchElementKeyword = ko.observable('');
+            self.selectRoutingElement = function (data) {
+                self.selectedRoutingElement(data);
+            }
 
-            self.filteredCreatingElementsByRoutable = ko.observableArray([]);
+
+
+
             self.RoutingSelectableElements = ko.computed(function () {
                 self.filteredCreatingElementsByRoutable([])
-
                 var filter = self.searchElementKeyword();
-
                 self.createdElements().some(function iter(o, i, a) {
                     if (o !== self.activeElement()) {
                         self.filteredCreatingElementsByRoutable.push(o)
@@ -74,7 +89,8 @@
 
             self.getActiveElement = ko.computed({
                 read: function () {
-                    return self.activeElement() ? self.activeElement() : { name: "Not Selected", position: { x: 0, y: 0, w: 0, h: 0 } };
+                    var a = self.activeElement() ? self.activeElement() : { name: "Not Selected", position: { x: 0, y: 0, w: 0, h: 0 } };
+                    return a;
                 },
                 write: function () {
                     self.activeElement().position.x = parseInt(self.activeElement().position.x);
@@ -90,8 +106,9 @@
                         top: self.activeElement().position.y,
                         left: self.activeElement().position.x,
                     })
-                }
-            })
+                },
+                deferEvaluation: true
+            },viewModel)
 
             self.setElementPosition = function (pos) {
                 self.getActiveElement().position = {
@@ -146,6 +163,7 @@
                     return type.id == id;
                 })[0];
                 el.children = ko.observableArray([]);
+                el.routing = ko.observableArray([]);
                 return $.extend(true, {}, el);;
             }
 

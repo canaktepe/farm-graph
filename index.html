@@ -73,10 +73,6 @@
                     <div class="card-body h-100">
                         <div class="farm h-100">
                             <div id="draw-area">
-                                <!-- <div class="rect" data-bind="attr:{id:$data.guid,'data-type':$data.type},
-                                style:{ backgroundColor:$data.color,
-                                    width:$data.position.w+'px',height:$data.position.h+'px',
-                                    top:$data.position.y+'px',left:$data.position.x+'px' }"></div> -->
                             </div>
                         </div>
                     </div>
@@ -140,33 +136,45 @@
 
                         <div id="routingDropDown" class="dropdown show">
                             <a class="btn btn-light dropdown-toggle w-100" href="#" role="button" id="dropdownMenuLink"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text:selectedRoutingElement">
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="style:{backgroundColor:selectedRoutingElement() ? selectedRoutingElement().color:''},text:selectedRoutingElement() ? selectedRoutingElement().formData.Name : 'Select Object'">
                             </a>
                             <div class="dropdown-menu  w-100" aria-labelledby="dropdownMenuLink">
                                 <div class="container">
                                     <div class="form-group">
                                         <div class="input-group-btn">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                                <input type="text" class="form-control form-control-sm" placeholder="Search..." id="search"
-                                                    name="search" data-bind="value:searchElementKeyword, valueUpdate: 'keyup'" />
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-search"></i>
+                                                </span>
+                                                <input type="text" class="form-control form-control-sm" placeholder="Search..."
+                                                    id="search" name="search" data-bind="value:searchElementKeyword, valueUpdate: 'keyup'">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="dropdown-scroller" style="max-height:150px;overflow: hidden;">
-                                    <!--ko foreach:filteredCreatingElementsByRoutable-->
-                                    <button class="dropdown-item" type="button" data-bind="click:$parent.selectRoutingElement($data)">
+                                <div class="dropdown-scroller" style="max-height:150px;overflow: hidden;" data-bind="foreach:filteredCreatingElementsByRoutable">
+                                    <button class="dropdown-item" type="button" data-bind="click:$parent.selectRoutingElement.bind($data)">
                                         <div class="float-left mt-1 mr-1" data-bind="style:{backgroundColor:$data.color}"
                                             style="border:1px solid #ccc;width:15px;height:15px;"></div>
                                         <label data-bind="text:$data.formData.Name"></label>
                                     </button>
-                                    <!--/ko-->
                                 </div>
                             </div>
                         </div>
-                        <button id="updateObject" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold mt-2"
-                            data-bind="enable:activeElement">Add Routing</button>
+                        <!--ko if:activeElement-->
+                        <!--ko if:activeElement().routing.length>0-->
+                        <div>
+                            <h6 class=" mt-2 pl-3 pr-3 pt-2 pb-2 bg-secondary text-white"><strong>Routing List</strong></h6>
+                            <ul class="list-group" data-bind="foreach:activeElement().routing" style="max-height:150px">
+                                <li class="list-group-item" data-bind="text:$data.name"></li>
+                            </ul>
+
+                        </div>
+                        <!--/ko-->
+                        <button id="addRouting" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold mt-2"
+                            data-bind="enable:activeElement,click:addRouting">Add Routing</button>
+                        <!--/ko-->
+
                     </div>
                 </div>
             </div>
@@ -182,6 +190,7 @@
     <script type="text/javascript" src="/assets/js/modules.js"></script>
     <script type="text/javascript">
         (function () {
+            
             farmGraphModule.init();
         })();
     </script>
