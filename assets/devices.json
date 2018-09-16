@@ -31,7 +31,7 @@
       "id": 4,
       "type": 3,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(255, 189, 33)",
       "name": "Central Unit",
       "pageTemplate": "centralunit.html",
       "resizable": true
@@ -40,7 +40,7 @@
       "id": 5,
       "type": 3,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(255, 123, 25)",
       "name": "Cosmix",
       "pageTemplate": "cosmix.html",
       "resizable": true
@@ -49,7 +49,7 @@
       "id": 6,
       "type": 3,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(255, 158, 12)",
       "name": "Grazeway",
       "pageTemplate": "grazeway.html",
       "resizable": true
@@ -58,7 +58,7 @@
       "id": 7,
       "type": 3,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(255, 178, 89)",
       "name": "ID Station",
       "pageTemplate": "idstation.html",
       "resizable": true
@@ -67,7 +67,7 @@
       "id": 8,
       "type": 3,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(255, 113, 32)",
       "name": "Qwes LD Receiver",
       "pageTemplate": "qwesldreciever.html",
       "resizable": true
@@ -76,7 +76,7 @@
       "id": 9,
       "type": 3,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(255, 126, 68)",
       "name": "Qwes ISO LD Receiver",
       "pageTemplate": "qwesisoldreceiver.html",
       "resizable": true

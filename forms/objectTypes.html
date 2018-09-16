@@ -57,10 +57,6 @@
                 // self.getCreatedElement(self.activeElement().guid, function (item) {
                 var route = { guid: self.selectedRoutingElement().guid, name: self.selectedRoutingElement().formData().Name };
                 // item.routing.push(route);
-
-
-
-
                 self.activeElement().routing.push(route)
                 localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
                 // })
@@ -70,9 +66,6 @@
             self.selectRoutingElement = function (data) {
                 self.selectedRoutingElement(data);
             }
-
-
-
 
             self.RoutingSelectableElements = ko.computed(function () {
                 self.filteredCreatingElementsByRoutable([])
@@ -98,20 +91,16 @@
                     return a;
                 },
                 write: function () {
-
                     self.activeElement().position({
                         x: parseInt(self.activeElement().position().x),
                         y: parseInt(self.activeElement().position().y),
                         w: parseInt(self.activeElement().position().w),
                         h: parseInt(self.activeElement().position().h)
                     })
-
-
                     // self.activeElement().position.x = parseInt(self.activeElement().position.x);
                     // self.activeElement().position.y = parseInt(self.activeElement().position.y);
                     // self.activeElement().position.w = parseInt(self.activeElement().position.w);
                     // self.activeElement().position.h = parseInt(self.activeElement().position.h);
-                    localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
 
                     //set canvas element position
                     $("div[id=" + self.activeElement().guid() + "]").css({
@@ -120,16 +109,16 @@
                         top: self.activeElement().position.y,
                         left: self.activeElement().position.x,
                     })
-                },
-                deferEvaluation: true
+                    localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                }
             }, viewModel)
 
             self.setElementPosition = function (pos) {
                 self.getActiveElement().position({
-                    x: pos.left || self.getActiveElement().position().x,
-                    y: pos.top || self.getActiveElement().position().y,
-                    w: pos.width || self.getActiveElement().position().w,
-                    h: pos.height || self.getActiveElement().position().h,
+                    x: typeof(pos.left)=='number' ? pos.left : self.getActiveElement().position().x,
+                    y: typeof(pos.top)=='number' ? pos.top : self.getActiveElement().position().y,
+                    w: typeof(pos.width)=='number' ? pos.width : self.getActiveElement().position().w,
+                    h: typeof(pos.height)=='number' ? pos.height : self.getActiveElement().position().h,
                 })
             }
 
@@ -173,58 +162,48 @@
             self.getTypeOptions = function (id) {
                 if (!id) return;
                 var data = self.devices().concat(self.physicals()).concat(self.objects());
-
-                var el = ko.utils.arrayFilter(data, function (type) {
-                    return  type.id() == id;
-                })[0];
+                // data = $.extend([], data)
+                var el = ko.utils.arrayFirst(data, function (type) {
+                    // var item = $.extend({}, new farmGraphModule.jsonToModel(ko.toJS(type)));
+                    // if (item.id() == id)
+                    // return item;
+                    return type.id() == id;
+                });
                 // el.children = ko.observableArray([]);
-                el.routing = ko.observableArray([]);
-
-                console.log(1500, ko.toJSON( el.position()))
-                return $.extend(true, {}, el);;
+                // el.routing = ko.observableArray([]);
+                // return $.extend({}, el);;
+                return el;
             }
 
             self.loadFarmElements = function () {
                 ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.devices, function (el) {
-                    var obj = $.extend(true, {}, new farmGraphModule.jsonToModel(el));
                     // obj.status = ko.observable(false);
-                    self.devices.push(obj)
+                    self.devices.push($.extend(true, {}, new farmGraphModule.jsonToModel(el)))
                 })
-
                 ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.physicals, function (el) {
-                    var obj = $.extend(true, {}, new farmGraphModule.jsonToModel(el));
                     // obj.status = ko.observable(false);
-                    self.physicals.push(obj)
+                    self.physicals.push($.extend(true, {}, new farmGraphModule.jsonToModel(el)))
                 })
-
                 ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.objects, function (el) {
-                    var obj = $.extend(true, {}, new farmGraphModule.jsonToModel(el));
                     // obj.status = ko.observable(false);
-                    self.objects.push(obj)
+                    self.objects.push($.extend(true, {}, new farmGraphModule.jsonToModel(el)))
                 })
             }
 
             self.pushElement = function (parentGuid, element) {
-            
-                
+                var newElement = new farmGraphModule.jsonToModel(ko.toJS(element));
                 if (parentGuid == null)
-                    self.createdElements.push( element);
+                    self.createdElements.push(newElement);
 
                 self.getCreatedElement(parentGuid, function (data) {
-                    data.children.push( element);
+                    data.children.push(newElement);
                 })
-
-                console.log(ko.toJSON(self.createdElements()))
-                return;
                 localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
             }
 
             self.getCreatedElement = function (guid, callback) {
                 if (!guid) return;
                 self.createdElements().some(function iter(o, i, a) {
-
-
-
                     if (o.guid() === guid) {
                         callback(o)
                     }
@@ -234,7 +213,6 @@
             }
 
             self.setElement = function (option) {
-                console.log(1000, option)
                 self.getCreatedElement(option.guid(), function (callback) {
                     callback.formData(option.formData());
                     localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
