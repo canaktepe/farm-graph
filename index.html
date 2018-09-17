@@ -121,9 +121,9 @@
                             </div>
                         </div>
                         <div class="btn-group d-flex" role="group" aria-label="Basic example">
-                            <button id="updateObject" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold"
+                            <button id="updateObject" disabled type="button" class="btn btn-sm btn-success w-100 font-weight-bold"
                                 data-bind="enable:activeElement,click:getActiveElement">Save</button>
-                            <button id="deleteObject" disabled type="button" class="btn btn-md btn-danger w-100 font-weight-bold"
+                            <button id="deleteObject" disabled type="button" class="btn btn-sm btn-danger w-100 font-weight-bold"
                                 data-toggle="confirmation" data-bind="enable:activeElement,click:deleteElement">Delete</button>
                         </div>
                     </div>
@@ -134,46 +134,56 @@
                     </div>
                     <div class="card-body">
 
-                        <div id="routingDropDown" class="dropdown show">
-                            <a class="btn btn-light dropdown-toggle w-100" href="#" role="button" id="dropdownMenuLink"
+                        <div id="routingDropDown" class="dropdown show btn-group d-flex" role="group">
+                            <button class="btn btn-light btn-sm dropdown-toggle w-75" href="#" role="button" id="dropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="style:{backgroundColor:selectedRoutingElement() ? selectedRoutingElement().color:''},text:selectedRoutingElement() ? selectedRoutingElement().formData().Name : 'Select Object'">
-                            </a>
-                            <div class="dropdown-menu  w-100" aria-labelledby="dropdownMenuLink">
+                            </button>
+                            <button id="addRouting" disabled type="button" class="btn btn-success btn-sm font-weight-bold float-right w-25"
+                                data-bind="enable:getActiveElementRouting,click:addRouting.bind($root)">
+                                <i class="fa fa-plus" aria-hidden="true"></i> </button>
+
+                            <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
                                 <div class="container">
                                     <div class="form-group">
                                         <div class="input-group-btn">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    <i class="fas fa-search"></i>
+                                                    <i class="fas fa-search" aria-hidden="true"></i>
                                                 </span>
                                                 <input type="text" class="form-control form-control-sm" placeholder="Search..."
-                                                    id="search" name="search" data-bind="value:searchElementKeyword, valueUpdate: 'keyup'">
+                                                    id="search" name="search" data-bind="value:searchElementKeyword, valueUpdate: 'keyup'" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="dropdown-scroller" style="max-height:150px;overflow: hidden;" data-bind="foreach:filteredCreatingElementsByRoutable">
+                                <div class="dropdown-scroller" style="max-height:150px;overflow: hidden;">
+                                    <!--ko foreach:filteredCreatingElementsByRoutable-->
+                                    <!--ko if:$parent.hasRoutingList($data.routing())-->
                                     <button class="dropdown-item" type="button" data-bind="click:$parent.selectRoutingElement.bind($data)">
-                                        <div class="float-left mt-1 mr-1" data-bind="style:{backgroundColor:$data.color}"
-                                            style="border:1px solid #ccc;width:15px;height:15px;"></div>
-                                        <label data-bind="text:$data.formData().Name"></label>
+                                        <div class="float-left mt-1 mr-1 routing-selector-box" data-bind="style:{backgroundColor:color}"></div>
+                                        <label data-bind="text:formData().Name"></label>
                                     </button>
+                                    <!--/ko-->
+                                    <!--/ko-->
                                 </div>
                             </div>
                         </div>
-                        <!--ko if:activeElement-->
-                        <!--ko if:activeElement().routing().length>0-->
-                        <div>
-                            <h6 class=" mt-2 pl-3 pr-3 pt-2 pb-2 bg-secondary text-white"><strong>Routing List</strong></h6>
-                            <ul class="list-group dropdown-scroller" data-bind="foreach:activeElement().routing()" style="max-height:150px">
-                                <li class="list-group-item" data-bind="text:$data.name"></li>
+                        <div data-bind="visible:getActiveElementRouting().length>0">
+                            <h6 class="mt-3 pl-3 pr-3 pt-2 pb-2 bg-secondary text-white"><strong>Routing List</strong></h6>
+                            <ul id="addedRouting" class="list-group" style="max-height:150px;overflow: hidden;">
+                                <!--ko template:{foreach:getActiveElementRouting,afterAdd:addRoutingCallback}-->
+                                <li class="list-group-item">
+                                    <!--ko text: name-->
+                                    <!--/ko-->
+                                    <button type="button" class="btn btn-danger btn-sm float-right" data-bind="click:$parent.deleteRouting.bind($data)">
+                                        <i class="fa fa-times float-right" aria-hidden="true"></i>
+                                    </button>
+                                </li>
+                                <!--/ko-->
                             </ul>
 
                         </div>
-                        <!--/ko-->
-                        <button id="addRouting" disabled type="button" class="btn btn-md btn-success w-100 font-weight-bold mt-2"
-                            data-bind="enable:activeElement,click:addRouting">Add Routing</button>
-                        <!--/ko-->
+
 
                     </div>
                 </div>
@@ -190,9 +200,12 @@
     <script type="text/javascript" src="/assets/js/modules.js"></script>
     <script type="text/javascript">
         (function () {
-            
+
             farmGraphModule.init();
+
         })();
+
+
     </script>
 </body>
 

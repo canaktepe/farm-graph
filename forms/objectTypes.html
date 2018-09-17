@@ -63,8 +63,36 @@
                 self.selectedRoutingElement(null);
             }
 
+            self.addRoutingCallback = function (elem) {
+                if (elem.nodeType === 1) {
+                    $(elem)
+                        .animate({ backgroundColor: '#fc9c9c' }, 200)
+                        .animate({ backgroundColor: 'transparent' }, 800);
+                }
+            }
+
+            self.hasRoutingList = function (data) {
+                if (self.activeElement()) {
+                //    var a=  ko.utils.arrayFirst(data, function (item) {
+                //      return  ko.utils.arrayFilter(self.activeElement().routing(),function(route){
+                //          console.log(route);
+                //            return item == route;
+                //        })
+                //     })
+
+                   
+                //     return a == null;
+                return true;
+                }
+            }
+
             self.selectRoutingElement = function (data) {
                 self.selectedRoutingElement(data);
+            }
+
+            self.deleteRouting = function (item) {
+                self.activeElement().routing.remove(item);
+                localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
             }
 
             self.RoutingSelectableElements = ko.computed(function () {
@@ -80,15 +108,27 @@
 
                 if (filter) {
                     self.filteredCreatingElementsByRoutable(ko.utils.arrayFilter(self.filteredCreatingElementsByRoutable(), function (item) {
-                        return item.formData.Name.indexOf(filter) > -1;
+                        return item.formData().Name.indexOf(filter) > -1;
                     }))
                 }
             })
 
-            self.getActiveElement = ko.computed({
+            self.getActiveElementRouting = ko.computed({
                 read: function () {
-                    var a = self.activeElement() ? self.activeElement() : { name: "Not Selected", position: ko.observable({ x: 0, y: 0, w: 0, h: 0 }) };
-                    return a;
+                    var active = self.activeElement();
+                    if (active) {
+                        var data = $.extend([], active.routing())
+                        return data.reverse();
+                    }
+                    else {
+                        return ko.observableArray([]);
+                    }
+                }
+            })
+
+            self.getActiveElement = ko.pureComputed({
+                read: function () {
+                    return self.activeElement() ? self.activeElement() : { name: "Not Selected", position: ko.observable({ x: 0, y: 0, w: 0, h: 0 }) };
                 },
                 write: function () {
                     self.activeElement().position({
@@ -115,17 +155,17 @@
 
             self.setElementPosition = function (pos) {
                 self.getActiveElement().position({
-                    x: typeof(pos.left)=='number' ? pos.left : self.getActiveElement().position().x,
-                    y: typeof(pos.top)=='number' ? pos.top : self.getActiveElement().position().y,
-                    w: typeof(pos.width)=='number' ? pos.width : self.getActiveElement().position().w,
-                    h: typeof(pos.height)=='number' ? pos.height : self.getActiveElement().position().h,
+                    x: typeof (pos.left) == 'number' ? pos.left : self.getActiveElement().position().x,
+                    y: typeof (pos.top) == 'number' ? pos.top : self.getActiveElement().position().y,
+                    w: typeof (pos.width) == 'number' ? pos.width : self.getActiveElement().position().w,
+                    h: typeof (pos.height) == 'number' ? pos.height : self.getActiveElement().position().h,
                 })
             }
 
             self.setEnable = function (acceptable) {
                 var data = self.devices().concat(self.physicals()).concat(self.objects());
                 ko.utils.arrayForEach(data, function (el) {
-                    var i = ko.utils.arrayFilter(acceptable, function (acc) {
+                    ko.utils.arrayFilter(acceptable, function (acc) {
                         if (acc == el.id()) {
                             el.status(true);
                         }
