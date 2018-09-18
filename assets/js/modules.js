@@ -19,7 +19,7 @@ farmGraphModule = {
         resizable: true
       },
       onDrawComplete(e) {
-        farmGraphModule.openModal(false, e.drawingRect, function(item) {
+        farmGraphModule.openModal(false, e.drawingRect, function (item) {
           if (typeof item === "object") {
             e.drawingRect.click();
           }
@@ -29,18 +29,18 @@ farmGraphModule = {
         var guid = $(e).attr("id");
         vm.selectElement(guid);
 
-        $(e).draggable("option", "start", function(event, ui) {
+        $(e).draggable("option", "start", function (event, ui) {
           $(this).click();
         });
-        $(e).draggable("option", "drag", function(event, ui) {
+        $(e).draggable("option", "drag", function (event, ui) {
           vm.setElementPosition(ui.position);
         });
-        $(e).resizable("option", "resize", function(event, ui) {
+        $(e).resizable("option", "resize", function (event, ui) {
           guid = $(e).attr("id");
           vm.setElementPosition(ui.size);
           vm.selectElement(guid);
         });
-        $(e).resizable("option", "start", function(event, ui) {
+        $(e).resizable("option", "start", function (event, ui) {
           guid = $(e).attr("id");
           vm.selectElement(guid);
         });
@@ -48,6 +48,7 @@ farmGraphModule = {
     },
     jsonElements: [],
     farm: $(".farm"),
+    bsSliderFarmZoom: $('#bsSliderFarmZoom'),
     drawArea: $("#draw-area"),
     mainAcceptable: ko.observableArray([15]),
     elementModal: {
@@ -61,7 +62,7 @@ farmGraphModule = {
     activeClass: "active"
   },
 
-  bindCustomScrollBar: function() {
+  bindCustomScrollBar: function () {
 
     $(".dropdown-scroller").mCustomScrollbar({
       // scrollbarPosition: "outside"
@@ -89,18 +90,18 @@ farmGraphModule = {
     });
   },
 
-  bindExtensionMethods: function() {
-    String.prototype.getClass = function() {
+  bindExtensionMethods: function () {
+    String.prototype.getClass = function () {
       return this.substr(1, this.length);
     };
   },
 
-  bindFarmDraw: function() {
+  bindFarmDraw: function () {
     elements.drawArea.farmDraw(elements.farmDrawPluginOptions);
   },
 
-  loadModalTypesSection: function() {
-    elements.elementModal.typesBody.load("/forms/objectTypes.html", function(
+  loadModalTypesSection: function () {
+    elements.elementModal.typesBody.load("/forms/objectTypes.html", function (
       responseText,
       textStatus,
       XMLHttpRequest
@@ -112,18 +113,18 @@ farmGraphModule = {
     });
   },
 
-  elementUpdatedblClick: function(e) {
+  elementUpdatedblClick: function (e) {
     var clickedElement = $(e.currentTarget);
     var guid = clickedElement.attr("id");
-    vm.getCreatedElement(guid, function(data) {
-      farmGraphModule.openModal(true, data, function(cb) {
+    vm.getCreatedElement(guid, function (data) {
+      farmGraphModule.openModal(true, data, function (cb) {
         farmGraphModule.fillFormData(data);
       });
     });
     e.stopPropagation();
   },
 
-  setEnableElementsType: function(drawedElement) {
+  setEnableElementsType: function (drawedElement) {
     var isChild = drawedElement.parent().hasClass("rect");
     var acceptable = elements.mainAcceptable();
 
@@ -135,12 +136,12 @@ farmGraphModule = {
     vm.setEnable(acceptable);
   },
 
-  fillFormData: function(data) {
+  fillFormData: function (data) {
     $("#Name").val(data.formData().Name);
     $("#Name2").val(data.formData().Name2);
   },
 
-  getDrawedElementPosition: function(drawedElement) {
+  getDrawedElementPosition: function (drawedElement) {
     var position = { w: 0, h: 0, x: 0, y: 0 };
     if (drawedElement.options) {
       position.w = parseInt(drawedElement.css("width"));
@@ -159,7 +160,7 @@ farmGraphModule = {
     return position;
   },
 
-  openModal: function(update, drawedElement, callback) {
+  openModal: function (update, drawedElement, callback) {
     // off button events
     elements.elementModal.selector.off("shown.bs.modal");
     elements.elementModal.selector.off("hidden.bs.modal");
@@ -172,12 +173,12 @@ farmGraphModule = {
     elements.elementModal.selector.modal({ show: true });
 
     //binding modal save button event
-    elements.elementModal.saveButton.on("click", function(e) {
+    elements.elementModal.saveButton.on("click", function (e) {
       elements.elementModal.selector.data("saved", true).modal("hide");
       // get selected type forms input data
       var formData = $("form#controlData")
         .serializeArray()
-        .reduce(function(m, o) {
+        .reduce(function (m, o) {
           m[o.name] = o.value;
           return m;
         }, {});
@@ -216,12 +217,12 @@ farmGraphModule = {
     });
 
     //binding modal next button event
-    elements.elementModal.nextButton.on("click", function(e) {
+    elements.elementModal.nextButton.on("click", function (e) {
       if (update) {
         console.log("update mode");
         elements.elementModal.contentBody.load(
           "/forms/" + drawedElement.pageTemplate(),
-          function(responseText, textStatus, XMLHttpRequest) {
+          function (responseText, textStatus, XMLHttpRequest) {
             if (XMLHttpRequest.status == 200) {
               elements.elementModal.selector
                 .find(".modal-title")
@@ -243,7 +244,7 @@ farmGraphModule = {
       console.log("insert mode");
       drawedElement.options = elementOptions;
       var pageTemplate = drawedElement.options.pageTemplate();
-      elements.elementModal.contentBody.load("/forms/" + pageTemplate, function(
+      elements.elementModal.contentBody.load("/forms/" + pageTemplate, function (
         responseText,
         textStatus,
         XMLHttpRequest
@@ -269,7 +270,7 @@ farmGraphModule = {
     });
 
     //binding modal back button event
-    elements.elementModal.backButton.on("click", function(e) {
+    elements.elementModal.backButton.on("click", function (e) {
       drawedElement.options = undefined;
       //show next, hide back button
       elements.elementModal.selector.find(".modal-title").text("Select Type");
@@ -281,12 +282,12 @@ farmGraphModule = {
     });
 
     //binding modal shown event
-    elements.elementModal.selector.on("shown.bs.modal", function(e) {
+    elements.elementModal.selector.on("shown.bs.modal", function (e) {
       return callback("ok");
     });
 
     //binding modal hidden event
-    elements.elementModal.selector.on("hidden.bs.modal", function(e) {
+    elements.elementModal.selector.on("hidden.bs.modal", function (e) {
       var saved = elements.elementModal.selector.data("saved");
       if (!update && !saved) {
         drawedElement.remove();
@@ -314,23 +315,23 @@ farmGraphModule = {
     }
   },
 
-  getParentGuid: function(drawedElement) {
+  getParentGuid: function (drawedElement) {
     var parent = drawedElement.parent();
     if (!parent.hasClass("rect")) return null;
     return parent.attr("id");
   },
 
-  bindJsonElements: function() {
+  bindJsonElements: function () {
     $.getJSON("/assets/devices.json")
-      .done(function(data) {
+      .done(function (data) {
         farmGraphModule.elements.jsonElements = data;
       })
-      .fail(function(jqxhr, textStatus, error) {
+      .fail(function (jqxhr, textStatus, error) {
         console.log("Request Failed: " + error);
       });
   },
 
-  guid: function() {
+  guid: function () {
     function s4() {
       return Math.floor((1 + Math.random()) * 0x10000)
         .toString(16)
@@ -352,7 +353,7 @@ farmGraphModule = {
     );
   },
 
-  elementSelectClick: function(e) {
+  elementSelectClick: function (e) {
     var obj = $(e.currentTarget);
     $(".rect.active").removeClass("active");
     $(this).addClass(elements.activeClass);
@@ -361,35 +362,13 @@ farmGraphModule = {
     e.stopPropagation();
   },
 
-  jsonToModel: function(data) {
-    var self = this;
-    self.acceptable = ko.observable(data.acceptable);
-    self.children = ko.observableArray();
-    if (data.children) {
-      if (data.children.length > 0) {
-        $.each(data.children, function(i, item) {
-          self.children.push(new farmGraphModule.jsonToModel(item));
-        });
-      }
-    }
-    self.color = ko.observable(data.color);
-    self.formData = ko.observable(data.formData);
-    self.guid = ko.observable(data.guid);
-    self.id = ko.observable(data.id);
-    self.name = ko.observable(data.name);
-    self.order = ko.observable(data.order);
-    self.pageTemplate = ko.observable(data.pageTemplate);
-    self.position = ko.observable(data.position);
-    self.resizable = ko.observable(data.resizable);
-    self.routing = ko.observableArray(data.routing);
-    self.status = ko.observable(data.status);
-    self.type = ko.observable(data.type);
-  },
 
-  bindDbData: function(JSONData, parentObj) {
+ 
+
+  bindDbData: function (JSONData, parentObj) {
     if (JSONData == null) return;
-    $.each(JSONData, function(i, elem) {
-      var elementModel = new farmGraphModule.jsonToModel(ko.toJS(elem));
+    $.each(JSONData, function (i, elem) {
+      var elementModel = new jsonToModel(ko.toJS(elem));
       var el = $("<div />")
         .attr({ id: elementModel.guid(), "data-type": elementModel.id() })
         .css({
@@ -405,10 +384,10 @@ farmGraphModule = {
         .draggable({
           containment: "parent",
           grid: elements.farmDrawPluginOptions.canvas.gridSize,
-          start: function(event, ui) {
+          start: function (event, ui) {
             $(this).click();
           },
-          drag: function(event, ui) {
+          drag: function (event, ui) {
             vm.setElementPosition(ui.position);
           }
         });
@@ -462,7 +441,7 @@ farmGraphModule = {
           containment: "parent",
           autoHide: true,
           grid: elements.farmDrawPluginOptions.canvas.gridSize,
-          resize: function(event, ui) {
+          resize: function (event, ui) {
             var guid = $(ui.helper).attr("id");
             vm.setElementPosition(ui.size);
             vm.selectElement(guid);
@@ -478,16 +457,31 @@ farmGraphModule = {
       }
     });
   },
+  bootstrapSlider: function () {
 
-  init: function() {
+   var slider = elements.bsSliderFarmZoom.bootstrapSlider({
+      formatter: function (value) {
+        $('.farm-draw-zone').css({
+          zoom: value + '%',
+          // '-moz-transform': scale(1.0),
+          // '-webkit-transform': scale(1.0)
+        })
+        return value;
+      }      
+    });
+    // slider.bootstrapSlider('setValue',vm.canvasProperties.zoom)
+  },
+
+  init: function (jsonData) {
     elements = this.elements;
     this.bindJsonElements();
     this.loadModalTypesSection();
     this.bindFarmDraw();
     this.bindExtensionMethods();
     this.bindCustomScrollBar();
+    this.bootstrapSlider();
 
-    var dbJsonData = JSON.parse(localStorage.getItem("JSONData"));
-    this.bindDbData(dbJsonData, null);
+ 
+    this.bindDbData(jsonData, null);
   }
 };

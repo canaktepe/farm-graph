@@ -30,7 +30,7 @@
                         <div id="modalBodyContent"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                         <button id="nextStep" type="button" class="btn btn-default">Next</button>
                         <button id="backStep" type="button" class="btn btn-default">Back</button>
                         <button id="saveElement" type="button" class="btn btn-success">Save</button>
@@ -83,6 +83,38 @@
                     <i class="fa fa-pen-nib" aria-hidden="true"></i>
                     Draw New Item
                 </button>
+                <div id="canvasProperties" class="card mt-3">
+                    <div class="card-header">
+                        <button class="btn btn-link p-0 text-dark nodecor" data-toggle="collapse" data-target="#canvas-prop-body"
+                            aria-expanded="false" aria-controls="canvas-prop-body">
+                            <strong>Canvas Properties</strong>
+                        </button>
+                    </div>
+                    <div id="canvas-prop-body" class="collapse">
+                        <div class="card-body">
+                            <div data-bind="text:canvasProperties().zoom()"></div>
+                            <div class="form-group">
+                                <label for="canvasW" class="col-form-label font-weight-bold">Zoom</label>
+                                <input id="bsSliderFarmZoom" type="text" data-slider-min="25" data-slider-max="150"
+                                    data-slider-step="5" data-bind="attr:{'data-slider-value':canvasProperties().zoom(),'data-value':canvasProperties().zoom()}" />
+                            </div>
+                            <div class="form-group row">
+                                <label for="canvasW" class="col-sm-2 col-form-label font-weight-bold pr-0">W</label>
+                                <div class="col-sm-4 pl-0">
+                                    <input min="0" step="5" type="number" class="form-control form-control-sm text-center"
+                                        id="canvasW" value="0" placeholder="w">
+                                </div>
+                                <label for="canvasH" class="col-sm-2 col-form-label font-weight-bold pr-0">H</label>
+                                <div class="col-sm-4 pl-0">
+                                    <input min="0" step="5" type="number" class="form-control form-control-sm text-center"
+                                        id="canvasH" value="0" placeholder="h">
+                                </div>
+                            </div>
+                            <button id="updateCanvas" type="button" class="btn btn-sm btn-success w-100 font-weight-bold">Save</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="objectInfCard" class="card mt-3">
                     <div class="card-header bg-light text-dark">
                         <strong> Object Information</strong>
@@ -181,10 +213,7 @@
                                 </li>
                                 <!--/ko-->
                             </ul>
-
                         </div>
-
-
                     </div>
                 </div>
             </div>
@@ -194,17 +223,304 @@
     <script type="text/javascript" src="node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
     <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="node_modules/bootstrap-confirmation2/dist/bootstrap-confirmation.min.js"></script>
+    <script type="text/javascript" src="node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"></script>
     <script type="text/javascript" src="node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
     <script type="text/javascript" src="http://knockoutjs.com/downloads/knockout-3.4.2.js"></script>
     <script type="text/javascript" src="/assets/js/jquery.farmdraw.js"></script>
     <script type="text/javascript" src="/assets/js/modules.js"></script>
     <script type="text/javascript">
-        (function () {
 
-            farmGraphModule.init();
+        canvasModel = function (data) {
+            var self = this;
+            self.zoom = ko.observable(data.zoom);
+            self.width = ko.observable(data.width);
+            self.height = ko.observable(data.height);
+        };
+
+        jsonToModel = function (data) {
+            var self = this;
+            self.acceptable = ko.observable(data.acceptable);
+            self.children = ko.observableArray();
+            if (data.children) {
+                if (data.children.length > 0) {
+                    $.each(data.children, function (i, item) {
+                        self.children.push(new jsonToModel(item));
+                    });
+                }
+            }
+            self.color = ko.observable(data.color);
+            self.formData = ko.observable(data.formData);
+            self.guid = ko.observable(data.guid);
+            self.id = ko.observable(data.id);
+            self.name = ko.observable(data.name);
+            self.order = ko.observable(data.order);
+            self.pageTemplate = ko.observable(data.pageTemplate);
+            self.position = ko.observable(data.position);
+            self.resizable = ko.observable(data.resizable);
+            self.routing = ko.observableArray(data.routing);
+            self.status = ko.observable(data.status);
+            self.type = ko.observable(data.type);
+        };
+
+        var jsonData = JSON.parse(localStorage.getItem("JSONData")) || [];
+
+
+        $(document).ready(function () {
+
+            if (jsonData.length > 0) {
+                jsonData = jsonData.map(function (item) {
+                    return new jsonToModel(item);
+                })
+            }
+
+             viewModel = function () {
+                var self = this;
+
+                self.devices = ko.observableArray([]);
+                self.physicals = ko.observableArray([]);
+                self.objects = ko.observableArray([]);
+                self.createdElements = ko.observableArray(jsonData);
+                self.activeElement = ko.observable(null);
+                self.selectedRoutingElement = ko.observable(null);
+                self.searchElementKeyword = ko.observable('');
+                self.filteredCreatingElementsByRoutable = ko.observableArray([]);
+                self.canvasProperties = ko.observable(new canvasModel({ zoom: 100, width: farmGraphModule.elements.farmDrawPluginOptions.canvas.width, height: farmGraphModule.elements.farmDrawPluginOptions.canvas.height }))
+
+                self.addRouting = function () {
+                    if (!self.activeElement() || !self.selectedRoutingElement()) return;
+                    // self.getCreatedElement(self.activeElement().guid, function (item) {
+                    var route = { guid: self.selectedRoutingElement().guid, name: self.selectedRoutingElement().formData().Name };
+                    // item.routing.push(route);
+                    self.activeElement().routing.push(route)
+                    localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                    // })
+                    self.selectedRoutingElement(null);
+                }
+
+                self.addRoutingCallback = function (elem) {
+                    if (elem.nodeType === 1) {
+                        $(elem)
+                            .animate({ backgroundColor: '#fc9c9c' }, 200)
+                            .animate({ backgroundColor: 'transparent' }, 800);
+                    }
+                }
+
+                self.hasRoutingList = function (data) {
+                    if (self.activeElement()) {
+                        //    var a=  ko.utils.arrayFirst(data, function (item) {
+                        //      return  ko.utils.arrayFilter(self.activeElement().routing(),function(route){
+                        //          console.log(route);
+                        //            return item == route;
+                        //        })
+                        //     })
+
+
+                        //     return a == null;
+                        return true;
+                    }
+                }
+
+                self.selectRoutingElement = function (data) {
+                    self.selectedRoutingElement(data);
+                }
+
+                self.deleteRouting = function (item) {
+                    self.activeElement().routing.remove(item);
+                    localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                }
+
+                self.RoutingSelectableElements = ko.computed(function () {
+                    self.filteredCreatingElementsByRoutable([])
+                    var filter = self.searchElementKeyword();
+                    self.createdElements().some(function iter(o, i, a) {
+                        if (o !== self.activeElement()) {
+                            self.filteredCreatingElementsByRoutable.push(o)
+                        }
+                        var children = (typeof o.children) === "function" ? o.children() : o.children
+                        return children && children.some(iter);
+                    });
+
+                    if (filter) {
+                        self.filteredCreatingElementsByRoutable(ko.utils.arrayFilter(self.filteredCreatingElementsByRoutable(), function (item) {
+                            return item.formData().Name.indexOf(filter) > -1;
+                        }))
+                    }
+                })
+
+                self.getActiveElementRouting = ko.computed({
+                    read: function () {
+                        var active = self.activeElement();
+                        if (active) {
+                            var data = $.extend([], active.routing())
+                            return data.reverse();
+                        }
+                        else {
+                            return ko.observableArray([]);
+                        }
+                    }
+                })
+
+                self.getActiveElement = ko.pureComputed({
+                    read: function () {
+                        return self.activeElement() ? self.activeElement() : { name: "Not Selected", position: ko.observable({ x: 0, y: 0, w: 0, h: 0 }) };
+                    },
+                    write: function () {
+                        self.activeElement().position({
+                            x: parseInt(self.activeElement().position().x),
+                            y: parseInt(self.activeElement().position().y),
+                            w: parseInt(self.activeElement().position().w),
+                            h: parseInt(self.activeElement().position().h)
+                        })
+                        // self.activeElement().position.x = parseInt(self.activeElement().position.x);
+                        // self.activeElement().position.y = parseInt(self.activeElement().position.y);
+                        // self.activeElement().position.w = parseInt(self.activeElement().position.w);
+                        // self.activeElement().position.h = parseInt(self.activeElement().position.h);
+
+                        //set canvas element position
+                        $("div[id=" + self.activeElement().guid() + "]").css({
+                            width: self.activeElement().position.w,
+                            height: self.activeElement().position.h,
+                            top: self.activeElement().position.y,
+                            left: self.activeElement().position.x,
+                        })
+                        localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                    }
+                }, viewModel)
+
+                self.setElementPosition = function (pos) {
+                    self.getActiveElement().position({
+                        x: typeof (pos.left) == 'number' ? pos.left : self.getActiveElement().position().x,
+                        y: typeof (pos.top) == 'number' ? pos.top : self.getActiveElement().position().y,
+                        w: typeof (pos.width) == 'number' ? pos.width : self.getActiveElement().position().w,
+                        h: typeof (pos.height) == 'number' ? pos.height : self.getActiveElement().position().h,
+                    })
+                }
+
+                self.setEnable = function (acceptable) {
+                    var data = self.devices().concat(self.physicals()).concat(self.objects());
+                    ko.utils.arrayForEach(data, function (el) {
+                        ko.utils.arrayFilter(acceptable, function (acc) {
+                            if (acc == el.id()) {
+                                el.status(true);
+                            }
+                        });
+                    })
+                    return true;
+                }
+
+                self.deleteElement = function (item) {
+                    var elem = self.activeElement();
+                    if (elem) {
+                        self.createdElements().some(function iter(o, i, a) {
+                            if (o.guid() === elem.guid()) {
+                                a.splice(i, 1);
+                                $("div[id=" + elem.guid() + "]").remove();
+                                self.activeElement(null)
+                                localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                                return true;
+                            }
+                            var children = (typeof o.children) === "function" ? o.children() : o.children
+                            return children && children.some(iter);
+                        });
+                    }
+                }
+
+                self.setDisableAllTypes = function () {
+                    var data = self.devices().concat(self.physicals()).concat(self.objects());
+                    ko.utils.arrayForEach(data, function (el) {
+                        el.status(false);
+                    })
+                    $('input[name="farmCheckBox"]').prop('checked', false);
+                }
+
+                self.getTypeOptions = function (id) {
+                    if (!id) return;
+                    var data = self.devices().concat(self.physicals()).concat(self.objects());
+                    // data = $.extend([], data)
+                    var el = ko.utils.arrayFirst(data, function (type) {
+                        // var item = $.extend({}, new farmGraphModule.jsonToModel(ko.toJS(type)));
+                        // if (item.id() == id)
+                        // return item;
+                        return type.id() == id;
+                    });
+                    // el.children = ko.observableArray([]);
+                    // el.routing = ko.observableArray([]);
+                    // return $.extend({}, el);;
+                    return el;
+                }
+
+                self.loadFarmElements = function () {
+                    ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.devices, function (el) {
+                        // obj.status = ko.observable(false);
+                        self.devices.push($.extend(true, {}, new jsonToModel(el)))
+                    })
+                    ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.physicals, function (el) {
+                        // obj.status = ko.observable(false);
+                        self.physicals.push($.extend(true, {}, new jsonToModel(el)))
+                    })
+                    ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.objects, function (el) {
+                        // obj.status = ko.observable(false);
+                        self.objects.push($.extend(true, {}, new jsonToModel(el)))
+                    })
+                }
+
+                self.pushElement = function (parentGuid, element) {
+                    var newElement = new jsonToModel(ko.toJS(element));
+                    if (parentGuid == null)
+                        self.createdElements.push(newElement);
+
+                    self.getCreatedElement(parentGuid, function (data) {
+                        data.children.push(newElement);
+                    })
+                    localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                }
+
+                self.getCreatedElement = function (guid, callback) {
+                    if (!guid) return;
+                    self.createdElements().some(function iter(o, i, a) {
+                        if (o.guid() === guid) {
+                            callback(o)
+                        }
+                        var children = (typeof o.children) === "function" ? o.children() : o.children
+                        return children && children.some(iter);
+                    });
+                }
+
+                self.setElement = function (option) {
+                    self.getCreatedElement(option.guid(), function (callback) {
+                        callback.formData(option.formData());
+                        localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                    })
+                }
+
+                self.selectElement = function (guid) {
+                    if (!guid) return;
+                    self.getCreatedElement(guid, function (item) {
+                        self.activeElement(item)
+                    })
+                }
+
+                self.zoomCanvas = function () {
+
+                }
+
+                self.loadFarmElements();
+
+                
+            }
+
+            vm = new viewModel();
+            ko.applyBindings(vm);
+
+
+
+        });
+
+        (function () {
+            farmGraphModule.init(jsonData)
+
 
         })();
-
 
     </script>
 </body>
