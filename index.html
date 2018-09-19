@@ -398,7 +398,7 @@
 
                     if (filter) {
                         self.filteredCreatingElementsByRoutable(ko.utils.arrayFilter(self.filteredCreatingElementsByRoutable(), function (item) {
-                            return item.formData().Name.indexOf(filter) > -1;
+                            return item.formData().Name.toLowerCase().indexOf(filter.toLowerCase()) > -1;
                         }))
                     }
                 })
