@@ -26,7 +26,41 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div id="modalBodyTypes"></div>
+                        <div id="modalBodyTypes">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="border border-primary border-top-0 border-right-0 border-left-0">
+                                        Devices</h5>
+                                    <div class="form type-form" data-bind="foreach:vm.devices">
+                                        <div class="form-check">
+                                            <input class="form-check-input" data-bind="value:id() ,attr: { id:'chk_' + id()},enable:status()"
+                                                type="radio" name="farmCheckBox">
+                                            <label class="form-check-label" data-bind="text:name(),attr: { for:'chk_'+ id() }"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <h5 class="border border-success border-top-0 border-right-0 border-left-0">Physicals</h5>
+                                    <div class="form type-form" data-bind="foreach:physicals">
+                                        <div class="form-check">
+                                            <input class="form-check-input" data-bind="value:id() ,attr: { id:'chk_' + id()},enable:status()"
+                                                type="radio" name="farmCheckBox">
+                                            <label class="form-check-label" data-bind="text:name(),attr: { for:'chk_'+ id() }"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <h5 class="border border-danger border-top-0 border-right-0 border-left-0">Objects</h5>
+                                    <div class="form type-form" data-bind="foreach:objects">
+                                        <div class="form-check">
+                                            <input class="form-check-input" data-bind="value:id() ,attr: { id:'chk_' + id()},enable:status()"
+                                                type="radio" name="farmCheckBox">
+                                            <label class="form-check-label" data-bind="text:name(),attr: { for:'chk_'+ id() }"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div id="modalBodyContent"></div>
                     </div>
                     <div class="modal-footer">
@@ -92,25 +126,30 @@
                     </div>
                     <div id="canvas-prop-body" class="collapse">
                         <div class="card-body">
-                            <div data-bind="text:canvasProperties().zoom()"></div>
+                            <div class="form-group row">
+                                <label for="canvasW" class="col-sm-4 col-form-label font-weight-bold">Zoom</label>
+                                <div class="col-sm-8">
+                                    <input type="text" readonly class="form-control-plaintext" id="canvasW" data-bind="value:canvasProperties().zoom()+'%'">
+                                </div>
+                            </div>
                             <div class="form-group">
-                                <label for="canvasW" class="col-form-label font-weight-bold">Zoom</label>
-                                <input id="bsSliderFarmZoom" type="text" data-slider-min="25" data-slider-max="150"
+                                <input id="bsSliderFarmZoom" type="text" data-slider-min="25" data-slider-max="175"
                                     data-slider-step="5" data-bind="attr:{'data-slider-value':canvasProperties().zoom(),'data-value':canvasProperties().zoom()}" />
                             </div>
                             <div class="form-group row">
                                 <label for="canvasW" class="col-sm-2 col-form-label font-weight-bold pr-0">W</label>
                                 <div class="col-sm-4 pl-0">
-                                    <input min="0" step="5" type="number" class="form-control form-control-sm text-center"
-                                        id="canvasW" value="0" placeholder="w">
+                                    <input min="640" step="5" max="2500" type="number" class="form-control form-control-sm text-center"
+                                        id="canvasW" value="0" placeholder="w" data-bind="value:canvasProperties().getWidth, valueUpdate: 'afterkeydown'">
                                 </div>
                                 <label for="canvasH" class="col-sm-2 col-form-label font-weight-bold pr-0">H</label>
                                 <div class="col-sm-4 pl-0">
-                                    <input min="0" step="5" type="number" class="form-control form-control-sm text-center"
-                                        id="canvasH" value="0" placeholder="h">
+                                    <input min="480" step="5" max="2500" type="number" class="form-control form-control-sm text-center"
+                                        id="canvasH" value="0" placeholder="h" data-bind="value:canvasProperties().getHeight,valueUpdate:'afterkeydown'">
                                 </div>
                             </div>
-                            <button id="updateCanvas" type="button" class="btn btn-sm btn-success w-100 font-weight-bold">Save</button>
+                            <button id="updateCanvas" type="button" class="btn btn-sm btn-success w-100 font-weight-bold"
+                                data-bind="click:saveCanvas">Save</button>
                         </div>
                     </div>
                 </div>
@@ -235,6 +274,25 @@
             self.zoom = ko.observable(data.zoom);
             self.width = ko.observable(data.width);
             self.height = ko.observable(data.height);
+
+
+
+            self.getWidth = ko.computed({
+                read: function () {
+                    return self.width();
+                },
+                write: function (value) {
+                    self.width(parseInt(value));
+                }
+            })
+            self.getHeight = ko.computed({
+                read: function () {
+                    return self.height();
+                },
+                write: function (value) {
+                    self.height(parseInt(value));
+                }
+            })
         };
 
         jsonToModel = function (data) {
@@ -264,16 +322,14 @@
 
         var jsonData = JSON.parse(localStorage.getItem("JSONData")) || [];
 
-
-        $(document).ready(function () {
-
+        farmGraphModule.bindJsonElements(function (callback) {
             if (jsonData.length > 0) {
                 jsonData = jsonData.map(function (item) {
                     return new jsonToModel(item);
                 })
             }
 
-             viewModel = function () {
+            viewModel = function () {
                 var self = this;
 
                 self.devices = ko.observableArray([]);
@@ -500,28 +556,25 @@
                     })
                 }
 
-                self.zoomCanvas = function () {
-
+                self.saveCanvas = function () {
+                    farmGraphModule.elements.drawArea.css({
+                        width: self.canvasProperties().width() + 'px',
+                        height: self.canvasProperties().height() + 'px'
+                    })
+                    farmGraphModule.elements.farm.mCustomScrollbar("update");
+                    farmGraphModule.elements.drawArea.farmDraw.reDrawGrid('x')
                 }
 
                 self.loadFarmElements();
-
-                
             }
 
             vm = new viewModel();
             ko.applyBindings(vm);
 
-
-
-        });
-
-        (function () {
-            farmGraphModule.init(jsonData)
-
-
-        })();
-
+            (function () {
+                farmGraphModule.init(jsonData)
+            })();
+        })
     </script>
 </body>
 

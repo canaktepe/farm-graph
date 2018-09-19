@@ -33,7 +33,16 @@ the production-ready jquery.farmdraw.min.js which contains the plugin
 and dependencies (minified). 
 */
 (function ($) {
+
+
     $.fn.farmDraw = function (options) {
+
+        var self = this;
+
+        $.fn.farmDraw.reDrawGrid = function (text) {
+            drawGrid(self, true);
+        };
+
         var defaults = {
             drawNewButton: '',
             drawNewButtonAddText: 'Add New Item',
@@ -213,7 +222,7 @@ and dependencies (minified).
             drawBox.selectedRect = drawBox.drawingRect;
             $('.rect.active').removeClass('active');
             drawBox.selectedRect.addClass(settings.rectangle.activeClass);
-            settings.onSelectElement.call(drawBox.selectedRect,drawBox.selectedRect);
+            settings.onSelectElement.call(drawBox.selectedRect, drawBox.selectedRect);
         }
 
         function calcPosition(startX, startY, endX, endY) {
@@ -241,11 +250,22 @@ and dependencies (minified).
             };
         }
 
-        drawGrid = function (drawBox) {
+
+
+        drawGrid = function (drawBox, redraw) {
+
+
+
             var canvas_width = settings.canvas.width,
                 canvas_height = settings.canvas.height,
                 gridsizeW = settings.canvas.gridSize[0],
                 gridsizeH = settings.canvas.gridSize[1];
+
+            if (redraw) {
+                canvas_width = parseInt( drawBox.css('width'));
+                canvas_height = parseInt( drawBox.css('height'));
+            }
+
 
             var gridCanvas = $('<canvas />', { attr: { width: canvas_width, height: canvas_height } });
             var context = gridCanvas.get(0).getContext("2d");
@@ -298,6 +318,8 @@ and dependencies (minified).
 
             $base.init = function () {
                 if (!$base.is('[id]')) $base.attr({ id: 'drawZone_' + i })
+
+                $base.data('options', settings);
 
                 $base.addClass('farm-draw-zone');
                 if (settings.canvas.class !== '') $base.addClass(settings.canvas.class);

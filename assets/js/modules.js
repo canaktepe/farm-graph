@@ -100,19 +100,6 @@ farmGraphModule = {
     elements.drawArea.farmDraw(elements.farmDrawPluginOptions);
   },
 
-  loadModalTypesSection: function () {
-    elements.elementModal.typesBody.load("/forms/objectTypes.html", function (
-      responseText,
-      textStatus,
-      XMLHttpRequest
-    ) {
-      if (XMLHttpRequest.status == 200) {
-      } else if (XMLHttpRequest.status == 404) {
-        console.log("objectTypes.html Page Not Found");
-      }
-    });
-  },
-
   elementUpdatedblClick: function (e) {
     var clickedElement = $(e.currentTarget);
     var guid = clickedElement.attr("id");
@@ -321,10 +308,11 @@ farmGraphModule = {
     return parent.attr("id");
   },
 
-  bindJsonElements: function () {
+  bindJsonElements: function (callback) {
     $.getJSON("/assets/devices.json")
       .done(function (data) {
         farmGraphModule.elements.jsonElements = data;
+        return callback('success')
       })
       .fail(function (jqxhr, textStatus, error) {
         console.log("Request Failed: " + error);
@@ -363,7 +351,7 @@ farmGraphModule = {
   },
 
 
- 
+
 
   bindDbData: function (JSONData, parentObj) {
     if (JSONData == null) return;
@@ -458,30 +446,27 @@ farmGraphModule = {
     });
   },
   bootstrapSlider: function () {
-
-   var slider = elements.bsSliderFarmZoom.bootstrapSlider({
+    var slider = elements.bsSliderFarmZoom.bootstrapSlider({
       formatter: function (value) {
+        vm.canvasProperties().zoom(value)
         $('.farm-draw-zone').css({
           zoom: value + '%',
           // '-moz-transform': scale(1.0),
           // '-webkit-transform': scale(1.0)
         })
         return value;
-      }      
+      }
     });
-    // slider.bootstrapSlider('setValue',vm.canvasProperties.zoom)
+    //  slider.bootstrapSlider('setValue',vm.canvasProperties().zoom())
   },
 
   init: function (jsonData) {
     elements = this.elements;
-    this.bindJsonElements();
-    this.loadModalTypesSection();
+
     this.bindFarmDraw();
     this.bindExtensionMethods();
     this.bindCustomScrollBar();
-    this.bootstrapSlider();
-
- 
     this.bindDbData(jsonData, null);
+    this.bootstrapSlider();
   }
 };
