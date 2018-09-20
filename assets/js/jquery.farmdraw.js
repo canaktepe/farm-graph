@@ -78,12 +78,16 @@ and dependencies (minified).
 
         function snapElementToGrid(x, y, w, h) {
             var position = { x, y, w, h };
+
+            var gridX = settings.canvas.gridSize[0];
+            var gridY = settings.canvas.gridSize[1];
+
             if (settings.canvas.snapGrid) {
                 position = {
-                    x: Math.round(x / settings.canvas.gridSize[0]) * settings.canvas.gridSize[0],
-                    y: Math.round(y / settings.canvas.gridSize[1]) * settings.canvas.gridSize[1],
-                    w: Math.round(w / settings.canvas.gridSize[0]) * settings.canvas.gridSize[0],
-                    h: Math.round(h / settings.canvas.gridSize[1]) * settings.canvas.gridSize[1]
+                    x: Math.round(x / gridX) * gridX,
+                    y: Math.round(y / gridY) * gridY,
+                    w: Math.round(w / gridX) * gridX,
+                    h: Math.round(h / gridY) * gridY
                 }
             }
             return position;
@@ -98,8 +102,8 @@ and dependencies (minified).
 
             var drawBox = $(e);
             var el = $("<div />").css({
-                left: e.drawStartX,
-                top: e.drawStartY,
+                // left: e.drawStartX,
+                // top: e.drawStartY,
                 width: w,
                 height: h,
                 backgroundColor: settings.rectangle.color,
@@ -116,7 +120,6 @@ and dependencies (minified).
                 el.on('click', function (cev) {
                     e.drawingRect = $(cev.currentTarget);
                     selectRect(e);
-
                     cev.stopPropagation();
                 })
             }
@@ -168,7 +171,9 @@ and dependencies (minified).
         function draw(e) {
             var currentX = e.pageX - this.canvasOffsetLeft;
             var currentY = e.pageY - this.canvasOffsetTop;
-            var position = calcPosition(this.drawStartX, this.drawStartY, currentX, currentY);
+
+            var position = calcPosition(this, currentX, currentY);
+
             this.drawingRect.css(position);
             settings.onDraw.call(this, this);
         };
@@ -178,14 +183,34 @@ and dependencies (minified).
 
             var target = $(e.target);
             var offset = target.offset();
+
+
+            var zoom = self.css('zoom');
+
             this.canvasOffsetLeft = offset.left;
             this.canvasOffsetTop = offset.top;
+
+
+            // if (zoom > 1) {
+                this.canvasOffsetLeft = parseInt(this.canvasOffsetLeft * zoom);
+                this.canvasOffsetTop = parseInt(this.canvasOffsetTop * zoom);
+            // }
+            // else if(zoom<1){
+            //     // zoom = zoom*10;
+            //     this.canvasOffsetLeft = parseInt(this.canvasOffsetLeft * zoom);
+            //     this.canvasOffsetTop = parseInt(this.canvasOffsetTop * zoom);
+            // }
+
+
+
+
             this.drawStartX = e.pageX - this.canvasOffsetLeft;
             this.drawStartY = e.pageY - this.canvasOffsetTop;
 
             var position = snapElementToGrid(this.drawStartX, this.drawStartY, 0, 0);
             this.drawStartX = position.x;
             this.drawStartY = position.y;
+
             this.drawingRect = createRectangle(target, 0, 0);
 
             $(this).on('mousemove', $.proxy(draw, this));
@@ -197,7 +222,7 @@ and dependencies (minified).
         function endDraw(e) {
             var currentX = e.pageX - this.canvasOffsetLeft;
             var currentY = e.pageY - this.canvasOffsetTop;
-            var position = calcPosition(this.drawStartX, this.drawStartY, currentX, currentY);
+            var position = calcPosition(this, currentX, currentY);
 
             if (position.width < settings.rectangle.minWidth || position.height < settings.rectangle.minHeight) {
                 this.drawingRect.remove();
@@ -225,11 +250,14 @@ and dependencies (minified).
             settings.onSelectElement.call(drawBox.selectedRect, drawBox.selectedRect);
         }
 
-        function calcPosition(startX, startY, endX, endY) {
-            var width = endX - startX;
-            var height = endY - startY;
-            var posX = startX;
-            var posY = startY;
+        function calcPosition(obj, endX, endY) {
+            var zoom = self.css('zoom');
+
+
+            var width = endX - obj.drawStartX;
+            var height = endY - obj.drawStartY;
+            var posX = Math.round( obj.drawStartX/zoom);
+            var posY = Math.round( obj.drawStartY/zoom);
 
             if (width < 0) {
                 width = Math.abs(width);
@@ -262,8 +290,8 @@ and dependencies (minified).
                 gridsizeH = settings.canvas.gridSize[1];
 
             if (redraw) {
-                canvas_width = parseInt( drawBox.css('width'));
-                canvas_height = parseInt( drawBox.css('height'));
+                canvas_width = parseInt(drawBox.css('width'));
+                canvas_height = parseInt(drawBox.css('height'));
             }
 
 
