@@ -43,6 +43,10 @@ and dependencies (minified).
             drawGrid(self, true);
         };
 
+        $.fn.farmDraw.snapToGrid = function (x, y, w, h) {
+            return snapElementToGrid(x, y, w, h);
+        }
+
         var defaults = {
             drawNewButton: '',
             drawNewButtonAddText: 'Add New Item',
@@ -77,6 +81,7 @@ and dependencies (minified).
         var settings = $.extend(true, {}, defaults, options);
 
         function snapElementToGrid(x, y, w, h) {
+
             var position = { x, y, w, h };
 
             var gridX = settings.canvas.gridSize[0];
@@ -84,12 +89,15 @@ and dependencies (minified).
 
             if (settings.canvas.snapGrid) {
                 position = {
-                    x: Math.round(x / gridX) * gridX,
-                    y: Math.round(y / gridY) * gridY,
-                    w: Math.round(w / gridX) * gridX,
-                    h: Math.round(h / gridY) * gridY
+                    x: typeof (position.x) == 'number' ? Math.round(x / gridX) * gridX : undefined,
+                    y: typeof (position.y) == 'number' ? Math.round(y / gridY) * gridY : undefined,
+                    w: typeof (position.w) == 'number' ? Math.round(w / gridX) * gridX : undefined,
+                    h: typeof (position.h) == 'number' ? Math.round(h / gridY) * gridY : undefined
                 }
             }
+
+
+
             return position;
         }
 
@@ -192,8 +200,8 @@ and dependencies (minified).
 
 
             // if (zoom > 1) {
-                this.canvasOffsetLeft = parseInt(this.canvasOffsetLeft * zoom);
-                this.canvasOffsetTop = parseInt(this.canvasOffsetTop * zoom);
+            this.canvasOffsetLeft = parseInt(this.canvasOffsetLeft * zoom);
+            this.canvasOffsetTop = parseInt(this.canvasOffsetTop * zoom);
             // }
             // else if(zoom<1){
             //     // zoom = zoom*10;
@@ -256,8 +264,8 @@ and dependencies (minified).
 
             var width = endX - obj.drawStartX;
             var height = endY - obj.drawStartY;
-            var posX = Math.round( obj.drawStartX/zoom);
-            var posY = Math.round( obj.drawStartY/zoom);
+            var posX = Math.round(obj.drawStartX / zoom);
+            var posY = Math.round(obj.drawStartY / zoom);
 
             if (width < 0) {
                 width = Math.abs(width);

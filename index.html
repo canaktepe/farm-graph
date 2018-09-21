@@ -229,12 +229,10 @@
                                 </div>
                                 <div class="dropdown-scroller" style="max-height:150px;overflow: hidden;">
                                     <!--ko foreach:filteredCreatingElementsByRoutable-->
-                                    <!--ko if:$parent.hasRoutingList($data.routing())-->
                                     <button class="dropdown-item" type="button" data-bind="click:$parent.selectRoutingElement.bind($data)">
                                         <div class="float-left mt-1 mr-1 routing-selector-box" data-bind="style:{backgroundColor:color}"></div>
                                         <label data-bind="text:formData().Name"></label>
                                     </button>
-                                    <!--/ko-->
                                     <!--/ko-->
                                 </div>
                             </div>
@@ -361,20 +359,7 @@
                     }
                 }
 
-                self.hasRoutingList = function (data) {
-                    if (self.activeElement()) {
-                        //    var a=  ko.utils.arrayFirst(data, function (item) {
-                        //      return  ko.utils.arrayFilter(self.activeElement().routing(),function(route){
-                        //          console.log(route);
-                        //            return item == route;
-                        //        })
-                        //     })
 
-
-                        //     return a == null;
-                        return true;
-                    }
-                }
 
                 self.selectRoutingElement = function (data) {
                     self.selectedRoutingElement(data);
@@ -386,12 +371,21 @@
                 }
 
                 self.RoutingSelectableElements = ko.computed(function () {
+                    if (self.activeElement() == null) return;
+
                     self.filteredCreatingElementsByRoutable([])
                     var filter = self.searchElementKeyword();
                     self.createdElements().some(function iter(o, i, a) {
                         if (o !== self.activeElement()) {
-                            self.filteredCreatingElementsByRoutable.push(o)
+                            var hasRoute = ko.utils.arrayFilter(self.activeElement().routing(), function (item) {
+                                var iguid = typeof(item.guid) === "function" ? item.guid() : item.guid;
+                                return iguid=== o.guid();
+                            }).length > 0
+
+                            if (hasRoute == false)
+                                self.filteredCreatingElementsByRoutable.push(o)
                         }
+
                         var children = (typeof o.children) === "function" ? o.children() : o.children
                         return children && children.some(iter);
                     });
@@ -427,29 +421,29 @@
                             w: parseInt(self.activeElement().position().w),
                             h: parseInt(self.activeElement().position().h)
                         })
-                        // self.activeElement().position.x = parseInt(self.activeElement().position.x);
-                        // self.activeElement().position.y = parseInt(self.activeElement().position.y);
-                        // self.activeElement().position.w = parseInt(self.activeElement().position.w);
-                        // self.activeElement().position.h = parseInt(self.activeElement().position.h);
 
                         //set canvas element position
                         $("div[id=" + self.activeElement().guid() + "]").css({
-                            width: self.activeElement().position.w,
-                            height: self.activeElement().position.h,
-                            top: self.activeElement().position.y,
-                            left: self.activeElement().position.x,
+                            width: self.activeElement().position().w,
+                            height: self.activeElement().position().h,
+                            top: self.activeElement().position().y,
+                            left: self.activeElement().position().x,
                         })
                         localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
                     }
                 }, viewModel)
 
                 self.setElementPosition = function (pos) {
-                    self.getActiveElement().position({
-                        x: typeof (pos.left) == 'number' ? pos.left : self.getActiveElement().position().x,
-                        y: typeof (pos.top) == 'number' ? pos.top : self.getActiveElement().position().y,
-                        w: typeof (pos.width) == 'number' ? pos.width : self.getActiveElement().position().w,
-                        h: typeof (pos.height) == 'number' ? pos.height : self.getActiveElement().position().h,
-                    })
+                    pos = {
+                        left: pos.left || self.getActiveElement().position().x,
+                        top: pos.top || self.getActiveElement().position().y,
+                        width: pos.width || self.getActiveElement().position().w,
+                        height: pos.height || self.getActiveElement().position().h
+                    };
+                    pos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(pos.left, pos.top, pos.width, pos.height);
+                    self.getActiveElement().position(pos)
+
+                    return pos;
                 }
 
                 self.setEnable = function (acceptable) {
@@ -492,16 +486,9 @@
                 self.getTypeOptions = function (id) {
                     if (!id) return;
                     var data = self.devices().concat(self.physicals()).concat(self.objects());
-                    // data = $.extend([], data)
                     var el = ko.utils.arrayFirst(data, function (type) {
-                        // var item = $.extend({}, new farmGraphModule.jsonToModel(ko.toJS(type)));
-                        // if (item.id() == id)
-                        // return item;
                         return type.id() == id;
                     });
-                    // el.children = ko.observableArray([]);
-                    // el.routing = ko.observableArray([]);
-                    // return $.extend({}, el);;
                     return el;
                 }
 

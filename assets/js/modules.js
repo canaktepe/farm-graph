@@ -32,6 +32,10 @@ farmGraphModule = {
         $(e).draggable("option", "start", function (event, ui) {
           $(this).click();
         });
+        $(e).draggable("option","stop",function(event,ui){
+          var newPos = vm.setElementPosition(ui.position);
+          $(this).css({ top: newPos.y, left: newPos.x });
+        })
         $(e).draggable("option", "drag", function (event, ui) {
           vm.setElementPosition(ui.position);
         });
@@ -44,6 +48,10 @@ farmGraphModule = {
           guid = $(e).attr("id");
           vm.selectElement(guid);
         });
+        $(e).resizable("option","stop",function(event,ui){
+          var newPos = vm.setElementPosition(ui.position);
+          $(this).css({ top: newPos.y, left: newPos.x });
+        })
       }
     },
     jsonElements: [],
@@ -376,7 +384,12 @@ farmGraphModule = {
             $(this).click();
           },
           drag: function (event, ui) {
-            vm.setElementPosition(ui.position);
+          vm.setElementPosition(ui.position);
+
+          },
+          stop:function(event,ui){
+            var newPos = vm.setElementPosition(ui.position);
+            $(this).css({ top: newPos.y, left: newPos.x });
           }
         });
 
@@ -433,6 +446,10 @@ farmGraphModule = {
             var guid = $(ui.helper).attr("id");
             vm.setElementPosition(ui.size);
             vm.selectElement(guid);
+          },
+          stop:function(event,ui){
+            var newPos = vm.setElementPosition(ui.position);
+            $(this).css({ top: newPos.y, left: newPos.x });
           }
         });
 
