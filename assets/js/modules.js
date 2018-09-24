@@ -468,8 +468,8 @@ farmGraphModule = {
         vm.canvasProperties().zoom(value)
         $('.farm-draw-zone').css({
           zoom: value + '%',
-          // '-moz-transform': scale(1.0),
-          // '-webkit-transform': scale(1.0)
+         '-moz-transform': 'scale('+value/100+')',
+         '-webkit-transform-origin':'top left'
         })
         return value;
       }

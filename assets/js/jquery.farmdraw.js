@@ -182,13 +182,21 @@ and dependencies (minified).
             settings.onDraw.call(this, this);
         };
 
+        function getZoom(){
+            var zoom = self.css('zoom') || self.css('-moz-transform');
+            
+            var values = zoom.match(/-?[\d\.]+/g);
+            return values[0] || zoom;
+        }
+
         function startDraw(e) {
             if (!drawingEnabled && settings.drawNewButton !== '') return;
 
             var target = $(e.target);
             var offset = target.offset();
 
-            var zoom = self.css('zoom');
+            var zoom = getZoom();
+            
 
             this.canvasOffsetLeft = offset.left;
             this.canvasOffsetTop = offset.top;
@@ -243,7 +251,7 @@ and dependencies (minified).
         }
 
         function calcPosition(obj, endX, endY) {
-            var zoom = self.css('zoom');
+            var zoom = getZoom();
 
             var width = endX - obj.drawStartX;
             var height = endY - obj.drawStartY;
