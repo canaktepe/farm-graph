@@ -95,12 +95,8 @@ and dependencies (minified).
                     h: typeof (position.h) == 'number' ? Math.round(h / gridY) * gridY : undefined
                 }
             }
-
-
-
             return position;
         }
-
 
         function drawBoxmouseOver(e) {
             drawingEnabled ? $(e.currentTarget).css("cursor", "crosshair") : $(e.currentTarget).css("cursor", "default")
@@ -192,25 +188,13 @@ and dependencies (minified).
             var target = $(e.target);
             var offset = target.offset();
 
-
             var zoom = self.css('zoom');
 
             this.canvasOffsetLeft = offset.left;
             this.canvasOffsetTop = offset.top;
 
-
-            // if (zoom > 1) {
             this.canvasOffsetLeft = parseInt(this.canvasOffsetLeft * zoom);
             this.canvasOffsetTop = parseInt(this.canvasOffsetTop * zoom);
-            // }
-            // else if(zoom<1){
-            //     // zoom = zoom*10;
-            //     this.canvasOffsetLeft = parseInt(this.canvasOffsetLeft * zoom);
-            //     this.canvasOffsetTop = parseInt(this.canvasOffsetTop * zoom);
-            // }
-
-
-
 
             this.drawStartX = e.pageX - this.canvasOffsetLeft;
             this.drawStartY = e.pageY - this.canvasOffsetTop;
@@ -260,7 +244,6 @@ and dependencies (minified).
 
         function calcPosition(obj, endX, endY) {
             var zoom = self.css('zoom');
-
 
             var width = endX - obj.drawStartX;
             var height = endY - obj.drawStartY;
