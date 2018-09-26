@@ -19,6 +19,8 @@ farmGraphModule = {
         resizable: true
       },
       onDrawComplete(e) {
+
+        if (!e.drawingRect) return;
         farmGraphModule.openModal(false, e.drawingRect, function (item) {
           if (typeof item === "object") {
             e.drawingRect.click();
@@ -32,7 +34,7 @@ farmGraphModule = {
         $(e).draggable("option", "start", function (event, ui) {
           $(this).click();
         });
-        $(e).draggable("option","stop",function(event,ui){
+        $(e).draggable("option", "stop", function (event, ui) {
           var newPos = vm.setElementPosition(ui.position);
           $(this).css({ top: newPos.y, left: newPos.x });
         })
@@ -48,7 +50,7 @@ farmGraphModule = {
           guid = $(e).attr("id");
           vm.selectElement(guid);
         });
-        $(e).resizable("option","stop",function(event,ui){
+        $(e).resizable("option", "stop", function (event, ui) {
           var newPos = vm.setElementPosition(ui.position);
           $(this).css({ top: newPos.y, left: newPos.x });
         })
@@ -57,6 +59,7 @@ farmGraphModule = {
     jsonElements: [],
     farm: $(".farm"),
     bsSliderFarmZoom: $('#bsSliderFarmZoom'),
+    ctxMenuSelector: $('.context'),
     drawArea: $("#draw-area"),
     mainAcceptable: ko.observableArray([15]),
     elementModal: {
@@ -77,7 +80,12 @@ farmGraphModule = {
     });
 
     $("#addedRouting").mCustomScrollbar({
-      scrollbarPosition: "outside"
+      scrollbarPosition: "outside",
+      autoDraggerLength: true,
+      autoHideScrollbar: true,
+      contentTouchScroll: true,
+      documentTouchScroll: true,
+      live: "on"
     });
 
     elements.farm.mCustomScrollbar({
@@ -384,10 +392,10 @@ farmGraphModule = {
             $(this).click();
           },
           drag: function (event, ui) {
-          vm.setElementPosition(ui.position);
+            vm.setElementPosition(ui.position);
 
           },
-          stop:function(event,ui){
+          stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);
             $(this).css({ top: newPos.y, left: newPos.x });
           }
@@ -447,7 +455,7 @@ farmGraphModule = {
             vm.setElementPosition(ui.size);
             vm.selectElement(guid);
           },
-          stop:function(event,ui){
+          stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);
             $(this).css({ top: newPos.y, left: newPos.x });
           }
@@ -468,13 +476,40 @@ farmGraphModule = {
         vm.canvasProperties().zoom(value)
         $('.farm-draw-zone').css({
           zoom: value + '%',
-         '-moz-transform': 'scale('+value/100+')',
-         '-webkit-transform-origin':'top left'
+          '-moz-transform': 'scale(' + value / 100 + ')',
+          '-webkit-transform-origin': 'top left'
         })
         return value;
       }
     });
     //  slider.bootstrapSlider('setValue',vm.canvasProperties().zoom())
+  },
+
+  contextMenu: function () {
+    elements.ctxMenuSelector.contextmenu({
+      before: function (e, context) {
+        this.$element.find('.rect').on('click.context.data-api', $.proxy(this.closemenu, this));
+        var target = $(e.target);
+        target.click();
+        if (!target.hasClass('rect')) {
+          $("#context-menu").find('.dropdown-item:not([id]),.dropdown-divider').hide();
+        }
+        else {
+          $("#context-menu").children().show();
+        }
+      },
+      onItem: function (context, e) {
+        var target = $(e.currentTarget);
+        if (target.attr('id')) {
+          var id = target.attr('id');
+          switch (id) {
+            case "ddlDrawNewItem":
+              $(elements.farmDrawPluginOptions.drawNewButton).click();
+              break;
+          }
+        }
+      }
+    });
   },
 
   init: function (jsonData) {
@@ -485,5 +520,6 @@ farmGraphModule = {
     this.bindCustomScrollBar();
     this.bindDbData(jsonData, null);
     this.bootstrapSlider();
+    this.contextMenu();
   }
 };

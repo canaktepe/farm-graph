@@ -34,12 +34,12 @@ and dependencies (minified).
 */
 (function ($) {
 
-
     $.fn.farmDraw = function (options) {
+        $("html").on('keydown', $.proxy(keydown, this));
 
         var self = this;
 
-        $.fn.farmDraw.reDrawGrid = function (text) {
+        $.fn.farmDraw.reDrawGrid = function () {
             drawGrid(self, true);
         };
 
@@ -49,7 +49,7 @@ and dependencies (minified).
 
         var defaults = {
             drawNewButton: '',
-            drawNewButtonAddText: 'Add New Item',
+            drawNewButtonAddText: 'Draw New Item',
             drawNewButtonCancelText: 'Cancel Draw',
             canvas: {
                 class: '',
@@ -182,9 +182,9 @@ and dependencies (minified).
             settings.onDraw.call(this, this);
         };
 
-        function getZoom(){
+        function getZoom() {
             var zoom = self.css('zoom') || self.css('-moz-transform');
-            
+
             var values = zoom.match(/-?[\d\.]+/g);
             return values[0] || zoom;
         }
@@ -196,7 +196,7 @@ and dependencies (minified).
             var offset = target.offset();
 
             var zoom = getZoom();
-            
+
 
             this.canvasOffsetLeft = offset.left;
             this.canvasOffsetTop = offset.top;
@@ -226,6 +226,7 @@ and dependencies (minified).
 
             if (position.width < settings.rectangle.minWidth || position.height < settings.rectangle.minHeight) {
                 this.drawingRect.remove();
+                this.drawingRect = null;
             } else {
                 this.drawingRect.css(position);
                 selectRect(this);
@@ -237,6 +238,7 @@ and dependencies (minified).
 
             $(this).off('mousemove');
             $(this).off('mouseup');
+
 
             settings.onDrawComplete.call(this, this);
         };
@@ -318,8 +320,8 @@ and dependencies (minified).
             if (settings.drawNewButton === '') return;
             drawingEnabled = !drawingEnabled
             drawingEnabled ?
-                drawNewButton.text(settings.drawNewButtonCancelText) :
-                drawNewButton.text(settings.drawNewButtonAddText);
+                drawNewButton.text(settings.drawNewButtonCancelText).prepend('<i class="fas fa-ban pr-1" aria-hidden="true"></i>') :
+                drawNewButton.text(settings.drawNewButtonAddText).prepend('<i class="fa fa-pen-nib pr-1" aria-hidden="true"></i>');
         }
 
         function dragEnableOrDisable() {
@@ -328,6 +330,13 @@ and dependencies (minified).
             $.each(draggables, function (i, dragEl) {
                 drawingEnabled ? $(dragEl).draggable('disable') : $(dragEl).draggable('enable');
             })
+        }
+
+        function keydown(e) {
+            if (!drawingEnabled) return;
+            if (e.which == 27) {
+                $(settings.drawNewButton).click();
+            }
         }
 
         var drawNewButton,
@@ -363,9 +372,12 @@ and dependencies (minified).
 
                 this.on('mouseover', $.proxy(drawBoxmouseOver, this));
                 this.on('mousedown', $.proxy(startDraw, this));
+
+
             };
 
             $base.init();
         });
+
     };
 }(jQuery));

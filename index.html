@@ -73,6 +73,15 @@
             </div>
         </div>
         <!--Modal end-->
+        <!--context menu start-->
+        <div id="context-menu" class="dropdown-menu">
+            <a class="dropdown-item" href="javascipt:void(0)" id="ddlDrawNewItem">
+                <i class="fa fa-pen-nib pr-3 text-primary"></i><strong>Draw New Item</strong></a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item pb-2 pt-2" href="javascript:void(0)" data-bind="click:editElement"><i class="fas fa-pen pr-3 text-secondary"></i>Edit</a>
+            <a class="dropdown-item pb-2 pt-2" href="javascript:void(0)" data-bind="click:deleteElement"><i class="fas fa-trash pr-3 text-danger"></i>Delete</a>
+        </div>
+        <!--context menu end-->
         <div class="row h-100">
             <div class="col-xl-10 col-lg-8 col-md-8 col-sm- col-xs-">
                 <div id="elementsAccordion" hidden>
@@ -100,22 +109,24 @@
                         </div>
                     </div>
                 </div>
+
                 <div id="designCard" class="card h-100">
                     <div class="card-header bg-light">
                         <strong> Farm Design Canvas</strong>
                     </div>
                     <div class="card-body h-100">
+
                         <div class="farm h-100">
-                            <div id="draw-area">
+                            <div class="context" id="draw-area" data-toggle="context" data-target="#context-menu">
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-xl-2 col-lg-4 col-md-4 col-sm- col-xs-">
                 <button type="button" id="draw" class="btn btn-primary btn-sm btn-block">
-                    <i class="fa fa-pen-nib" aria-hidden="true"></i>
-                    Draw New Item
+                    <i class="fa fa-pen-nib" aria-hidden="true"></i> Draw New Item
                 </button>
                 <div id="canvasProperties" class="card mt-3">
                     <div class="card-header">
@@ -263,6 +274,7 @@
     <script type="text/javascript" src="node_modules/bootstrap-confirmation2/dist/bootstrap-confirmation.min.js"></script>
     <script type="text/javascript" src="node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"></script>
     <script type="text/javascript" src="node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script type="text/javascript" src="node_modules/bootstrap-contextmenu/bootstrap-contextmenu.js"></script>
     <script type="text/javascript" src="http://knockoutjs.com/downloads/knockout-3.4.2.js"></script>
     <script type="text/javascript" src="/assets/js/jquery.farmdraw.js"></script>
     <script type="text/javascript" src="/assets/js/modules.js"></script>
@@ -474,7 +486,7 @@
                     return true;
                 }
 
-                self.deleteElement = function (item) {
+                self.deleteElement = function () {
                     var elem = self.activeElement();
                     if (elem) {
                         self.createdElements().some(function iter(o, i, a) {
@@ -545,6 +557,12 @@
                     });
                 }
 
+                self.editElement = function () {
+                    var activeGuid = self.activeElement().guid();
+                    $("div[id=" + activeGuid + "]").dblclick();
+                    return;
+                }
+
                 self.setElement = function (option) {
                     self.getCreatedElement(option.guid(), function (callback) {
                         callback.formData(option.formData());
@@ -565,7 +583,7 @@
                         height: self.canvasProperties().height() + 'px'
                     })
                     farmGraphModule.elements.farm.mCustomScrollbar("update");
-                    farmGraphModule.elements.drawArea.farmDraw.reDrawGrid('x')
+                    farmGraphModule.elements.drawArea.farmDraw.reDrawGrid();
                 }
 
                 self.loadFarmElements();
@@ -575,8 +593,12 @@
             ko.applyBindings(vm);
 
             (function () {
-                farmGraphModule.init(jsonData)
+                farmGraphModule.init(jsonData);
+
             })();
+
+
+
         })
     </script>
 </body>
