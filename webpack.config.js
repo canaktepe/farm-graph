@@ -1,25 +1,3 @@
-// var webpack = require('webpack');
-
-// module.exports = {
-//   plugins: [
-//     new webpack.ProvidePlugin({
-//       jQuery: 'jquery',
-//       $: 'jquery'
-//     }),
-//     new webpack.ProvidePlugin({
-//       ko: 'knockout',
-//     }),
-//   ],
-//   module: {
-//     rules: [
-//       {
-//         test: /\.css$/,
-//         use: [ 'style-loader', 'css-loader' ]
-//       }
-//     ]
-//   }
-// };
-
 const path = require("path");
 const webpack = require("webpack");
 
