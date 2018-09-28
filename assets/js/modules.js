@@ -1,6 +1,3 @@
-// TODO: farm canvas zoom in zoom out
-// TODO: farm canvas object double-click open modal
-
 var elements;
 farmGraphModule = {
   elements: {
@@ -482,11 +479,10 @@ farmGraphModule = {
         return value;
       }
     });
-    //  slider.bootstrapSlider('setValue',vm.canvasProperties().zoom())
   },
 
   contextMenu: function () {
-    var xy = elements.ctxMenuSelector.contextmenu({
+   elements.ctxMenuSelector.contextmenu({
       before: function (e, context) {
 
         this.$element.find('.rect').on('click.context.data-api', $.proxy(this.closemenu, this));
@@ -512,19 +508,15 @@ farmGraphModule = {
         }
       }
     });
-
-
-
   },
 
   init: function (jsonData) {
     elements = this.elements;
-    this.contextMenu();
     this.bindFarmDraw();
     this.bindExtensionMethods();
     this.bindCustomScrollBar();
     this.bindDbData(jsonData, null);
     this.bootstrapSlider();
-
+    this.contextMenu();
   }
 };

@@ -1,9 +1,8 @@
-@import url("/node_modules/jquery-ui-dist/jquery-ui.min.css");
-@import url("/node_modules/bootstrap/dist/css/bootstrap.min.css");
-@import url("/node_modules/@fortawesome/fontawesome-free/css/all.css");
-@import url("https://fonts.googleapis.com/css?family=Rajdhani:400,700");
-@import url("/node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css");
-@import url("/node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css");
+@import "~jquery-ui-dist/jquery-ui.min.css";
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~@fortawesome/fontawesome-free/css/all.css";
+@import "~malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css";
+@import "~bootstrap-slider/dist/css/bootstrap-slider.min.css";
 
 html,
 body,
@@ -122,4 +121,11 @@ body {
   -moz-box-shadow:    5px 5px 5px 0px #6b6b6b;
   -webkit-box-shadow: 5px 5px 5px 0px #6b6b6b;
   box-shadow:         5px 5px 5px 0px #6b6b6b;
+}
+
+.dropdown-menu.open{
+  display: block;
+}
+.slider.slider-horizontal{
+  width: 100% !important;
 }

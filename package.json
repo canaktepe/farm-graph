@@ -14,11 +14,14 @@
     "bootstrap-contextmenu": "^1.0.0",
     "bootstrap-slider": "^10.2.1",
     "css-loader": "^1.0.0",
+    "extract-loader": "^3.0.0",
+    "file-loader": "^2.0.0",
     "jquery": "^3.3.1",
     "jquery-ui-dist": "^1.12.1",
     "jsplumb": "^2.8.0",
     "knockout": "^3.4.2",
     "malihu-custom-scrollbar-plugin": "^3.1.5",
+    "url-loader": "^1.1.1",
     "webpack": "~4.20.2"
   },
   "devDependencies": {
