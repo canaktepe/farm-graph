@@ -486,10 +486,12 @@ farmGraphModule = {
   },
 
   contextMenu: function () {
-    elements.ctxMenuSelector.contextmenu({
+    var xy = elements.ctxMenuSelector.contextmenu({
       before: function (e, context) {
+
         this.$element.find('.rect').on('click.context.data-api', $.proxy(this.closemenu, this));
         var target = $(e.target);
+
         target.click();
         if (!target.hasClass('rect')) {
           $("#context-menu").find('.dropdown-item:not([id]),.dropdown-divider').hide();
@@ -510,16 +512,19 @@ farmGraphModule = {
         }
       }
     });
+
+
+
   },
 
   init: function (jsonData) {
     elements = this.elements;
-
+    this.contextMenu();
     this.bindFarmDraw();
     this.bindExtensionMethods();
     this.bindCustomScrollBar();
     this.bindDbData(jsonData, null);
     this.bootstrapSlider();
-    this.contextMenu();
+
   }
 };

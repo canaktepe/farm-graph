@@ -1,3 +1,5 @@
+@import url("/node_modules/jquery-ui-dist/jquery-ui.min.css");
+@import url("/node_modules/bootstrap/dist/css/bootstrap.min.css");
 @import url("/node_modules/@fortawesome/fontawesome-free/css/all.css");
 @import url("https://fonts.googleapis.com/css?family=Rajdhani:400,700");
 @import url("/node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css");
