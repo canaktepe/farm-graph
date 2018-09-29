@@ -24,7 +24,7 @@ module.exports = {
           {
             loader: "file-loader",
             options: {
-                name: "[name].[ext]",
+                name: "[name].[ext]"
             },
           },
           {
@@ -34,6 +34,7 @@ module.exports = {
             loader: "css-loader",
             options: {
               importLoaders: 1,
+              minimize: true 
             },
           }
         ]
