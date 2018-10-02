@@ -390,7 +390,6 @@ farmGraphModule = {
           },
           drag: function (event, ui) {
             vm.setElementPosition(ui.position);
-
           },
           stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);

@@ -160,12 +160,8 @@ farmGraphModule.bindJsonElements(function (callback) {
                 return self.activeElement() ? self.activeElement() : { name: "Not Selected", position: ko.observable({ x: 0, y: 0, w: 0, h: 0 }) };
             },
             write: function () {
-                self.activeElement().position({
-                    x: parseInt(self.activeElement().position().x),
-                    y: parseInt(self.activeElement().position().y),
-                    w: parseInt(self.activeElement().position().w),
-                    h: parseInt(self.activeElement().position().h)
-                })
+                var positionToSnap = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(self.activeElement().position().x, self.activeElement().position().y, self.activeElement().position().w, self.activeElement().position().h);
+                self.activeElement().position(positionToSnap)
 
                 //set canvas element position
                 $("div[id=" + self.activeElement().guid() + "]").css({
@@ -180,10 +176,10 @@ farmGraphModule.bindJsonElements(function (callback) {
 
         self.setElementPosition = function (pos) {
             pos = {
-                left: pos.left || self.getActiveElement().position().x,
-                top: pos.top || self.getActiveElement().position().y,
-                width: pos.width || self.getActiveElement().position().w,
-                height: pos.height || self.getActiveElement().position().h
+                left: typeof(pos.left) == 'number'? pos.left : self.getActiveElement().position().x,
+                top: typeof(pos.top) == 'number'? pos.top : self.getActiveElement().position().y,
+                width: typeof(pos.width) == 'number'? pos.width : self.getActiveElement().position().w,
+                height: typeof(pos.height) == 'number'? pos.height : self.getActiveElement().position().h
             };
             pos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(pos.left, pos.top, pos.width, pos.height);
             self.getActiveElement().position(pos)
