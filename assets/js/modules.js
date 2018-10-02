@@ -137,8 +137,23 @@ farmGraphModule = {
   },
 
   fillFormData: function (data) {
-    $("#Name").val(data.formData().Name);
-    $("#Name2").val(data.formData().Name2);
+    $.each(data.formData(), function (key, value) {
+      var formObject = $('[name=' + key + ']');
+      var tagName = formObject[0].tagName.toLowerCase();
+      switch (tagName) {
+        case "input":
+          var type = formObject.attr('type').toLowerCase();
+          switch (type) {
+            case "text":
+              formObject.val(value);
+              break;
+            case "radio":
+              formObject.filter('[value=' + value + ']').attr('checked', true);
+              break;
+          }
+          break;
+      }
+    });
   },
 
   getDrawedElementPosition: function (drawedElement) {
@@ -481,7 +496,7 @@ farmGraphModule = {
   },
 
   contextMenu: function () {
-   elements.ctxMenuSelector.contextmenu({
+    elements.ctxMenuSelector.contextmenu({
       before: function (e, context) {
 
         this.$element.find('.rect').on('click.context.data-api', $.proxy(this.closemenu, this));
