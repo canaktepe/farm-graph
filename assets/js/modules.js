@@ -513,9 +513,9 @@ farmGraphModule = {
     elements = this.elements;
     this.bindFarmDraw();
     this.bindExtensionMethods();
-    this.bindCustomScrollBar();
     this.bindDbData(jsonData, null);
     this.bootstrapSlider();
     this.contextMenu();
+    this.bindCustomScrollBar();
   }
 };
