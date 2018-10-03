@@ -138,20 +138,41 @@ farmGraphModule = {
 
   fillFormData: function (data) {
     $.each(data.formData(), function (key, value) {
-      var formObject = $('[name=' + key + ']');
-      var tagName = formObject[0].tagName.toLowerCase();
-      switch (tagName) {
-        case "input":
-          var type = formObject.attr('type').toLowerCase();
-          switch (type) {
-            case "text":
-              formObject.val(value);
-              break;
-            case "radio":
-              formObject.filter('[value=' + value + ']').attr('checked', true);
-              break;
-          }
-          break;
+      var formObject = $('form#controlData [name=' + key + ']');
+      if (formObject.length > 0) {
+        var tagName = formObject[0].tagName.toLowerCase();
+        switch (tagName) {
+          case "input":
+            var type = formObject.attr('type').toLowerCase();
+            switch (type) {
+              case "text":
+                formObject.val(value);
+                break;
+              case "radio":
+                formObject.filter('[value=' + value + ']').attr('checked', true);
+                break;
+              case "checkbox":
+                value.filter((v, vi) => {
+                  formObject.filter((foi, fo) => {
+                    if (v == $(fo).val()) {
+                      $(fo).attr('checked', true);
+                    }
+                  })
+                });
+                break;
+            }
+            break;
+          case "select":
+            var multiple = typeof (formObject.attr('multiple')) !== 'undefined';
+            if (multiple) {
+              $.each(value, function (i, e) {
+                formObject.find('option[value=' + e + ']').attr('selected', true);
+              });
+            }
+            else
+              formObject.find('option[value=' + value + ']').attr('selected', true);
+            break;
+        }
       }
     });
   },
@@ -194,7 +215,41 @@ farmGraphModule = {
       var formData = $("form#controlData")
         .serializeArray()
         .reduce(function (m, o) {
-          m[o.name] = o.value;
+          var formObject = $('form#controlData [name=' + o.name + ']');
+          var tagName = formObject[0].tagName.toLowerCase();
+
+          var value = "";
+          switch (tagName) {
+            case 'input':
+              var type = formObject.attr('type');
+              switch (type) {
+                case "text":
+                  value = o.value;
+                  break;
+                case "radio":
+                  value = o.value;
+                  break;
+                case "checkbox":
+                  value = [];
+                  $.each(formObject.filter(':checked'), function (i, e) {
+                    value.push($(e).val())
+                  })
+                  break;
+              }
+              break;
+            case 'select':
+              var multiple = typeof (formObject.attr('multiple')) !== 'undefined';
+              if (multiple) {
+                value = [];
+                $.each(formObject.find('option:selected'), function (i, e) {
+                  value.push($(e).val());
+                })
+              }
+              else
+                value = o.value;
+              break;
+          }
+          m[o.name] = value;
           return m;
         }, {});
 
