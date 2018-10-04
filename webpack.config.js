@@ -10,7 +10,7 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       jQuery: "jquery",
-      $: "jquery"
+      $fg: "jquery"
     }),
     new webpack.ProvidePlugin({
       ko: "knockout"

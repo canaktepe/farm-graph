@@ -29,7 +29,7 @@ jsonToModel = function (data) {
     self.children = ko.observableArray();
     if (data.children) {
         if (data.children.length > 0) {
-            $.each(data.children, function (i, item) {
+            $fg.each(data.children, function (i, item) {
                 self.children.push(new jsonToModel(item));
             });
         }
@@ -63,7 +63,7 @@ farmGraphModule.bindJsonElements(function (callback) {
             if (ko.isObservable(guid))
                 guid = guid()
 
-            var showObj = $("div.rect[id=" + guid + "]");
+            var showObj = $fg("div.rect[id=" + guid + "]");
 
             ko.utils.registerEventHandler(element, "mouseover", function () {
                 ko.utils.toggleDomNodeCssClass(element, ko.utils.unwrapObservable('bg-light'), true);
@@ -99,7 +99,7 @@ farmGraphModule.bindJsonElements(function (callback) {
 
         self.addRoutingCallback = function (elem) {
             if (elem.nodeType === 1) {
-                $(elem)
+                $fg(elem)
                     .animate({ backgroundColor: '#fc9c9c' }, 200)
                     .animate({ backgroundColor: 'transparent' }, 800);
             }
@@ -111,7 +111,7 @@ farmGraphModule.bindJsonElements(function (callback) {
 
         self.deleteRouting = function (item) {
             self.activeElement().routing.remove(item);
-            $('div.rect').removeClass('show-route');
+            $fg('div.rect').removeClass('show-route');
             localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
         }
 
@@ -146,7 +146,7 @@ farmGraphModule.bindJsonElements(function (callback) {
             read: function () {
                 var active = self.activeElement();
                 if (active) {
-                    var data = $.extend([], active.routing())
+                    var data = $fg.extend([], active.routing())
                     return data.reverse();
                 }
                 else {
@@ -164,7 +164,7 @@ farmGraphModule.bindJsonElements(function (callback) {
                 self.activeElement().position(positionToSnap)
 
                 //set canvas element position
-                $("div[id=" + self.activeElement().guid() + "]").css({
+                $fg("div[id=" + self.activeElement().guid() + "]").css({
                     width: self.activeElement().position().w,
                     height: self.activeElement().position().h,
                     top: self.activeElement().position().y,
@@ -205,7 +205,7 @@ farmGraphModule.bindJsonElements(function (callback) {
                 self.createdElements().some(function iter(o, i, a) {
                     if (o.guid() === elem.guid()) {
                         a.splice(i, 1);
-                        $("div[id=" + elem.guid() + "]").remove();
+                        $fg("div[id=" + elem.guid() + "]").remove();
                         self.activeElement(null)
                         localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
                         return true;
@@ -221,7 +221,7 @@ farmGraphModule.bindJsonElements(function (callback) {
             ko.utils.arrayForEach(data, function (el) {
                 el.status(false);
             })
-            $('input[name="farmCheckBox"]').prop('checked', false);
+            $fg('input[name="farmCheckBox"]').prop('checked', false);
         }
 
         self.getTypeOptions = function (id) {
@@ -236,15 +236,15 @@ farmGraphModule.bindJsonElements(function (callback) {
         self.loadFarmElements = function () {
             ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.devices, function (el) {
                 // obj.status = ko.observable(false);
-                self.devices.push($.extend(true, {}, new jsonToModel(el)))
+                self.devices.push($fg.extend(true, {}, new jsonToModel(el)))
             })
             ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.physicals, function (el) {
                 // obj.status = ko.observable(false);
-                self.physicals.push($.extend(true, {}, new jsonToModel(el)))
+                self.physicals.push($fg.extend(true, {}, new jsonToModel(el)))
             })
             ko.utils.arrayForEach(farmGraphModule.elements.jsonElements.objects, function (el) {
                 // obj.status = ko.observable(false);
-                self.objects.push($.extend(true, {}, new jsonToModel(el)))
+                self.objects.push($fg.extend(true, {}, new jsonToModel(el)))
             })
         }
 
@@ -272,7 +272,7 @@ farmGraphModule.bindJsonElements(function (callback) {
 
         self.editElement = function () {
             var activeGuid = self.activeElement().guid();
-            $("div[id=" + activeGuid + "]").dblclick();
+            $fg("div[id=" + activeGuid + "]").dblclick();
             return;
         }
 

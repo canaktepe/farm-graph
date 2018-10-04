@@ -25,58 +25,58 @@ farmGraphModule = {
         });
       },
       onSelectElement(e) {
-        var guid = $(e).attr("id");
+        var guid = $fg(e).attr("id");
         vm.selectElement(guid);
 
-        $(e).draggable("option", "start", function (event, ui) {
-          $(this).click();
+        $fg(e).draggable("option", "start", function (event, ui) {
+          $fg(this).click();
         });
-        $(e).draggable("option", "stop", function (event, ui) {
+        $fg(e).draggable("option", "stop", function (event, ui) {
           var newPos = vm.setElementPosition(ui.position);
-          $(this).css({ top: newPos.y, left: newPos.x });
+          $fg(this).css({ top: newPos.y, left: newPos.x });
         })
-        $(e).draggable("option", "drag", function (event, ui) {
+        $fg(e).draggable("option", "drag", function (event, ui) {
           vm.setElementPosition(ui.position);
         });
-        $(e).resizable("option", "resize", function (event, ui) {
-          guid = $(e).attr("id");
+        $fg(e).resizable("option", "resize", function (event, ui) {
+          guid = $fg(e).attr("id");
           vm.setElementPosition(ui.size);
           vm.selectElement(guid);
         });
-        $(e).resizable("option", "start", function (event, ui) {
-          guid = $(e).attr("id");
+        $fg(e).resizable("option", "start", function (event, ui) {
+          guid = $fg(e).attr("id");
           vm.selectElement(guid);
         });
-        $(e).resizable("option", "stop", function (event, ui) {
+        $fg(e).resizable("option", "stop", function (event, ui) {
           var newPos = vm.setElementPosition(ui.position);
-          $(this).css({ top: newPos.y, left: newPos.x });
+          $fg(this).css({ top: newPos.y, left: newPos.x });
         })
       }
     },
     jsonElements: [],
-    farm: $(".farm"),
-    bsSliderFarmZoom: $('#bsSliderFarmZoom'),
-    ctxMenuSelector: $('.context'),
-    drawArea: $("#draw-area"),
+    farm: $fg(".farm"),
+    bsSliderFarmZoom: $fg('#bsSliderFarmZoom'),
+    ctxMenuSelector: $fg('.context'),
+    drawArea: $fg("#draw-area"),
     mainAcceptable: ko.observableArray([15]),
     elementModal: {
-      selector: $("#elementModal"),
-      typesBody: $("#modalBodyTypes"),
-      contentBody: $("#modalBodyContent"),
-      saveButton: $("#saveElement"),
-      nextButton: $("#nextStep"),
-      backButton: $("#backStep")
+      selector: $fg("#elementModal"),
+      typesBody: $fg("#modalBodyTypes"),
+      contentBody: $fg("#modalBodyContent"),
+      saveButton: $fg("#saveElement"),
+      nextButton: $fg("#nextStep"),
+      backButton: $fg("#backStep")
     },
     activeClass: "active"
   },
 
   bindCustomScrollBar: function () {
 
-    $(".dropdown-scroller").mCustomScrollbar({
+    $fg(".dropdown-scroller").mCustomScrollbar({
       // scrollbarPosition: "outside"
     });
 
-    $("#addedRouting").mCustomScrollbar({
+    $fg("#addedRouting").mCustomScrollbar({
       scrollbarPosition: "outside",
       autoDraggerLength: true,
       autoHideScrollbar: true,
@@ -114,7 +114,7 @@ farmGraphModule = {
   },
 
   elementUpdatedblClick: function (e) {
-    var clickedElement = $(e.currentTarget);
+    var clickedElement = $fg(e.currentTarget);
     var guid = clickedElement.attr("id");
     vm.getCreatedElement(guid, function (data) {
       farmGraphModule.openModal(true, data, function (cb) {
@@ -137,8 +137,8 @@ farmGraphModule = {
   },
 
   fillFormData: function (data) {
-    $.each(data.formData(), function (key, value) {
-      var formObject = $('form#controlData [name=' + key + ']');
+    $fg.each(data.formData(), function (key, value) {
+      var formObject = $fg('form#controlData [name=' + key + ']');
       if (formObject.length > 0) {
         var tagName = formObject[0].tagName.toLowerCase();
         switch (tagName) {
@@ -154,8 +154,8 @@ farmGraphModule = {
               case "checkbox":
                 value.filter((v, vi) => {
                   formObject.filter((foi, fo) => {
-                    if (v == $(fo).val()) {
-                      $(fo).attr('checked', true);
+                    if (v == $fg(fo).val()) {
+                      $fg(fo).attr('checked', true);
                     }
                   })
                 });
@@ -165,7 +165,7 @@ farmGraphModule = {
           case "select":
             var multiple = typeof (formObject.attr('multiple')) !== 'undefined';
             if (multiple) {
-              $.each(value, function (i, e) {
+              $fg.each(value, function (i, e) {
                 formObject.find('option[value=' + e + ']').attr('selected', true);
               });
             }
@@ -185,7 +185,7 @@ farmGraphModule = {
       position.x = parseInt(drawedElement.css("left"));
       position.y = parseInt(drawedElement.css("top"));
     } else {
-      var savedElement = $("div[id=" + drawedElement.guid() + "]");
+      var savedElement = $fg("div[id=" + drawedElement.guid() + "]");
       if (savedElement) {
         position.w = parseInt(savedElement.css("width"));
         position.h = parseInt(savedElement.css("height"));
@@ -212,10 +212,10 @@ farmGraphModule = {
     elements.elementModal.saveButton.on("click", function (e) {
       elements.elementModal.selector.data("saved", true).modal("hide");
       // get selected type forms input data
-      var formData = $("form#controlData")
+      var formData = $fg("form#controlData")
         .serializeArray()
         .reduce(function (m, o) {
-          var formObject = $('form#controlData [name=' + o.name + ']');
+          var formObject = $fg('form#controlData [name=' + o.name + ']');
           var tagName = formObject[0].tagName.toLowerCase();
 
           var value = "";
@@ -231,8 +231,8 @@ farmGraphModule = {
                   break;
                 case "checkbox":
                   value = [];
-                  $.each(formObject.filter(':checked'), function (i, e) {
-                    value.push($(e).val())
+                  $fg.each(formObject.filter(':checked'), function (i, e) {
+                    value.push($fg(e).val())
                   })
                   break;
               }
@@ -241,8 +241,8 @@ farmGraphModule = {
               var multiple = typeof (formObject.attr('multiple')) !== 'undefined';
               if (multiple) {
                 value = [];
-                $.each(formObject.find('option:selected'), function (i, e) {
-                  value.push($(e).val());
+                $fg.each(formObject.find('option:selected'), function (i, e) {
+                  value.push($fg(e).val());
                 })
               }
               else
@@ -306,7 +306,7 @@ farmGraphModule = {
         return;
       }
 
-      var selectedType = $('input[name="farmCheckBox"]:checked').val();
+      var selectedType = $fg('input[name="farmCheckBox"]:checked').val();
       var elementOptions = vm.getTypeOptions(selectedType);
 
       if (!elementOptions) return;
@@ -323,7 +323,7 @@ farmGraphModule = {
           elements.elementModal.selector
             .find(".modal-title")
             .text("Add New " + drawedElement.options.name());
-          $("form#controlData input:first").focus();
+          $fg("form#controlData input:first").focus();
         } else if (XMLHttpRequest.status == 404) {
           console.log(pageTemplate + " Page Not Found");
           elements.elementModal.selector.modal("hide");
@@ -332,7 +332,7 @@ farmGraphModule = {
       });
 
       //show back, hide next button
-      $(this).hide();
+      $fg(this).hide();
       elements.elementModal.backButton.show();
       elements.elementModal.saveButton.show();
       elements.elementModal.typesBody.hide();
@@ -344,7 +344,7 @@ farmGraphModule = {
       drawedElement.options = undefined;
       //show next, hide back button
       elements.elementModal.selector.find(".modal-title").text("Select Type");
-      $(this).hide();
+      $fg(this).hide();
       elements.elementModal.nextButton.show();
       elements.elementModal.saveButton.hide();
       elements.elementModal.contentBody.hide();
@@ -392,7 +392,7 @@ farmGraphModule = {
   },
 
   bindJsonElements: function (callback) {
-    $.getJSON("/assets/devices.json")
+    $fg.getJSON("/assets/devices.json")
       .done(function (data) {
         farmGraphModule.elements.jsonElements = data;
         return callback('success')
@@ -425,9 +425,9 @@ farmGraphModule = {
   },
 
   elementSelectClick: function (e) {
-    var obj = $(e.currentTarget);
-    $(".rect.active").removeClass("active");
-    $(this).addClass(elements.activeClass);
+    var obj = $fg(e.currentTarget);
+    $fg(".rect.active").removeClass("active");
+    $fg(this).addClass(elements.activeClass);
     var guid = obj.attr("id");
     vm.selectElement(guid);
     e.stopPropagation();
@@ -438,9 +438,9 @@ farmGraphModule = {
 
   bindDbData: function (JSONData, parentObj) {
     if (JSONData == null) return;
-    $.each(JSONData, function (i, elem) {
+    $fg.each(JSONData, function (i, elem) {
       var elementModel = new jsonToModel(ko.toJS(elem));
-      var el = $("<div />")
+      var el = $fg("<div />")
         .attr({ id: elementModel.guid(), "data-type": elementModel.id() })
         .css({
           backgroundColor: elementModel.color(),
@@ -456,47 +456,47 @@ farmGraphModule = {
           containment: "parent",
           grid: elements.farmDrawPluginOptions.canvas.gridSize,
           start: function (event, ui) {
-            $(this).click();
+            $fg(this).click();
           },
           drag: function (event, ui) {
             vm.setElementPosition(ui.position);
           },
           stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);
-            $(this).css({ top: newPos.y, left: newPos.x });
+            $fg(this).css({ top: newPos.y, left: newPos.x });
           }
         });
 
       if (elem.resizable) {
-        $("<div>", {
+        $fg("<div>", {
           class: "ui-resizable-handle ui-resizable-nw",
           attr: { id: "nwgrip" }
         }).appendTo(el);
-        $("<div>", {
+        $fg("<div>", {
           class: "ui-resizable-handle ui-resizable-ne",
           attr: { id: "negrip" }
         }).appendTo(el);
-        $("<div>", {
+        $fg("<div>", {
           class: "ui-resizable-handle ui-resizable-sw",
           attr: { id: "swgrip" }
         }).appendTo(el);
-        $("<div>", {
+        $fg("<div>", {
           class: "ui-resizable-handle ui-resizable-se",
           attr: { id: "segrip" }
         }).appendTo(el);
-        $("<div>", {
+        $fg("<div>", {
           class: "ui-resizable-handle ui-resizable-n",
           attr: { id: "ngrip" }
         }).appendTo(el);
-        $("<div>", {
+        $fg("<div>", {
           class: "ui-resizable-handle ui-resizable-e",
           attr: { id: "egrip" }
         }).appendTo(el);
-        $("<div>", {
+        $fg("<div>", {
           class: "ui-resizable-handle ui-resizable-s",
           attr: { id: "sgrip" }
         }).appendTo(el);
-        $("<div>", {
+        $fg("<div>", {
           class: "ui-resizable-handle ui-resizable-w",
           attr: { id: "wgrip" }
         }).appendTo(el);
@@ -517,13 +517,13 @@ farmGraphModule = {
           autoHide: true,
           grid: elements.farmDrawPluginOptions.canvas.gridSize,
           resize: function (event, ui) {
-            var guid = $(ui.helper).attr("id");
+            var guid = $fg(ui.helper).attr("id");
             vm.setElementPosition(ui.size);
             vm.selectElement(guid);
           },
           stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);
-            $(this).css({ top: newPos.y, left: newPos.x });
+            $fg(this).css({ top: newPos.y, left: newPos.x });
           }
         });
 
@@ -540,7 +540,7 @@ farmGraphModule = {
     var slider = elements.bsSliderFarmZoom.bootstrapSlider({
       formatter: function (value) {
         vm.canvasProperties().zoom(value)
-        $('.farm-draw-zone').css({
+        $fg('.farm-draw-zone').css({
           zoom: value + '%',
           '-moz-transform': 'scale(' + value / 100 + ')',
           '-webkit-transform-origin': 'top left'
@@ -554,24 +554,24 @@ farmGraphModule = {
     elements.ctxMenuSelector.contextmenu({
       before: function (e, context) {
 
-        this.$element.find('.rect').on('click.context.data-api', $.proxy(this.closemenu, this));
-        var target = $(e.target);
+        this.$element.find('.rect').on('click.context.data-api', $fg.proxy(this.closemenu, this));
+        var target = $fg(e.target);
 
         target.click();
         if (!target.hasClass('rect')) {
-          $("#context-menu").find('.dropdown-item:not([id]),.dropdown-divider').hide();
+          $fg("#context-menu").find('.dropdown-item:not([id]),.dropdown-divider').hide();
         }
         else {
-          $("#context-menu").children().show();
+          $fg("#context-menu").children().show();
         }
       },
       onItem: function (context, e) {
-        var target = $(e.currentTarget);
+        var target = $fg(e.currentTarget);
         if (target.attr('id')) {
           var id = target.attr('id');
           switch (id) {
             case "ddlDrawNewItem":
-              $(elements.farmDrawPluginOptions.drawNewButton).click();
+              $fg(elements.farmDrawPluginOptions.drawNewButton).click();
               break;
           }
         }
