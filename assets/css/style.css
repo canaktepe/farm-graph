@@ -41,7 +41,7 @@ body {
 }
 .rect.active{
   /* border:1px dashed #b4b4b4; */
-  outline: 1px dashed #dc3545;
+  outline: 2px dashed #dc3545;
     box-sizing: border-box;
   /* background-color: yellow !important; */
 }

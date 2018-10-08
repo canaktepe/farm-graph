@@ -219,7 +219,7 @@
                     </div>
                     <div class="card-body">
                         <div id="routingDropDown" class="dropdown show btn-group d-flex" role="group">
-                            <button class="btn btn-light btn-sm dropdown-toggle w-75" href="#" role="button" id="dropdownMenuLink"
+                            <button class="btn btn-light btn-sm dropdown-toggle w-75 font-weight-bold" href="#" role="button" id="dropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="style:{backgroundColor:selectedRoutingElement() ? selectedRoutingElement().color:''},text:selectedRoutingElement() ? selectedRoutingElement().formData().Name : 'Select Object'">
                             </button>
                             <button id="addRouting" disabled type="button" class="btn btn-success btn-sm font-weight-bold float-right w-25"
@@ -244,7 +244,7 @@
                                         No Result
                                     </div>
                                     <!--ko foreach:filteredCreatingElementsByRoutable-->
-                                    <button class="dropdown-item" type="button" data-bind="click:$parent.selectRoutingElement.bind($data)">
+                                    <button class="dropdown-item" type="button" data-bind="click:$parent.selectRoutingElement.bind($data),hoverToggle: guid">
                                         <div class="float-left mt-1 mr-1 routing-selector-box" data-bind="style:{backgroundColor:color}"></div>
                                         <label data-bind="text:formData().Name"></label>
                                     </button>
