@@ -6,7 +6,7 @@
   "license": "ISC",
   "scripts": {
     "build-product": "webpack --env.production && live-server",
-    "build-dev" :"webpack && live-server"
+    "build-dev": "webpack && live-server"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.3.1",
