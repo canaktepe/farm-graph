@@ -291,7 +291,7 @@ farmGraphModule = {
       if (update) {
         console.log("update mode");
         elements.elementModal.contentBody.load(
-          "/forms/" + drawedElement.pageTemplate(),
+          process.env.FORMS_PATH + drawedElement.pageTemplate(),
           function (responseText, textStatus, XMLHttpRequest) {
             if (XMLHttpRequest.status == 200) {
               elements.elementModal.selector
@@ -314,7 +314,7 @@ farmGraphModule = {
       console.log("insert mode");
       drawedElement.options = elementOptions;
       var pageTemplate = drawedElement.options.pageTemplate();
-      elements.elementModal.contentBody.load("/forms/" + pageTemplate, function (
+      elements.elementModal.contentBody.load(process.env.FORMS_PATH + pageTemplate, function (
         responseText,
         textStatus,
         XMLHttpRequest
@@ -392,7 +392,7 @@ farmGraphModule = {
   },
 
   bindJsonElements: function (callback) {
-    $fg.getJSON("/assets/devices.json")
+    $fg.getJSON(process.env.DEVICES_PATH)
       .done(function (data) {
         farmGraphModule.elements.jsonElements = data;
         return callback('success')
