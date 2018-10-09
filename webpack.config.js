@@ -1,5 +1,26 @@
 const path = require("path");
 const webpack = require("webpack");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const copyHTMLFiles = new CopyWebpackPlugin([
+  {
+    from: './forms/*.html',
+    to: "../"
+  },
+  {
+    from : './assets/devices.json',
+    to: "../"
+  }
+]);
+
+const jqueryPlugin = new webpack.ProvidePlugin({
+  jQuery: "jquery",
+  $fg: "jquery"
+});
+
+const knockoutPlugin = new webpack.ProvidePlugin({
+  ko: "knockout"
+});
 
 module.exports = env => {
   const FORMS_PATH = env ? env.production ? '/farm_graph/forms/' : '/forms/' : '/forms/';
@@ -11,13 +32,9 @@ module.exports = env => {
       path: path.resolve(__dirname, "dist/assets")
     },
     plugins: [
-      new webpack.ProvidePlugin({
-        jQuery: "jquery",
-        $fg: "jquery"
-      }),
-      new webpack.ProvidePlugin({
-        ko: "knockout"
-      }),
+      jqueryPlugin,
+      knockoutPlugin,
+      copyHTMLFiles,
       new webpack.DefinePlugin({
         'process.env': {
           'FORMS_PATH': JSON.stringify(FORMS_PATH),
