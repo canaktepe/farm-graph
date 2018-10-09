@@ -24,7 +24,7 @@ const knockoutPlugin = new webpack.ProvidePlugin({
 
 module.exports = env => {
   const FORMS_PATH = env ? env.production ? '/farm_graph/forms/' : '/forms/' : '/forms/';
-  const DEVICES_PATH = env ? env.production ? '/farm_graph/devices.json' : '/assets/devices.json' : '/assets/devices.json';
+  const DEVICES_PATH = env ? env.production ? '/farm_graph/devices.json' : 'assets/devices.json' : 'assets/devices.json';
   return {
     entry: "./assets/js/app.js",
     output: {
