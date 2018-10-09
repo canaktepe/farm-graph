@@ -7,7 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>FarmGraph Management</title>
     <link href="/favicon.ico" rel="icon" type="image/x-icon" />
-    <!-- <link rel="stylesheet" href="assets/css/style.css" /> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rajdhani:400,700" />
     <link rel="stylesheet" href="dist/assets/style.css" />
 </head>
@@ -87,42 +86,14 @@
         <!--context menu end-->
         <div class="row h-100">
             <div class="col-xl-10 col-lg-8 col-md-8 col-sm- col-xs-">
-                <div id="elementsAccordion" hidden>
-                    <div class="card">
-                        <div class="card-header bg-light accordionHeader" id="headingDevice">
-                            <button class="btn btn-link pl-0 pt-0 pb-0 text-dark accordionBtn nodecor" data-toggle="collapse"
-                                data-target="#collapseDevice" aria-expanded="false" aria-controls="collapseDevice">
-                                <strong>Farm Devices</strong>
-                            </button>
-                        </div>
-                        <div id="collapseDevice" class="collapse" aria-labelledby="headingDevice" data-parent="#elementsAccordion">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="farm-main-objects farm-object-scroller col-xl-4 col-lg-12 col-md-12">
-                                        <ul id="farmMain" class="list-inline"></ul>
-                                    </div>
-                                    <div class="farm-objects farm-object-scroller col-xl-4 col-lg-12 col-md-12">
-                                        <ul id="devices" class="list-inline"></ul>
-                                    </div>
-                                    <div class="other-objects farm-object-scroller col-xl-4 col-lg-12 col-md-12">
-                                        <ul id="others" class="list-inline"></ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div id="designCard" class="card h-100">
                     <div class="card-header bg-light">
                         <strong> Farm Design Canvas</strong>
                     </div>
                     <div class="card-body h-100">
-
                         <div class="farm h-100">
                             <div class="context" id="draw-area" data-toggle="context" data-target="#context-menu">
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -219,8 +190,9 @@
                     </div>
                     <div class="card-body">
                         <div id="routingDropDown" class="dropdown show btn-group d-flex" role="group">
-                            <button class="btn btn-light btn-sm dropdown-toggle w-75 font-weight-bold" href="#" role="button" id="dropdownMenuLink"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="style:{backgroundColor:selectedRoutingElement() ? selectedRoutingElement().color:''},text:selectedRoutingElement() ? selectedRoutingElement().formData().Name : 'Select Object'">
+                            <button class="btn btn-light btn-sm dropdown-toggle w-75 font-weight-bold" href="#" role="button"
+                                id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                data-bind="style:{backgroundColor:selectedRoutingElement() ? selectedRoutingElement().color:''},text:selectedRoutingElement() ? selectedRoutingElement().formData().Name : 'Select Object'">
                             </button>
                             <button id="addRouting" disabled type="button" class="btn btn-success btn-sm font-weight-bold float-right w-25"
                                 data-bind="enable:getActiveElementRouting,click:addRouting.bind($root)">
@@ -273,4 +245,5 @@
     </div>
     <script type="text/javascript" src="dist/assets/bundle.js"></script>
 </body>
+
 </html>
