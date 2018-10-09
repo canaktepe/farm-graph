@@ -16,7 +16,6 @@ farmGraphModule = {
         resizable: true
       },
       onDrawComplete(e) {
-
         if (!e.drawingRect) return;
         farmGraphModule.openModal(false, e.drawingRect, function (item) {
           if (typeof item === "object") {
@@ -37,11 +36,13 @@ farmGraphModule = {
         })
         $fg(e).draggable("option", "drag", function (event, ui) {
           vm.setElementPosition(ui.position);
+          jsPlumb.repaintEverything();
         });
         $fg(e).resizable("option", "resize", function (event, ui) {
           guid = $fg(e).attr("id");
           vm.setElementPosition(ui.size);
           vm.selectElement(guid);
+          jsPlumb.repaintEverything();
         });
         $fg(e).resizable("option", "start", function (event, ui) {
           guid = $fg(e).attr("id");
@@ -196,6 +197,32 @@ farmGraphModule = {
     return position;
   },
 
+  addEndPoints: function (element) {
+
+    var el = element;
+    var options = element.options;
+
+    if (options === undefined) {
+      el = $fg("#"+element.guid());
+      options = element;
+    }
+
+    if (options.endPoints() === undefined) return;
+
+
+    var endpointArr = options.endPoints();
+    if (endpointArr.length > 0) {
+      console.log("endpoint add " + options.guid());
+
+      
+
+      $fg.each(endpointArr, function (i, endpoint) {
+        console.log(209,endpoint)
+        jsPlumb.addEndpoint(el, endpoint)
+      })
+    }
+  },
+
   openModal: function (update, drawedElement, callback) {
     // off button events
     elements.elementModal.selector.off("shown.bs.modal");
@@ -270,6 +297,10 @@ farmGraphModule = {
         options.formData(formData);
 
         var parentGuid = farmGraphModule.getParentGuid(drawedElement);
+
+        if (options.endPoints()) {
+          farmGraphModule.addEndPoints(drawedElement);
+        }
 
         vm.pushElement(parentGuid, options);
         drawedElement
@@ -433,9 +464,6 @@ farmGraphModule = {
     e.stopPropagation();
   },
 
-
-
-
   bindDbData: function (JSONData, parentObj) {
     if (JSONData == null) return;
     $fg.each(JSONData, function (i, elem) {
@@ -460,6 +488,7 @@ farmGraphModule = {
           },
           drag: function (event, ui) {
             vm.setElementPosition(ui.position);
+            jsPlumb.repaintEverything();
           },
           stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);
@@ -520,6 +549,7 @@ farmGraphModule = {
             var guid = $fg(ui.helper).attr("id");
             vm.setElementPosition(ui.size);
             vm.selectElement(guid);
+            jsPlumb.repaintEverything();
           },
           stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);
@@ -529,6 +559,8 @@ farmGraphModule = {
 
         if (parentObj == null) farmGraphModule.elements.drawArea.append(el);
         else parentObj.append(el);
+
+        // farmGraphModule.addEndPoints(elementModel);
 
         if (elementModel.children().length > 0) {
           farmGraphModule.bindDbData(elementModel.children(), el);
@@ -578,11 +610,37 @@ farmGraphModule = {
       }
     });
   },
+  plumbInitialize: function () {
+    jsPlumb.importDefaults({
+      // default drag options
+      DragOptions: { cursor: 'pointer', zIndex: 2000 },
+      // the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
+      // case it returns the 'labelText' member that we set on each connection in the 'init' method below.
+      ConnectionOverlays: [
+        ["PlainArrow", { location: 0.5 }],
+        // [ "Label", { label:"foo", location:0.25, id:"myLabel" } ]
+      ],
+      ConnectorZIndex: 5,
+      Connector: ['Flowchart', {
+        stub: [25, 25],
+        cornerRadius: 10,
+        alwaysRespectStubs: true
+      }],
+      // Endpoint : "Dot",
+      EndpointStyle: { fill: "rgba(200,0,0,0.5)" },
+      // PaintStyle : { strokeWidth : 3, stroke : "red" },
+      PaintStyle: {
+        strokeWidth: 5,
+        stroke: 'rgba(200,0,0,0.5)'
+      },
+    });
+  },
 
   init: function (jsonData) {
     elements = this.elements;
     this.bindFarmDraw();
     this.bindExtensionMethods();
+    this.plumbInitialize();
     this.bindDbData(jsonData, null);
     this.bootstrapSlider();
     this.contextMenu();

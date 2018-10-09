@@ -8,5 +8,6 @@ import mcustomScrolller from '../../node_modules/malihu-custom-scrollbar-plugin/
 import contextmenu from 'bootstrap-contextmenu/bootstrap-contextmenu'
 import ko from 'knockout/build/output/knockout-latest';
 import farmDraw from './jquery.farmdraw'
+import plumb from 'jsplumb'
 import farmModule from './modules'
 import Webscript from './script'

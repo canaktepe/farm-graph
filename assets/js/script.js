@@ -46,6 +46,7 @@ jsonToModel = function (data) {
     self.routing = ko.observableArray(data.routing);
     self.status = ko.observable(data.status);
     self.type = ko.observable(data.type);
+    self.endPoints = ko.observable(data.endPoints);
 };
 
 var jsonData = JSON.parse(localStorage.getItem("JSONData")) || [];
