@@ -4,7 +4,7 @@
       "id": 1,
       "type": 1,
       "order": 1,
-      "color": "rgb(206, 206, 206)",
+      "color": "rgb(195, 10, 20)",
       "name": "Astronaut A5",
       "pageTemplate": "astronaut.html",
       "resizable": true,
@@ -29,7 +29,7 @@
       "id": 2,
       "type": 1,
       "order": 2,
-      "color": "rgb(212, 243, 255)",
+      "color": "rgb(195, 10, 20)",
       "name": "Astronaut A4",
       "pageTemplate": "astronaut.html",
       "resizable": true
@@ -38,7 +38,7 @@
       "id": 3,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(195, 10, 20)",
       "name": "Astronaut A3",
       "pageTemplate": "astronaut.html",
       "resizable": true
@@ -47,7 +47,7 @@
       "id": 4,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 189, 33)",
+      "color": "rgb(195, 10, 20)",
       "name": "Central Unit",
       "pageTemplate": "centralunit.html",
       "resizable": true
@@ -56,7 +56,7 @@
       "id": 5,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 123, 25)",
+      "color": "rgb(195, 10, 20)",
       "name": "Cosmix",
       "pageTemplate": "cosmix.html",
       "resizable": true
@@ -65,7 +65,7 @@
       "id": 6,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 158, 12)",
+      "color": "rgb(195, 10, 20)",
       "name": "Grazeway",
       "pageTemplate": "grazeway.html",
       "resizable": true
@@ -74,7 +74,7 @@
       "id": 7,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 178, 89)",
+      "color": "rgb(195, 10, 20)",
       "name": "ID Station",
       "pageTemplate": "idstation.html",
       "resizable": true
@@ -83,7 +83,7 @@
       "id": 8,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 113, 32)",
+      "color": "rgb(195, 10, 20)",
       "name": "Qwes LD Receiver",
       "pageTemplate": "qwesldreciever.html",
       "resizable": true
@@ -92,7 +92,7 @@
       "id": 9,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 126, 68)",
+      "color": "rgb(195, 10, 20)",
       "name": "Qwes ISO LD Receiver",
       "pageTemplate": "qwesisoldreceiver.html",
       "resizable": true
@@ -101,7 +101,7 @@
       "id": 10,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(195, 10, 20)",
       "name": "Qwes ISO VPU",
       "pageTemplate": "qwesisovpu.html",
       "resizable": true
@@ -110,7 +110,7 @@
       "id": 11,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(195, 10, 20)",
       "name": "Vector",
       "pageTemplate": "vector.html",
       "resizable": true
@@ -119,7 +119,7 @@
       "id": 12,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(195, 10, 20)",
       "name": "CRS+",
       "pageTemplate": "crsplus.html",
       "resizable": true
@@ -128,7 +128,7 @@
       "id": 13,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(195, 10, 20)",
       "name": "CRS M3",
       "pageTemplate": "crsm3.html",
       "resizable": true
@@ -137,7 +137,7 @@
       "id": 14,
       "type": 1,
       "order": 3,
-      "color": "rgb(255, 205, 68)",
+      "color": "rgb(195, 10, 20)",
       "name": "Light",
       "pageTemplate": "light.html",
       "resizable": true

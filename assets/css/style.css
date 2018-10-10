@@ -133,4 +133,8 @@ body {
   position: absolute;
   text-align: center;
   font-size: 35px;
+  padding: 0 10px;
+  top:20px;
+  width: 100%;
+  color:#fff;
 }
