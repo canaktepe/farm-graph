@@ -47,6 +47,10 @@ and dependencies (minified).
             return snapElementToGrid(x, y, w, h);
         }
 
+        $.fn.farmDraw.getZoom = function(){
+            return getZoom();
+        }
+
         var defaults = {
             drawNewButton: '',
             drawNewButtonAddText: 'Draw New Item',
@@ -81,6 +85,7 @@ and dependencies (minified).
         var settings = $.extend(true, {}, defaults, options);
 
         function snapElementToGrid(x, y, w, h) {
+
             var position = { x: parseInt(x), y: parseInt(y), w: parseInt(w), h: parseInt(h) };
             var gridX = settings.canvas.gridSize[0];
             var gridY = settings.canvas.gridSize[1];
@@ -277,11 +282,13 @@ and dependencies (minified).
             };
         }
 
-
-
         drawGrid = function (drawBox, redraw) {
+            // var zoom = getZoom();
 
-
+            // var canvas_width = settings.canvas.width,
+            //     canvas_height = settings.canvas.height,
+            //     gridsizeW = Math.round( settings.canvas.gridSize[0]/zoom),
+            //     gridsizeH = Math.round( settings.canvas.gridSize[1]/zoom);
 
             var canvas_width = settings.canvas.width,
                 canvas_height = settings.canvas.height,

@@ -88,7 +88,7 @@ farmGraphModule.bindJsonElements(function (callback) {
         self.selectedRoutingElement = ko.observable(null);
         self.searchElementKeyword = ko.observable('');
         self.filteredCreatingElementsByRoutable = ko.observableArray([]);
-        self.canvasProperties = ko.observable(new canvasModel({ zoom: 100, width: farmGraphModule.elements.farmDrawPluginOptions.canvas.width, height: farmGraphModule.elements.farmDrawPluginOptions.canvas.height }))
+        self.canvasProperties = ko.observable(new canvasModel({ zoom: 50, width: farmGraphModule.elements.farmDrawPluginOptions.canvas.width, height: farmGraphModule.elements.farmDrawPluginOptions.canvas.height }))
 
         self.addRouting = function () {
             if (!self.activeElement() || !self.selectedRoutingElement()) return;
@@ -177,10 +177,10 @@ farmGraphModule.bindJsonElements(function (callback) {
 
         self.setElementPosition = function (pos) {
             pos = {
-                left: typeof(pos.left) == 'number'? pos.left : self.getActiveElement().position().x,
-                top: typeof(pos.top) == 'number'? pos.top : self.getActiveElement().position().y,
-                width: typeof(pos.width) == 'number'? pos.width : self.getActiveElement().position().w,
-                height: typeof(pos.height) == 'number'? pos.height : self.getActiveElement().position().h
+                left: typeof (pos.left) == 'number' ? pos.left : self.getActiveElement().position().x,
+                top: typeof (pos.top) == 'number' ? pos.top : self.getActiveElement().position().y,
+                width: typeof (pos.width) == 'number' ? pos.width : self.getActiveElement().position().w,
+                height: typeof (pos.height) == 'number' ? pos.height : self.getActiveElement().position().h
             };
             pos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(pos.left, pos.top, pos.width, pos.height);
             self.getActiveElement().position(pos)
@@ -206,14 +206,18 @@ farmGraphModule.bindJsonElements(function (callback) {
                 self.createdElements().some(function iter(o, i, a) {
                     if (o.guid() === elem.guid()) {
                         a.splice(i, 1);
+
+                        console.log(100, elem.guid());
+                        jsPlumb.removeAllEndpoints(elem.guid());
+
                         $fg("div[id=" + elem.guid() + "]").remove();
                         self.activeElement(null)
-                        localStorage.setItem('JSONData', ko.toJSON(self.createdElements()))
+                        localStorage.setItem('JSONData', ko.toJSON(self.createdElements()));
                         return true;
                     }
-                    var children = (typeof o.children) === "function" ? o.children() : o.children
+                    var children = (typeof o.children) === "function" ? o.children() : o.children;
                     return children && children.some(iter);
-                });
+                });t
             }
         }
 

@@ -129,3 +129,8 @@ body {
 .slider.slider-horizontal{
   width: 100% !important;
 }
+.rect-name{
+  position: absolute;
+  text-align: center;
+  font-size: 35px;
+}

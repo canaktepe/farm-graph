@@ -109,7 +109,7 @@
                             <strong>Canvas Properties</strong>
                         </button>
                     </div>
-                    <div id="canvas-prop-body" class="collapse">
+                    <div id="canvas-prop-body" class="collapse show">
                         <div class="card-body">
                             <div class="form-group row">
                                 <label for="canvasW" class="col-sm-4 col-form-label font-weight-bold">Zoom</label>
@@ -118,17 +118,17 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <input id="bsSliderFarmZoom" type="text" data-slider-min="50" data-slider-max="200"
-                                    data-slider-step="5" data-bind="attr:{'data-slider-value':canvasProperties().zoom(),'data-value':canvasProperties().zoom()}" />
+                                <input id="bsSliderFarmZoom" type="text" data-slider-min="1" data-slider-max="200"
+                                    data-slider-step="1" data-bind="attr:{'data-slider-value':canvasProperties().zoom(),'data-value':canvasProperties().zoom()}" />
                             </div>
                             <div class="form-group row">
-                                <label for="canvasW" class="col-sm-2 col-form-label font-weight-bold pr-0">W</label>
-                                <div class="col-sm-4 pl-0">
+                                <label for="canvasW" class="col-sm-7 col-form-label font-weight-bold pr-0">Length</label>
+                                <div class="col-sm-5 pl-0">
                                     <input min="640" step="5" max="2500" type="number" class="form-control form-control-sm text-center"
                                         id="canvasW" value="0" placeholder="w" data-bind="value:canvasProperties().getWidth, valueUpdate: 'afterkeydown'">
                                 </div>
-                                <label for="canvasH" class="col-sm-2 col-form-label font-weight-bold pr-0">H</label>
-                                <div class="col-sm-4 pl-0">
+                                <label for="canvasH" class="col-sm-7 col-form-label font-weight-bold pr-0">Height</label>
+                                <div class="col-sm-5 pl-0">
                                     <input min="480" step="5" max="2500" type="number" class="form-control form-control-sm text-center"
                                         id="canvasH" value="0" placeholder="h" data-bind="value:canvasProperties().getHeight,valueUpdate:'afterkeydown'">
                                 </div>

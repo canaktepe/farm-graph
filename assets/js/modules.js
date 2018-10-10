@@ -4,8 +4,8 @@ farmGraphModule = {
     farmDrawPluginOptions: {
       drawNewButton: "#draw",
       canvas: {
-        width: 2000,
-        height: 1000,
+        width: 3000,
+        height: 2000,
         grid: true,
         gridSize: [25, 25]
       },
@@ -198,28 +198,37 @@ farmGraphModule = {
   },
 
   addEndPoints: function (element) {
-
     var el = element;
     var options = element.options;
 
     if (options === undefined) {
-      el = $fg("#"+element.guid());
+      el = $fg("#" + element.guid());
       options = element;
     }
 
     if (options.endPoints() === undefined) return;
 
-
     var endpointArr = options.endPoints();
     if (endpointArr.length > 0) {
       console.log("endpoint add " + options.guid());
+      -
+        $fg.each(endpointArr, function (i, endpoint) {
+          jsPlumb.addEndpoint(el, endpoint)
+        })
+    }
+  },
 
-      
-
-      $fg.each(endpointArr, function (i, endpoint) {
-        console.log(209,endpoint)
-        jsPlumb.addEndpoint(el, endpoint)
-      })
+  setElementRectangleNameText: function (element) {
+    var options = element.options;
+    if (options.formData().Name && options.type() == 1) {
+      var existElement = element.find('div.rect-name');
+      if (existElement.length > 0) {
+        existElement.text(options.formData().Name);
+      }
+      else {
+        $fg('<div/>', { attr: { class: 'rect-name' } }).css({ width: '100%', top: position.h / 2 + 'px' }).text(options.formData().Name)
+        .appendTo(element)
+      }
     }
   },
 
@@ -299,7 +308,7 @@ farmGraphModule = {
         var parentGuid = farmGraphModule.getParentGuid(drawedElement);
 
         if (options.endPoints()) {
-          farmGraphModule.addEndPoints(drawedElement);
+          // farmGraphModule.addEndPoints(drawedElement);
         }
 
         vm.pushElement(parentGuid, options);
@@ -312,7 +321,10 @@ farmGraphModule = {
             backgroundColor: options.color()
           })
           .dblclick(farmGraphModule.elementUpdatedblClick);
+
+
       }
+      farmGraphModule.setElementRectangleNameText(drawedElement);
 
       callback(drawedElement);
     });
@@ -487,8 +499,30 @@ farmGraphModule = {
             $fg(this).click();
           },
           drag: function (event, ui) {
-            vm.setElementPosition(ui.position);
+
+            // var myScale  =farmGraphModule.elements.drawArea.css('zoom') || farmGraphModule.elements.drawArea.css('-moz-transform');
+
+            // console.log(myScale);
+
+            // var gridX = farmGraphModule.elements.farmDrawPluginOptions.canvas.gridSize[0];
+            // var gridY = farmGraphModule.elements.farmDrawPluginOptions.canvas.gridSize[1];
+            // var myTop = Math.round((ui.position.top / myScale)/gridX)*gridX;
+            // var myLeft = Math.round((ui.position.left / myScale)/gridY)*gridY;
+            // ui.position = {
+            //   top: myTop,
+            //   left: myLeft
+            // };
+
+            var newPos = vm.setElementPosition(ui.position);
+            $fg(this).css({ top: newPos.y, left: newPos.x });
+            // console.log(pos);
+            // ui.position = {
+            //   top: pos.top,
+            //   left:pos.left
+            // };
             jsPlumb.repaintEverything();
+
+
           },
           stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);
