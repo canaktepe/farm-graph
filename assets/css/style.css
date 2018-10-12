@@ -138,3 +138,7 @@ body {
   width: 100%;
   color:#fff;
 }
+
+button#canvasProperties[aria-expanded="true"] > i:before {
+  content: "\F0D8";
+}

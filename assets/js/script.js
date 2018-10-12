@@ -243,12 +243,14 @@ farmGraphModule.bindJsonElements(function(callback) {
             ? pos.height
             : self.getActiveElement().position().h
       };
+
       pos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
         pos.left,
         pos.top,
         pos.width,
         pos.height
       );
+
       self.getActiveElement().position(pos);
 
       return pos;

@@ -85,7 +85,7 @@ and dependencies (minified).
         var settings = $.extend(true, {}, defaults, options);
 
         function snapElementToGrid(x, y, w, h) {
-
+            
             var position = { x: parseInt(x), y: parseInt(y), w: parseInt(w), h: parseInt(h) };
             var gridX = settings.canvas.gridSize[0];
             var gridY = settings.canvas.gridSize[1];
