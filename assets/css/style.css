@@ -142,3 +142,7 @@ body {
 button#canvasProperties[aria-expanded="true"] > i:before {
   content: "\F0D8";
 }
+.mini-search-icon{
+  font-size: 10px;
+    padding: 5px;
+}

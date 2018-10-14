@@ -73,7 +73,7 @@ farmGraphModule = {
 
   bindCustomScrollBar: function () {
     $fg(".dropdown-scroller").mCustomScrollbar({
-      // scrollbarPosition: "outside"
+      scrollbarPosition: "outside"
     });
 
     $fg("#addedRouting").mCustomScrollbar({

@@ -22,6 +22,12 @@ canvasModel = function(data) {
   });
 };
 
+routingTypeModel = function(data) {
+  var self = this;
+  self.id = ko.observable(data.id);
+  self.type = ko.observable(data.type);
+};
+
 jsonToModel = function(data) {
   var self = this;
   self.acceptable = ko.observable(data.acceptable);
@@ -108,6 +114,16 @@ farmGraphModule.bindJsonElements(function(callback) {
       })
     );
     self.textColor = ko.observable();
+
+    self.routingTypes = ko.observableArray([
+      new routingTypeModel({ id: 1, type: "Routing" }),
+      new routingTypeModel({ id: 2, type: "Routing (DDS)" })
+    ]);
+
+    self.selectedRoutingType = ko.observable(self.routingTypes()[0]);
+    self.changeRoutingType = function(routingType) {
+      self.selectedRoutingType(routingType);
+    };
 
     self.addRouting = function() {
       if (!self.activeElement() || !self.selectedRoutingElement()) return;
