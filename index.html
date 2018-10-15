@@ -128,7 +128,7 @@
                                     <input min="640" step="5" max="10000" type="number" class="form-control form-control-sm text-center"
                                         id="canvasW" value="0" placeholder="w" data-bind="value:canvasProperties().getWidth, valueUpdate: 'afterkeydown'">
                                 </div>
-                                <label for="canvasH" class="col-sm-7 col-form-label font-weight-bold pr-0">Height</label>
+                                <label for="canvasH" class="col-sm-7 col-form-label font-weight-bold pr-0">Width</label>
                                 <div class="col-sm-5 pl-0">
                                     <input min="480" step="5" max="10000" type="number" class="form-control form-control-sm text-center"
                                         id="canvasH" value="0" placeholder="h" data-bind="value:canvasProperties().getHeight,valueUpdate:'afterkeydown'">
@@ -171,13 +171,14 @@
                                 <input min="0" step="25" type="number" class="form-control form-control-sm text-center"
                                     id="txtObjectW" value="0" placeholder="w" data-bind="value: getActiveElement().position().w">
                             </div>
-                            <label for="txtObjectH" class="col-sm-2 col-form-label font-weight-bold pr-0">H</label>
+                            <label for="txtObjectH" class="col-sm-2 col-form-label font-weight-bold pr-0">W</label>
                             <div class="col-sm-4 pl-0">
                                 <input min="0" step="25" type="number" class="form-control form-control-sm text-center"
                                     id="txtObjectH" value="0" placeholder="h" data-bind="value: getActiveElement().position().h">
                             </div>
                         </div>
-                        <!-- routing dropdown menu -->
+                        <!-- routing section -->
+                        <!--ko if : getActiveElement().routingEnabled -->
                         <div class="dropdown mb-2">
                             <a class="dropdown-toggle font-weight-bold" id="routingDropdownMenuButton" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false" data-bind="text:selectedRoutingType().type()">
@@ -189,14 +190,16 @@
                                 <a class="dropdown-item" href="javascript:void(0)" data-bind="text:type,click:$parent.changeRoutingType.bind($data)">Routing</a>
                             </div>
                         </div>
-                        <!-- routing dropdown menu end -->
-                        <div class="row mb-2 pt-2 pb-2 border-bottom border-bottom-1">
-                            <div class="col-sm-1">1</div>
+                        <!--ko foreach: {data: getActiveElement().routings, as :'routingItem' } -->
+                        <div class="row pt-2 pb-2 border-bottom border-bottom-1">
+                            <div class="col-sm-1" data-bind="text:routingItem.id"></div>
                             <div class="col-sm-8">
+                                <!-- <div data-bind="text:ko.toJSON(routingItem)"></div> -->
                                 <div id="routingDropDown" class="dropdown btn-group w-100" role="group">
                                     <a class="dropdown-toggle nodecor text-dark w-100" href="#" id="dropdownMenuLink"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text:selectedRoutingElement() ? selectedRoutingElement().formData().Name : 'Select Object'">
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text:routingItem.to().guid()!='' ? routingItem.to().name() : 'Select Object'">
                                     </a>
+
                                     <div class="dropdown-menu border-bottom-2 w-100" aria-labelledby="dropdownMenuLink">
                                         <div class="container">
                                             <div class="form-group">
@@ -206,36 +209,44 @@
                                                             <i class="fas fa-search" aria-hidden="true"></i>
                                                         </span>
                                                         <input type="text" class="form-control form-control-sm"
-                                                            placeholder="Search..." id="search" name="search" data-bind="value:searchElementKeyword, valueUpdate: 'keyup'" />
+                                                            placeholder="Search..." id="search" name="search" data-bind="value:$parent.searchElementKeyword, valueUpdate: 'keyup'" />
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="dropdown-scroller" style="max-height:150px;overflow: hidden;">
-                                            <div class="dropdown-item text-center" data-bind="visible:filteredCreatingElementsByRoutable().length==0">
-                                                No Result
+                                            <div class="dropdown-scroller" style="max-height:150px;overflow: hidden;">
+                                                <div class="dropdown-item text-center" data-bind="visible:$root.filteredCreatingElementsByRoutable().length==0">
+                                                    No Result
+                                                </div>
+                                                <!--ko foreach:$parent.filteredCreatingElementsByRoutable-->
+                                                <button class="dropdown-item p-1" type="button" data-bind="click:$root.selectRoutingElement.bind($data,routingItem),hoverToggle:$parent.guid">
+                                                    <div class="float-left mt-1 mr-1 routing-selector-box" data-bind="style:{backgroundColor:color}"></div>
+                                                    <label data-bind="text:formData().Name"></label>
+                                                </button>
+                                                <!--/ko-->
                                             </div>
-                                            <!--ko foreach:filteredCreatingElementsByRoutable-->
-                                            <button class="dropdown-item" type="button" data-bind="click:$parent.selectRoutingElement.bind($data),hoverToggle: guid">
-                                                <div class="float-left mt-1 mr-1 routing-selector-box" data-bind="style:{backgroundColor:color}"></div>
-                                                <label data-bind="text:formData().Name"></label>
-                                            </button>
-                                            <!--/ko-->
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-2 p-0"> <input type="radio" checked /></div>
-                        </div>
-                        <div class="btn-group d-flex" role="group" aria-label="Basic example">
-                                <button id="updateObject" disabled type="button" class="btn btn-sm btn-success w-100 font-weight-bold"
-                                    data-bind="enable:activeElement,click:getActiveElement">Save</button>
-                                <button id="deleteObject" disabled type="button" class="btn btn-sm btn-danger w-100 font-weight-bold"
-                                    data-toggle="confirmation" data-bind="enable:activeElement,click:deleteElement">Delete</button>
+                            <div class="col-sm-2 p-0">
+                                <input type="radio" name="routingDefault" data-bind="attr:{checked:routingItem.default}" />
                             </div>
+                        </div>
+                        <!--/ko-->
+                        <button class="btn btn-sm btn-muted w-100 mb-2 add-new-routing-element">
+                                <i class="fa fa-plus" aria-hidden="true"></i> 
+                        </button>
+                        <!--/ko-->
+                        <!-- routing section end -->
+                        <div class="btn-group d-flex" role="group" aria-label="Basic example">
+                            <button id="updateObject" disabled type="button" class="btn btn-sm btn-success w-100 font-weight-bold"
+                                data-bind="enable:activeElement,click:getActiveElement">Save</button>
+                            <button id="deleteObject" disabled type="button" class="btn btn-sm btn-danger w-100 font-weight-bold"
+                                data-toggle="confirmation" data-bind="enable:activeElement,click:deleteElement">Delete</button>
+                        </div>
                     </div>
 
-                 
+
                 </div>
             </div>
             <!-- visible:activeElement -->

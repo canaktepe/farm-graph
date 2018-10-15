@@ -1,40 +1,51 @@
-canvasModel = function(data) {
+canvasModel = function (data) {
   var self = this;
   self.zoom = ko.observable(data.zoom);
   self.width = ko.observable(data.width);
   self.height = ko.observable(data.height);
 
   self.getWidth = ko.computed({
-    read: function() {
+    read: function () {
       return self.width();
     },
-    write: function(value) {
+    write: function (value) {
       self.width(parseInt(value));
     }
   });
   self.getHeight = ko.computed({
-    read: function() {
+    read: function () {
       return self.height();
     },
-    write: function(value) {
+    write: function (value) {
       self.height(parseInt(value));
     }
   });
 };
 
-routingTypeModel = function(data) {
+routingTypeModel = function (data) {
   var self = this;
   self.id = ko.observable(data.id);
   self.type = ko.observable(data.type);
 };
 
-jsonToModel = function(data) {
+routingModel = function (prop) {
+  var self = this;
+  self.id = ko.observable(prop.id);
+  self.from = ko.observable(prop.guid);
+  self.to = ko.observable({
+    guid: ko.observable(""),
+    name: ko.observable("")
+  });
+  self.default = ko.observable(prop.default);
+};
+
+jsonToModel = function (data) {
   var self = this;
   self.acceptable = ko.observable(data.acceptable);
   self.children = ko.observableArray();
   if (data.children) {
     if (data.children.length > 0) {
-      $fg.each(data.children, function(i, item) {
+      $fg.each(data.children, function (i, item) {
         self.children.push(new jsonToModel(item));
       });
     }
@@ -51,20 +62,29 @@ jsonToModel = function(data) {
   self.routing = ko.observableArray(data.routing);
   self.status = ko.observable(data.status);
   self.type = ko.observable(data.type);
+  self.routingEnabled = ko.observable(data.routingEnabled);
+  self.routings = ko.observableArray();
+  if (data.routingEnabled) {
+    // if (data.formData && data.formData.Direction) {
+    //   for (var i = 1; i <= data.formData.Direction; i++) {
+    self.routings.push(new routingModel({ id: 1, guid: data.guid, default: true }));
+    //   }
+    // }
+  }
   self.endPoints = ko.observable(data.endPoints);
 };
 
 var jsonData = JSON.parse(localStorage.getItem("JSONData")) || [];
 
-farmGraphModule.bindJsonElements(function(callback) {
+farmGraphModule.bindJsonElements(function (callback) {
   if (jsonData.length > 0) {
-    jsonData = jsonData.map(function(item) {
+    jsonData = jsonData.map(function (item) {
       return new jsonToModel(item);
     });
   }
 
   ko.bindingHandlers.hoverToggle = {
-    init: function(
+    init: function (
       element,
       valueAccessor,
       allBindings,
@@ -76,7 +96,7 @@ farmGraphModule.bindJsonElements(function(callback) {
 
       var showObj = $fg("div.rect[id=" + guid + "]");
 
-      ko.utils.registerEventHandler(element, "mouseover", function() {
+      ko.utils.registerEventHandler(element, "mouseover", function () {
         ko.utils.toggleDomNodeCssClass(
           element,
           ko.utils.unwrapObservable("bg-light"),
@@ -84,7 +104,7 @@ farmGraphModule.bindJsonElements(function(callback) {
         );
         showObj.addClass("show-route");
       });
-      ko.utils.registerEventHandler(element, "mouseout", function() {
+      ko.utils.registerEventHandler(element, "mouseout", function () {
         ko.utils.toggleDomNodeCssClass(
           element,
           ko.utils.unwrapObservable("bg-light"),
@@ -95,7 +115,7 @@ farmGraphModule.bindJsonElements(function(callback) {
     }
   };
 
-  viewModel = function() {
+  viewModel = function () {
     var self = this;
 
     self.devices = ko.observableArray([]);
@@ -121,22 +141,22 @@ farmGraphModule.bindJsonElements(function(callback) {
     ]);
 
     self.selectedRoutingType = ko.observable(self.routingTypes()[0]);
-    self.changeRoutingType = function(routingType) {
+    self.changeRoutingType = function (routingType) {
       self.selectedRoutingType(routingType);
     };
 
-    self.addRouting = function() {
+    self.addRouting = function () {
       if (!self.activeElement() || !self.selectedRoutingElement()) return;
       var route = {
         guid: self.selectedRoutingElement().guid,
-        name: self.selectedRoutingElement().formData().Name
+        name: self.selectedRoutingElement().formData().Name,
       };
       self.activeElement().routing.push(route);
       localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
       self.selectedRoutingElement(null);
     };
 
-    self.addRoutingCallback = function(elem) {
+    self.addRoutingCallback = function (elem) {
       if (elem.nodeType === 1) {
         $fg(elem)
           .animate({ backgroundColor: "#fc9c9c" }, 200)
@@ -144,17 +164,27 @@ farmGraphModule.bindJsonElements(function(callback) {
       }
     };
 
-    self.selectRoutingElement = function(data) {
-      self.selectedRoutingElement(data);
+    self.selectRoutingElement = function (data) {
+      var $this = this;
+      return ko.utils.arrayFilter(self.activeElement().routings(), function (route) {
+        if (route.id() == data.id()) {
+          route.to().guid($this.guid);
+          route.to().name($this.formData().Name);
+
+          localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
+        }
+      })
+
+
     };
 
-    self.deleteRouting = function(item) {
+    self.deleteRouting = function (item) {
       self.activeElement().routing.remove(item);
       $fg("div.rect").removeClass("show-route");
       localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
     };
 
-    self.RoutingSelectableElements = ko.computed(function() {
+    self.RoutingSelectableElements = ko.computed(function () {
       if (self.activeElement() == null) return;
 
       self.filteredCreatingElementsByRoutable([]);
@@ -162,7 +192,7 @@ farmGraphModule.bindJsonElements(function(callback) {
       self.createdElements().some(function iter(o, i, a) {
         if (o !== self.activeElement()) {
           var hasRoute =
-            ko.utils.arrayFilter(self.activeElement().routing(), function(
+            ko.utils.arrayFilter(self.activeElement().routing(), function (
               item
             ) {
               var iguid =
@@ -183,7 +213,7 @@ farmGraphModule.bindJsonElements(function(callback) {
         self.filteredCreatingElementsByRoutable(
           ko.utils.arrayFilter(
             self.filteredCreatingElementsByRoutable(),
-            function(item) {
+            function (item) {
               return (
                 item
                   .formData()
@@ -197,7 +227,7 @@ farmGraphModule.bindJsonElements(function(callback) {
     });
 
     self.getActiveElementRouting = ko.computed({
-      read: function() {
+      read: function () {
         var active = self.activeElement();
         if (active) {
           var data = $fg.extend([], active.routing());
@@ -210,15 +240,15 @@ farmGraphModule.bindJsonElements(function(callback) {
 
     self.getActiveElement = ko.pureComputed(
       {
-        read: function() {
+        read: function () {
           return self.activeElement()
             ? self.activeElement()
             : {
-                name: "Not Selected",
-                position: ko.observable({ x: 0, y: 0, w: 0, h: 0 })
-              };
+              name: "Not Selected",
+              position: ko.observable({ x: 0, y: 0, w: 0, h: 0 })
+            };
         },
-        write: function() {
+        write: function () {
           var positionToSnap = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
             self.activeElement().position().x,
             self.activeElement().position().y,
@@ -240,7 +270,7 @@ farmGraphModule.bindJsonElements(function(callback) {
       viewModel
     );
 
-    self.setElementPosition = function(pos) {
+    self.setElementPosition = function (pos) {
       pos = {
         left:
           typeof pos.left == "number"
@@ -272,13 +302,13 @@ farmGraphModule.bindJsonElements(function(callback) {
       return pos;
     };
 
-    self.setEnable = function(acceptable) {
+    self.setEnable = function (acceptable) {
       var data = self
         .devices()
         .concat(self.physicals())
         .concat(self.objects());
-      ko.utils.arrayForEach(data, function(el) {
-        ko.utils.arrayFilter(acceptable, function(acc) {
+      ko.utils.arrayForEach(data, function (el) {
+        ko.utils.arrayFilter(acceptable, function (acc) {
           if (acc == el.id()) {
             el.status(true);
           }
@@ -287,7 +317,7 @@ farmGraphModule.bindJsonElements(function(callback) {
       return true;
     };
 
-    self.deleteElement = function() {
+    self.deleteElement = function () {
       var elem = self.activeElement();
       if (elem) {
         self.createdElements().some(function iter(o, i, a) {
@@ -307,7 +337,7 @@ farmGraphModule.bindJsonElements(function(callback) {
       }
     };
 
-    self.setTextColor = function() {
+    self.setTextColor = function () {
       var rgb = self.activeElement().color();
       var colors = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
       var brightness = 5;
@@ -322,64 +352,64 @@ farmGraphModule.bindJsonElements(function(callback) {
       return "rgb(" + ir + "," + ig + "," + ib + ")";
     };
 
-    self.setDisableAllTypes = function() {
+    self.setDisableAllTypes = function () {
       var data = self
         .devices()
         .concat(self.physicals())
         .concat(self.objects());
-      ko.utils.arrayForEach(data, function(el) {
+      ko.utils.arrayForEach(data, function (el) {
         el.status(false);
       });
       $fg('input[name="farmCheckBox"]').prop("checked", false);
     };
 
-    self.getTypeOptions = function(id) {
+    self.getTypeOptions = function (id) {
       if (!id) return;
       var data = self
         .devices()
         .concat(self.physicals())
         .concat(self.objects());
-      var el = ko.utils.arrayFirst(data, function(type) {
+      var el = ko.utils.arrayFirst(data, function (type) {
         return type.id() == id;
       });
       return el;
     };
 
-    self.loadFarmElements = function() {
+    self.loadFarmElements = function () {
       ko.utils.arrayForEach(
         farmGraphModule.elements.jsonElements.devices,
-        function(el) {
+        function (el) {
           // obj.status = ko.observable(false);
           self.devices.push($fg.extend(true, {}, new jsonToModel(el)));
         }
       );
       ko.utils.arrayForEach(
         farmGraphModule.elements.jsonElements.physicals,
-        function(el) {
+        function (el) {
           // obj.status = ko.observable(false);
           self.physicals.push($fg.extend(true, {}, new jsonToModel(el)));
         }
       );
       ko.utils.arrayForEach(
         farmGraphModule.elements.jsonElements.objects,
-        function(el) {
+        function (el) {
           // obj.status = ko.observable(false);
           self.objects.push($fg.extend(true, {}, new jsonToModel(el)));
         }
       );
     };
 
-    self.pushElement = function(parentGuid, element) {
+    self.pushElement = function (parentGuid, element) {
       var newElement = new jsonToModel(ko.toJS(element));
       if (parentGuid == null) self.createdElements.push(newElement);
 
-      self.getCreatedElement(parentGuid, function(data) {
+      self.getCreatedElement(parentGuid, function (data) {
         data.children.push(newElement);
       });
       localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
     };
 
-    self.getCreatedElement = function(guid, callback) {
+    self.getCreatedElement = function (guid, callback) {
       if (!guid) return;
       self.createdElements().some(function iter(o, i, a) {
         if (o.guid() === guid) {
@@ -391,22 +421,22 @@ farmGraphModule.bindJsonElements(function(callback) {
       });
     };
 
-    self.editElement = function() {
+    self.editElement = function () {
       var activeGuid = self.activeElement().guid();
       $fg("div[id=" + activeGuid + "]").dblclick();
       return;
     };
 
-    self.setElement = function(option) {
-      self.getCreatedElement(option.guid(), function(callback) {
+    self.setElement = function (option) {
+      self.getCreatedElement(option.guid(), function (callback) {
         callback.formData(option.formData());
         localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
       });
     };
 
-    self.selectElement = function(guid) {
+    self.selectElement = function (guid) {
       if (!guid) return;
-      self.getCreatedElement(guid, function(item) {
+      self.getCreatedElement(guid, function (item) {
         self.activeElement(item);
 
         var textColor = self.setTextColor(item.color);
@@ -414,7 +444,7 @@ farmGraphModule.bindJsonElements(function(callback) {
       });
     };
 
-    self.saveCanvas = function() {
+    self.saveCanvas = function () {
       farmGraphModule.elements.drawArea.css({
         width: self.canvasProperties().width() + "px",
         height: self.canvasProperties().height() + "px"
@@ -429,7 +459,7 @@ farmGraphModule.bindJsonElements(function(callback) {
   vm = new viewModel();
   ko.applyBindings(vm);
 
-  (function() {
+  (function () {
     farmGraphModule.init(jsonData);
   })();
 });

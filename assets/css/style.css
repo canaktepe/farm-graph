@@ -146,3 +146,8 @@ button#canvasProperties[aria-expanded="true"] > i:before {
   font-size: 10px;
     padding: 5px;
 }
+
+.add-new-routing-element{
+  font-size: 10px;
+    height: 25px;
+}

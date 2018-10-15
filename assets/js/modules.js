@@ -148,6 +148,9 @@ farmGraphModule = {
               case "text":
                 formObject.val(value);
                 break;
+              case "hidden":
+                formObject.val(value);
+                break;
               case "radio":
                 formObject
                   .filter("[value=" + value + "]")
@@ -274,6 +277,9 @@ farmGraphModule = {
                   value = o.value;
                   break;
                 case "radio":
+                  value = o.value;
+                  break;
+                case "hidden":
                   value = o.value;
                   break;
                 case "checkbox":
