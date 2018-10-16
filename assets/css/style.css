@@ -151,3 +151,11 @@ button#canvasProperties[aria-expanded="true"] > i:before {
   font-size: 10px;
     height: 25px;
 }
+
+.remove-routing-icon{
+  font-size: 13px;
+  position: absolute;
+  top: 0px;
+  right: 6px;
+  color: rgb(195, 10, 20);
+}

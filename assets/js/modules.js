@@ -491,6 +491,7 @@ farmGraphModule = {
 
   bindDbData: function (JSONData, parentObj) {
     if (JSONData == null) return;
+
     $fg.each(JSONData, function (i, elem) {
       var elementModel = new jsonToModel(ko.toJS(elem));
       var el = $fg("<div />")
