@@ -73,7 +73,7 @@ jsonToModel = function (data) {
           guid: '',
           name: ''
         };
-        self.routings.push(new routingModel({ id: 1, from: data.guid, to: to, default: true }));
+        self.routings.push(new routingModel({ id: farmGraphModule.guid(), from: data.guid, to: to, default: true }));
       }
     }
   }
@@ -151,6 +151,7 @@ farmGraphModule.bindJsonElements(function (callback) {
     self.selectedRoutingType = ko.observable(self.routingTypes()[0]);
     self.changeRoutingType = function (routingType) {
       self.selectedRoutingType(routingType);
+      self.routingButtonVisible();
     };
 
     // self.addRouting = function () {
@@ -180,7 +181,6 @@ farmGraphModule.bindJsonElements(function (callback) {
             guid: $this.guid(),
             name: $this.formData().Name
           });
-          // localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
         }
       })
     };
@@ -188,22 +188,23 @@ farmGraphModule.bindJsonElements(function (callback) {
     self.newRoutingVisible = ko.observable(true);
 
     //routing add button visibility function
-    self.routingButtonVisible = function (maxId) {
+    self.routingButtonVisible = function () {
       var ldnSize = 4,
         ddsSize = 6,
-        selectedRtType = self.selectedRoutingType().id();
+        selectedRtType = self.selectedRoutingType().id(),
+        routingCount = self.activeElement().routings().length;
 
-      if (selectedRtType == 1 && maxId == ldnSize || selectedRtType == 2 && maxId == ddsSize)
+      if (selectedRtType == 1 && routingCount >= ldnSize || selectedRtType == 2 && routingCount >= ddsSize)
         self.newRoutingVisible(false);
       else
         self.newRoutingVisible(true);
     }
 
 
-    self.getRoutingMaxID = function () {
-      var activeElement = self.activeElement();
-      return Math.max.apply(Math, activeElement.routings().map(function (o) { return o.id() })) + 1;
-    }
+    // self.getRoutingMaxID = function () {
+    //   var activeElement = self.activeElement();
+    //   return Math.max.apply(Math, activeElement.routings().map(function (o) { return o.id() })) + 1;
+    // }
 
 
     self.addNewRouting = function () {
@@ -211,22 +212,37 @@ farmGraphModule.bindJsonElements(function (callback) {
       if (!activeElement)
         return;
 
-      var maxId = self.getRoutingMaxID();
+      // var maxId = self.getRoutingMaxID();
       var to = {
         guid: '',
         name: ''
       };
-      activeElement.routings.push(new routingModel({ id: maxId, from: activeElement.guid(), to: to, default: false }));
+      activeElement.routings.push(new routingModel({ id: farmGraphModule.guid(), from: activeElement.guid(), to: to, default: false }));
 
-      self.routingButtonVisible(maxId);
+      self.routingButtonVisible();
     }
 
     self.removeRouting = function () {
       var $this = this;
       self.activeElement().routings.remove($this);
-      self.routingButtonVisible(self.getRoutingMaxID());
+      self.routingButtonVisible();
     }
 
+    self.getRoutingDirectionName = function (index) {
+
+      var ldnDirections = [1, 2, 3, 4];
+      var ddsDirections = ["L", "R", "LR", "LL", "RL", "RR"]
+
+      var directionName;
+      if (self.selectedRoutingType().id() == 1) {
+        directionName = ldnDirections[index];
+      }
+      else if (self.selectedRoutingType().id() == 2) {
+        directionName = ddsDirections[index];
+      }
+
+      return directionName;
+    }
 
     // self.deleteRouting = function (item) {
     //   self.activeElement().routing.remove(item);
@@ -491,7 +507,10 @@ farmGraphModule.bindJsonElements(function (callback) {
 
         var textColor = self.setTextColor(item.color);
         self.textColor(textColor);
+        self.routingButtonVisible();
       });
+
+
     };
 
     self.saveCanvas = function () {
