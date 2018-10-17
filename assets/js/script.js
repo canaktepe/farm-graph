@@ -74,20 +74,21 @@ jsonToModel = function (data) {
             })
           );
         });
-      } else {
-        var to = {
-          guid: "",
-          name: ""
-        };
-        self.routings.push(
-          new routingModel({
-            id: farmGraphModule.guid(),
-            from: data.guid,
-            to: to,
-            isDefault: true
-          })
-        );
       }
+      //  else {
+      //   var to = {
+      //     guid: "",
+      //     name: ""
+      //   };
+      //   self.routings.push(
+      //     new routingModel({
+      //       id: farmGraphModule.guid(),
+      //       from: data.guid,
+      //       to: to,
+      //       isDefault: true
+      //     })
+      //   );
+      // }
     }
   }
   self.endPoints = ko.observable(data.endPoints);

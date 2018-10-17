@@ -228,7 +228,7 @@
                             </div>
                             <div class="col-sm-2 p-0">
                                 <input type="radio" name="routingDefault" data-bind="routingSetDefault: routingItem" />
-                                <!--ko if:$index()>0-->
+                                <!--ko if:$index()>-1-->
                                 <a href="javascript:void(0)" class="remove-routing-icon" data-bind="click:$root.removeRouting.bind($data)">
                                     <i class="far fa-trash-alt"></i>
                                 </a>
