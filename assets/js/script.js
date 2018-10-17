@@ -34,6 +34,7 @@ routingModel = function (prop) {
   self.from = ko.observable(prop.from);
   self.to = ko.observable(prop.to);
   self.isDefault = ko.observable(prop.isDefault);
+  self.isDeleted = ko.observable(prop.isDeleted);
 };
 
 jsonToModel = function (data) {
@@ -61,7 +62,8 @@ jsonToModel = function (data) {
   self.type = ko.observable(data.type);
   self.routingEnabled = ko.observable(data.routingEnabled);
   if (data.routingEnabled) {
-    self.routings = ko.observableArray();
+    self.routings = ko.observableArray([]);
+    self.routingType = data.routingType ? ko.observable(new routingTypeModel(data.routingType)) : ko.observable();
     if (data.routings) {
       if (data.routings.length > 0) {
         $fg.each(data.routings, function (i, item) {
@@ -70,7 +72,8 @@ jsonToModel = function (data) {
               id: item.id,
               from: data.guid,
               to: item.to,
-              isDefault: item.isDefault
+              isDefault: item.isDefault,
+              isDeleted: item.isDeleted
             })
           );
         });
@@ -202,8 +205,13 @@ farmGraphModule.bindJsonElements(function (callback) {
 
     self.selectedRoutingType = ko.observable(self.routingTypes()[0]);
     self.changeRoutingType = function (routingType) {
+      console.log(100);
       self.selectedRoutingType(routingType);
+      console.log(110);
       self.routingButtonVisible();
+      console.log(120);
+      var activeElement = self.activeElement();
+      activeElement.,(routingType);
 
       if (routingType === self.routingTypes()[0] /*dds*/) {
         var activeElementRoutings = self.activeElement().routings();
@@ -245,7 +253,7 @@ farmGraphModule.bindJsonElements(function (callback) {
       var ldnSize = 4,
         ddsSize = 6,
         selectedRtType = self.selectedRoutingType().id(),
-        routingCount = activeElement.routings().length;
+        routingCount = ko.utils.arrayFilter(activeElement.routings(), function (route) { return route.isDeleted() == false }).length;
 
       if (
         (selectedRtType == 1 && routingCount >= ldnSize) ||
@@ -265,25 +273,42 @@ farmGraphModule.bindJsonElements(function (callback) {
       if (!activeElement) return;
 
       // var maxId = self.getRoutingMaxID();
+
+      var deletedRouting = $fg.grep(activeElement.routings(), function (route, i) {
+        return route.isDeleted() == true;
+      })[0];
+
       var to = {
         guid: "",
         name: ""
       };
+
+      if (deletedRouting) {
+        deletedRouting.to(to);
+        deletedRouting.isDefault(false);
+        deletedRouting.isDeleted(false);
+        self.routingButtonVisible();
+        return;
+      }
+
       activeElement.routings.push(
         new routingModel({
           id: farmGraphModule.guid(),
           from: activeElement.guid(),
           to: to,
-          isDefault: false
+          isDefault: false,
+          isDeleted: false
         })
       );
-
       self.routingButtonVisible();
     };
 
     self.removeRouting = function () {
       var $this = this;
-      self.activeElement().routings.remove($this);
+      // self.activeElement().routings.remove($this);
+      ko.utils.arrayFilter(self.activeElement().routings(), function (route) {
+        if ($this.id() == route.id()) route.isDeleted(true);
+      })
       self.routingButtonVisible();
     };
 
@@ -333,12 +358,8 @@ farmGraphModule.bindJsonElements(function (callback) {
       return ko.utils.arrayFilter(self.activeElement().routings(), function (
         route
       ) {
-
-        console.log(20, route);
-
         route.isDefault(false);
         if (route.id() == data.id()) {
-          console.log(30, route.id());
           route.isDefault(true);
         }
       });
@@ -547,7 +568,11 @@ farmGraphModule.bindJsonElements(function (callback) {
 
         var textColor = self.setTextColor(item.color);
         self.textColor(textColor);
-        self.routingButtonVisible();
+
+        if (item.routingEnabled()) {
+          self.changeRoutingType(item.routingType)
+          self.routingButtonVisible();
+        }
       });
     };
 

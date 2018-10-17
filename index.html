@@ -191,7 +191,7 @@
                             </div>
                         </div>
                         <!--ko foreach: {data: getActiveElement().routings, as :'routingItem' } -->
-                        <div class="row pt-2 pb-2 border-bottom border-bottom-1">
+                        <div class="row pt-2 pb-2 border-bottom border-bottom-1" data-bind="visible:!isDeleted()">
                             <div class="col-sm-2 pr-0 font-weight-bold text-center" data-bind="directionName:$index()"></div>
                             <div class="col-sm-8">
                                 <div id="routingDropDown" class="dropdown btn-group w-100" role="group">
