@@ -196,7 +196,7 @@
                             <div class="col-sm-8">
                                 <div id="routingDropDown" class="dropdown btn-group w-100" role="group">
                                     <a class="dropdown-toggle nodecor text-dark w-100" href="#" id="dropdownMenuLink"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text:routingItem.to().guid!='' ? routingItem.to().name : 'Select Object'">
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text:to().guid!='' ? to().name : 'Select Object'">
                                     </a>
                                     <div class="dropdown-menu border-bottom-2 w-100" aria-labelledby="dropdownMenuLink">
                                         <div class="container">
@@ -207,7 +207,7 @@
                                                             <i class="fas fa-search" aria-hidden="true"></i>
                                                         </span>
                                                         <input type="text" class="form-control form-control-sm"
-                                                            placeholder="Search..." id="search" name="search" data-bind="value:$parent.searchElementKeyword, valueUpdate: 'keyup'" />
+                                                            placeholder="Search..." id="search" name="search" data-bind="value:$root.searchElementKeyword, valueUpdate: 'keyup'" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -215,8 +215,8 @@
                                                 <div class="dropdown-item text-center" data-bind="visible:$root.filteredCreatingElementsByRoutable().length==0">
                                                     No Result
                                                 </div>
-                                                <!--ko foreach:$parent.filteredCreatingElementsByRoutable-->
-                                                <button class="dropdown-item p-1" type="button" data-bind="click:$root.selectRoutingElement.bind($data,routingItem),hoverToggle:$parent.guid">
+                                                <!--ko foreach:$root.filteredCreatingElementsByRoutable-->
+                                                <button class="dropdown-item p-1" type="button" data-bind="click:$root.selectRoutingElement.bind($data,routingItem),hoverToggle:guid">
                                                     <div class="float-left mt-1 mr-1 routing-selector-box" data-bind="style:{backgroundColor:color}"></div>
                                                     <label data-bind="text:formData().Name"></label>
                                                 </button>
@@ -227,7 +227,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-2 p-0">
-                                <input type="radio" name="routingDefault" data-bind="attr:{checked:$data.default},click:$root.setDefaultRouting.bind(routingItem)" />
+                                <input type="radio" name="routingDefault" data-bind="routingSetDefault: routingItem" />
                                 <!--ko if:$index()>0-->
                                 <a href="javascript:void(0)" class="remove-routing-icon" data-bind="click:$root.removeRouting.bind($data)">
                                     <i class="far fa-trash-alt"></i>

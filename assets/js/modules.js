@@ -583,7 +583,7 @@ farmGraphModule = {
             var guid = $fg(ui.helper).attr("id");
             vm.setElementPosition(ui.size);
             vm.selectElement(guid);
-            jsPlumb.repaintEverything();
+            // jsPlumb.repaintEverything();
           },
           stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);
