@@ -33,7 +33,7 @@ routingModel = function (prop) {
   self.id = ko.observable(prop.id);
   self.from = ko.observable(prop.from);
   self.to = ko.observable(prop.to);
-  self.default = ko.observable(prop.default);
+  self.isDefault = ko.observable(prop.isDefault);
 };
 
 jsonToModel = function (data) {
@@ -70,7 +70,7 @@ jsonToModel = function (data) {
               id: item.id,
               from: data.guid,
               to: item.to,
-              default: item.default
+              isDefault: item.isDefault
             })
           );
         });
@@ -84,7 +84,7 @@ jsonToModel = function (data) {
             id: farmGraphModule.guid(),
             from: data.guid,
             to: to,
-            default: true
+            isDefault: true
           })
         );
       }
@@ -124,7 +124,7 @@ farmGraphModule.bindJsonElements(function (callback) {
     init: function (element, valueAccessor) {
       var data = ko.utils.unwrapObservable(valueAccessor());
       ko.utils.arrayFilter(vm.activeElement().routings(), function (route) {
-        if (data.from() == route.from() && data.default()) {
+        if (data.from() == route.from() && data.isDefault()) {
           $fg(element).attr('checked', true);
         }
       })
@@ -134,8 +134,8 @@ farmGraphModule.bindJsonElements(function (callback) {
           return ko.utils.arrayFilter(vm.activeElement().routings(), function (
             route
           ) {
-            route.default(false);
-            if (route.id() == data.id()) route.default(true);
+            route.isDefault(false);
+            if (route.id() == data.id()) route.isDefault(true);
           });
         })
     }
@@ -273,7 +273,7 @@ farmGraphModule.bindJsonElements(function (callback) {
           id: farmGraphModule.guid(),
           from: activeElement.guid(),
           to: to,
-          default: false
+          isDefault: false
         })
       );
 
@@ -335,10 +335,10 @@ farmGraphModule.bindJsonElements(function (callback) {
 
         console.log(20, route);
 
-        route.default(false);
+        route.isDefault(false);
         if (route.id() == data.id()) {
           console.log(30, route.id());
-          route.default(true);
+          route.isDefault(true);
         }
       });
     };
