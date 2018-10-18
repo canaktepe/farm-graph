@@ -194,11 +194,12 @@
                         <div class="row pt-2 pb-2 border-bottom border-bottom-1" data-bind="visible:!isDeleted()">
                             <div class="col-sm-2 pr-0 font-weight-bold text-center" data-bind="directionName:$index()"></div>
                             <div class="col-sm-8">
-                                <div id="routingDropDown" class="dropdown btn-group w-100" role="group">
-                                    <a class="dropdown-toggle nodecor text-dark w-100" href="#" id="dropdownMenuLink"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="text:to().guid!='' ? to().name : 'Select Object'">
+                                <div class="dropdown btn-group w-100" role="group">
+                                    <a class="dropdown-toggle nodecor text-dark w-100" href="#" id="" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false" data-bind="attr:{id:'routeItem_'+$index()},text:to().guid!='' ? to().name : 'Select Object'">
                                     </a>
-                                    <div class="dropdown-menu border-bottom-2 w-100" aria-labelledby="dropdownMenuLink">
+                                    <div class="dropdown-menu border-bottom-2 w-100" aria-labelledby="dropdownMenuLink"
+                                        data-bind="attr:{id:'routeItem_'+$index()}">
                                         <div class="container">
                                             <div class="form-group">
                                                 <div class="input-group-btn">

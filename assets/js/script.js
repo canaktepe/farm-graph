@@ -28,7 +28,7 @@ routingTypeModel = function (data) {
   self.type = ko.observable(data.type);
 };
 
-const routingTypes=[
+const routingTypes = [
   new routingTypeModel({ id: 1, type: "Routing" }),
   new routingTypeModel({ id: 2, type: "Routing (DDS)" })
 ]
@@ -117,6 +117,18 @@ farmGraphModule.bindJsonElements(function (callback) {
       var ldnDirections = [1, 2, 3, 4];
       var ddsDirections = ["L", "R", "LR", "LL", "RL", "RR"];
 
+      //this part using for routing scroller
+      var parent = $fg(element).parent();
+      parent.find('.dropdown-toggle').off('click');
+      parent.find('.dropdown-toggle').on('click', function (e) {
+        if($fg(this).attr('aria-expanded')=="true") return;
+        parent.find('.dropdown-scroller').mCustomScrollbar({
+          scrollbarPosition: "outside"
+        });
+        e.preventDefault();
+      })
+      //this part using for routing scroller end
+
       var directionName;
       if (vm.activeElement().routingType().id() == 1) {
         directionName = ldnDirections[index];
@@ -160,7 +172,6 @@ farmGraphModule.bindJsonElements(function (callback) {
     ) {
       var guid = valueAccessor();
       if (ko.isObservable(guid)) guid = guid();
-
       var showObj = $fg("div.rect[id=" + guid + "]");
 
       ko.utils.registerEventHandler(element, "mouseover", function () {
@@ -172,6 +183,14 @@ farmGraphModule.bindJsonElements(function (callback) {
         showObj.addClass("show-route");
       });
       ko.utils.registerEventHandler(element, "mouseout", function () {
+        ko.utils.toggleDomNodeCssClass(
+          element,
+          ko.utils.unwrapObservable("bg-light"),
+          false
+        );
+        showObj.removeClass("show-route");
+      });
+      ko.utils.registerEventHandler(element, "click", function () {
         ko.utils.toggleDomNodeCssClass(
           element,
           ko.utils.unwrapObservable("bg-light"),
@@ -326,14 +345,12 @@ farmGraphModule.bindJsonElements(function (callback) {
       self.filteredCreatingElementsByRoutable([]);
       var filter = self.searchElementKeyword();
       self.createdElements().some(function iter(o, i, a) {
-        if (o !== self.activeElement()) {
+        if (o !== self.activeElement() && self.activeElement().routingEnabled()) {
           var hasRoute =
-            ko.utils.arrayFilter(self.activeElement().routing(), function (
+            ko.utils.arrayFilter(self.activeElement().routings(), function (
               item
             ) {
-              var iguid =
-                typeof item.guid === "function" ? item.guid() : item.guid;
-              return iguid === o.guid();
+              return item.to().guid === o.guid() && item.isDeleted() === false;
             }).length > 0;
 
           if (hasRoute == false)
@@ -571,6 +588,9 @@ farmGraphModule.bindJsonElements(function (callback) {
 
     self.selectElement = function (guid) {
       if (!guid) return;
+      // var b =  $fg(".dropdown-scroller").mCustomScrollbar('destroy');
+      // console.log(b)
+
       self.getCreatedElement(guid, function (item) {
         self.activeElement(item);
 
@@ -582,6 +602,12 @@ farmGraphModule.bindJsonElements(function (callback) {
           self.routingButtonVisible();
         }
       });
+
+      // var a = $fg(".dropdown-scroller").mCustomScrollbar({
+      //     scrollbarPosition: "outside"
+      //   });
+
+      // console.log(a);
     };
 
     self.saveCanvas = function () {
