@@ -73,20 +73,6 @@ farmGraphModule = {
 
   bindCustomScrollBar: function () {
 
-   var a =  $fg(".dropdown-scroller").mCustomScrollbar({
-      scrollbarPosition: "outside"
-    });
-
-
-
-    // $fg("#addedRouting").mCustomScrollbar({
-    //   scrollbarPosition: "outside",
-    //   autoDraggerLength: true,
-    //   autoHideScrollbar: true,
-    //   contentTouchScroll: true,
-    //   documentTouchScroll: true,
-    //   live: "on"
-    // });
 
     elements.farm.mCustomScrollbar({
       autoDraggerLength: true,

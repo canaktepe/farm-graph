@@ -62,7 +62,6 @@ jsonToModel = function (data) {
   self.pageTemplate = ko.observable(data.pageTemplate);
   self.position = ko.observable(data.position);
   self.resizable = ko.observable(data.resizable);
-  self.routing = ko.observableArray(data.routing);
   self.status = ko.observable(data.status);
   self.type = ko.observable(data.type);
   self.routingEnabled = ko.observable(data.routingEnabled);
