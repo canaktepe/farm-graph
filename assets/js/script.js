@@ -28,6 +28,11 @@ routingTypeModel = function (data) {
   self.type = ko.observable(data.type);
 };
 
+const routingTypes=[
+  new routingTypeModel({ id: 1, type: "Routing" }),
+  new routingTypeModel({ id: 2, type: "Routing (DDS)" })
+]
+
 routingModel = function (prop) {
   var self = this;
   self.id = ko.observable(prop.id);
@@ -63,7 +68,7 @@ jsonToModel = function (data) {
   self.routingEnabled = ko.observable(data.routingEnabled);
   if (data.routingEnabled) {
     self.routings = ko.observableArray([]);
-    self.routingType = data.routingType ? ko.observable(new routingTypeModel(data.routingType)) : ko.observable();
+    self.routingType = data.routingType ? ko.observable(new routingTypeModel(data.routingType)) : ko.observable(routingTypes[0]);
     if (data.routings) {
       if (data.routings.length > 0) {
         $fg.each(data.routings, function (i, item) {
@@ -113,11 +118,11 @@ farmGraphModule.bindJsonElements(function (callback) {
       var ddsDirections = ["L", "R", "LR", "LL", "RL", "RR"];
 
       var directionName;
-      if (vm.selectedRoutingType().id() == 1) {
+      if (vm.activeElement().routingType().id() == 1) {
         directionName = ldnDirections[index];
         if (!directionName)
           $fg(element).parent().remove();
-      } else if (vm.selectedRoutingType().id() == 2)
+      } else if (vm.activeElement().routingType().id() == 2)
         directionName = ddsDirections[index];
 
       $fg(element).text(directionName);
@@ -198,20 +203,23 @@ farmGraphModule.bindJsonElements(function (callback) {
     );
     self.textColor = ko.observable();
 
-    self.routingTypes = ko.observableArray([
-      new routingTypeModel({ id: 1, type: "Routing" }),
-      new routingTypeModel({ id: 2, type: "Routing (DDS)" })
-    ]);
+    self.routingTypes = ko.observableArray(routingTypes);
 
-    self.selectedRoutingType = ko.observable(self.routingTypes()[0]);
+    // self.selectedRoutingType = ko.observable(self.routingTypes()[0]);
     self.changeRoutingType = function (routingType) {
-      console.log(100);
-      self.selectedRoutingType(routingType);
-      console.log(110);
+
+
+      if (typeof (routingType) == "undefined") routingType = self.routingTypes()[0];
+
+
+      // self.selectedRoutingType(routingType);
       self.routingButtonVisible();
-      console.log(120);
+
+
+
       var activeElement = self.activeElement();
-      activeElement.,(routingType);
+      activeElement.routingType(routingType);
+
 
       if (routingType === self.routingTypes()[0] /*dds*/) {
         var activeElementRoutings = self.activeElement().routings();
@@ -252,7 +260,7 @@ farmGraphModule.bindJsonElements(function (callback) {
 
       var ldnSize = 4,
         ddsSize = 6,
-        selectedRtType = self.selectedRoutingType().id(),
+        selectedRtType = activeElement.routingType().id(),
         routingCount = ko.utils.arrayFilter(activeElement.routings(), function (route) { return route.isDeleted() == false }).length;
 
       if (
@@ -570,7 +578,7 @@ farmGraphModule.bindJsonElements(function (callback) {
         self.textColor(textColor);
 
         if (item.routingEnabled()) {
-          self.changeRoutingType(item.routingType)
+          self.changeRoutingType(item.routingType())
           self.routingButtonVisible();
         }
       });
