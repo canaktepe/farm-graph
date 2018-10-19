@@ -44,6 +44,7 @@ routingModel = function (prop) {
 
 jsonToModel = function (data) {
   var self = this;
+  self.parentGuid = ko.observable(data.parentGuid);
   self.acceptable = ko.observable(data.acceptable);
   self.children = ko.observableArray();
   if (data.children) {
@@ -64,7 +65,7 @@ jsonToModel = function (data) {
   self.resizable = ko.observable(data.resizable);
   self.status = ko.observable(data.status);
   self.type = ko.observable(data.type);
-  self.routingEnabled = ko.observable(data.routingEnabled);
+  self.routingEnabled = ko.observable(data.routingEnabled || false);
   if (data.routingEnabled) {
     self.routings = ko.observableArray([]);
     self.routingType = data.routingType ? ko.observable(new routingTypeModel(data.routingType)) : ko.observable(routingTypes[0]);
@@ -120,7 +121,7 @@ farmGraphModule.bindJsonElements(function (callback) {
       var parent = $fg(element).parent();
       parent.find('.dropdown-toggle').off('click');
       parent.find('.dropdown-toggle').on('click', function (e) {
-        if($fg(this).attr('aria-expanded')=="true") return;
+        if ($fg(this).attr('aria-expanded') == "true") return;
         parent.find('.dropdown-scroller').mCustomScrollbar({
           scrollbarPosition: "outside"
         });
@@ -239,7 +240,7 @@ farmGraphModule.bindJsonElements(function (callback) {
       activeElement.routingType(routingType);
 
 
-      if (routingType === self.routingTypes()[0] /*dds*/) {
+      if (routingType === self.routingTypes()[0] /*ldn*/) {
         var activeElementRoutings = self.activeElement().routings();
 
         if (activeElementRoutings.length > 4) {
@@ -338,45 +339,57 @@ farmGraphModule.bindJsonElements(function (callback) {
       self.routingButtonVisible();
     };
 
-    self.RoutingSelectableElements = ko.computed(function () {
-      if (self.activeElement() == null) return;
+    // self.RoutingSelectableElements = ko.computed(function () {
+    //   if (self.activeElement() == null) return;
+    //   if(!self.activeElement().routingEnabled()) return;
 
-      self.filteredCreatingElementsByRoutable([]);
-      var filter = self.searchElementKeyword();
-      self.createdElements().some(function iter(o, i, a) {
-        if (o !== self.activeElement() && self.activeElement().routingEnabled()) {
-          var hasRoute =
-            ko.utils.arrayFilter(self.activeElement().routings(), function (
-              item
-            ) {
-              return item.to().guid === o.guid() && item.isDeleted() === false;
-            }).length > 0;
+    //   self.filteredCreatingElementsByRoutable([]);
+    //   var filter = self.searchElementKeyword();
 
-          if (hasRoute == false)
-            self.filteredCreatingElementsByRoutable.push(o);
-        }
+    //   var routeableElements = self.createdElements();
+    //   if(self.activeElement().routingType().id()===self.routingTypes()[0].id()/*ldn*/){
+    //       console.log('routeable ldn');
+    //   }
+    //   else if(self.activeElement().routingType().id()===self.routingTypes()[1].id()/*dds*/){
+    //     console.log('routeable dds')
+    //   }
 
-        var children =
-          typeof o.children === "function" ? o.children() : o.children;
-        return children && children.some(iter);
-      });
 
-      if (filter) {
-        self.filteredCreatingElementsByRoutable(
-          ko.utils.arrayFilter(
-            self.filteredCreatingElementsByRoutable(),
-            function (item) {
-              return (
-                item
-                  .formData()
-                  .Name.toLowerCase()
-                  .indexOf(filter.toLowerCase()) > -1
-              );
-            }
-          )
-        );
-      }
-    });
+    //   routeableElements.some(function iter(o, i, a) {
+    //     if (o !== self.activeElement() && self.activeElement().routingEnabled()) {
+    //       var hasRoute =
+    //         ko.utils.arrayFilter(self.activeElement().routings(), function (
+    //           item
+    //         ) {
+    //           return item.to().guid === o.guid()
+    //             && item.isDeleted() === false;
+    //         }).length > 0;
+
+    //       if (hasRoute == false)
+    //         self.filteredCreatingElementsByRoutable.push(o);
+    //     }
+
+    //     var children =
+    //       typeof o.children === "function" ? o.children() : o.children;
+    //     return children && children.some(iter);
+    //   });
+
+    //   if (filter) {
+    //     self.filteredCreatingElementsByRoutable(
+    //       ko.utils.arrayFilter(
+    //         self.filteredCreatingElementsByRoutable(),
+    //         function (item) {
+    //           return (
+    //             item
+    //               .formData()
+    //               .Name.toLowerCase()
+    //               .indexOf(filter.toLowerCase()) > -1
+    //           );
+    //         }
+    //       )
+    //     );
+    //   }
+    // });
 
     self.setDefaultRouting = function (data) {
       return ko.utils.arrayFilter(self.activeElement().routings(), function (
@@ -469,22 +482,46 @@ farmGraphModule.bindJsonElements(function (callback) {
     };
 
     self.deleteElement = function () {
-      var elem = self.activeElement();
-      if (elem) {
+      var activeElement = self.activeElement();
+
+      removeAllRoutingRelations = function (item) {
+        if (!item.routingEnabled()) return;
+        if (item.routings().length > 0) {
+          if (activeElement.routingType().id() === self.routingTypes()[0].id()/*ldn*/) {
+            //(Areas, and Devices own location) remove relation
+            if (activeElement.parentGuid() == item.guid() || activeElement.parentGuid() == item.parentGuid()) {
+              item.routings().some(function iter(o, i, a) {
+                if (o.to().guid === activeElement.guid()) {
+                  a.splice(i, 1);
+                }
+              })
+            }
+          }
+          else if (activeElement.routingType() === self.routingTypes()[1]/*dds*/) {
+            //(Area,Location,Device) remove ralation
+            item.routings().some(function iter(o, i, a) {
+              if (o.to().guid === activeElement.guid()) {
+                a.splice(i, 1);
+              }
+            })
+          }
+        }
+      }
+
+      if (activeElement) {
         self.createdElements().some(function iter(o, i, a) {
-          if (o.guid() === elem.guid()) {
+          removeAllRoutingRelations(o);
+          if (o.guid() === activeElement.guid()) {
             a.splice(i, 1);
-            // console.log(100, elem.guid());
-            // jsPlumb.removeAllEndpoints(elem.guid());
-            $fg("div[id=" + elem.guid() + "]").remove();
+            // jsPlumb.removeAllEndpoints(activeElement.guid());
+            $fg("div[id=" + activeElement.guid() + "]").remove();
             self.activeElement(null);
-            localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
             return true;
           }
-          var children =
-            typeof o.children === "function" ? o.children() : o.children;
+          var children = typeof o.children === "function" ? o.children() : o.children;
           return children && children.some(iter);
         });
+        localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
       }
     };
 
@@ -587,9 +624,6 @@ farmGraphModule.bindJsonElements(function (callback) {
 
     self.selectElement = function (guid) {
       if (!guid) return;
-      // var b =  $fg(".dropdown-scroller").mCustomScrollbar('destroy');
-      // console.log(b)
-
       self.getCreatedElement(guid, function (item) {
         self.activeElement(item);
 
@@ -601,13 +635,33 @@ farmGraphModule.bindJsonElements(function (callback) {
           self.routingButtonVisible();
         }
       });
-
-      // var a = $fg(".dropdown-scroller").mCustomScrollbar({
-      //     scrollbarPosition: "outside"
-      //   });
-
-      // console.log(a);
     };
+
+    self.getSelectableRouteElement = function () {
+      var activeElement = self.activeElement()
+      if (!activeElement) return;
+
+      self.filteredCreatingElementsByRoutable([]);
+
+      var routeableElements = self.createdElements(); //Get all the elements on the canvas with its children
+      routeableElements.some(function iter(o, i, a) {
+        if (o !== activeElement && activeElement.routingEnabled()) {
+
+          console.log(100, activeElement.routings())
+
+          var hasRoute = ko.utils.arrayFilter(activeElement.routings(), function (item) {
+            return item.to().guid === o.guid() && item.isDeleted() === false;
+          }).length > 0;
+
+          if (hasRoute == false)
+            self.filteredCreatingElementsByRoutable.push(o);
+        }
+
+        var children =
+          typeof o.children === "function" ? o.children() : o.children;
+        return children && children.some(iter);
+      });
+    }
 
     self.saveCanvas = function () {
       farmGraphModule.elements.drawArea.css({

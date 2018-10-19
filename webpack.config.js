@@ -13,6 +13,10 @@ const copyHTMLFiles = new CopyWebpackPlugin([
   }
 ]);
 
+const debugPlugin  =   new webpack.LoaderOptionsPlugin({
+  debug: true
+});
+
 const jqueryPlugin = new webpack.ProvidePlugin({
   jQuery: "jquery",
   $fg: "jquery"
@@ -35,6 +39,7 @@ module.exports = env => {
       jqueryPlugin,
       knockoutPlugin,
       copyHTMLFiles,
+      debugPlugin,
       new webpack.DefinePlugin({
         'process.env': {
           'FORMS_PATH': JSON.stringify(FORMS_PATH),

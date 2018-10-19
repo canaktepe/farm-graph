@@ -303,13 +303,15 @@ farmGraphModule = {
         options.formData(formData);
         vm.setElement(options);
       } else {
+        var parentGuid = farmGraphModule.getParentGuid(drawedElement);
+
         var guid = farmGraphModule.guid();
         drawedElement.options.position(position);
         drawedElement.options.guid(guid);
+        drawedElement.options.parentGuid(parentGuid);
         options = drawedElement.options;
         options.formData(formData);
 
-        var parentGuid = farmGraphModule.getParentGuid(drawedElement);
 
         if (options.endPoints()) {
           // farmGraphModule.addEndPoints(drawedElement);

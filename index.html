@@ -196,7 +196,7 @@
                             <div class="col-sm-8">
                                 <div class="dropdown btn-group w-100" role="group">
                                     <a class="dropdown-toggle nodecor text-dark w-100" href="#" id="" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false" data-bind="attr:{id:'routeItem_'+$index()},text:to().guid!='' ? to().name : 'Select Object'">
+                                        aria-haspopup="true" aria-expanded="false" data-bind="click:$root.getSelectableRouteElement, attr:{id:'routeItem_'+$index()},text:to().guid!='' ? to().name : 'Select Object'">
                                     </a>
                                     <div class="dropdown-menu border-bottom-2 w-100" aria-labelledby="dropdownMenuLink"
                                         data-bind="attr:{id:'routeItem_'+$index()}">
