@@ -36,13 +36,11 @@ farmGraphModule = {
         });
         $fg(e).draggable("option", "drag", function (event, ui) {
           vm.setElementPosition(ui.position);
-          jsPlumb.repaintEverything();
         });
         $fg(e).resizable("option", "resize", function (event, ui) {
           guid = $fg(e).attr("id");
           vm.setElementPosition(ui.size);
           vm.selectElement(guid);
-          jsPlumb.repaintEverything();
         });
         $fg(e).resizable("option", "start", function (event, ui) {
           guid = $fg(e).attr("id");
@@ -193,26 +191,6 @@ farmGraphModule = {
     return position;
   },
 
-  addEndPoints: function (element) {
-    var el = element;
-    var options = element.options;
-
-    if (options === undefined) {
-      el = $fg("#" + element.guid());
-      options = element;
-    }
-
-    if (options.endPoints() === undefined) return;
-
-    var endpointArr = options.endPoints();
-    if (endpointArr.length > 0) {
-      console.log("endpoint add " + options.guid());
-      $fg.each(endpointArr, function (i, endpoint) {
-        jsPlumb.addEndpoint(el, endpoint);
-      });
-    }
-  },
-
   setElementRectangleNameText: function (el, update) {
     var element;
     if (update) {
@@ -311,11 +289,6 @@ farmGraphModule = {
         drawedElement.options.parentGuid(parentGuid);
         options = drawedElement.options;
         options.formData(formData);
-
-
-        if (options.endPoints()) {
-          // farmGraphModule.addEndPoints(drawedElement);
-        }
 
         vm.pushElement(parentGuid, options);
         drawedElement
@@ -513,7 +486,6 @@ farmGraphModule = {
             // ui.position.left =Math.round(ui.position.left / zoom);
 
             vm.setElementPosition(ui.position);
-            jsPlumb.repaintEverything();
           },
           stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);
@@ -574,7 +546,6 @@ farmGraphModule = {
             var guid = $fg(ui.helper).attr("id");
             vm.setElementPosition(ui.size);
             vm.selectElement(guid);
-            // jsPlumb.repaintEverything();
           },
           stop: function (event, ui) {
             var newPos = vm.setElementPosition(ui.position);
@@ -586,7 +557,6 @@ farmGraphModule = {
         else parentObj.append(el);
 
         farmGraphModule.setElementRectangleNameText(elementModel, true);
-        // farmGraphModule.addEndPoints(elementModel);
 
         if (elementModel.children().length > 0) {
           farmGraphModule.bindDbData(elementModel.children(), el);
@@ -640,40 +610,12 @@ farmGraphModule = {
       }
     });
   },
-  plumbInitialize: function () {
-    jsPlumb.importDefaults({
-      // default drag options
-      DragOptions: { cursor: "pointer", zIndex: 2000 },
-      // the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
-      // case it returns the 'labelText' member that we set on each connection in the 'init' method below.
-      ConnectionOverlays: [
-        ["PlainArrow", { location: 0.5 }]
-        // [ "Label", { label:"foo", location:0.25, id:"myLabel" } ]
-      ],
-      ConnectorZIndex: 5,
-      Connector: [
-        "Flowchart",
-        {
-          stub: [25, 25],
-          cornerRadius: 10,
-          alwaysRespectStubs: true
-        }
-      ],
-      // Endpoint : "Dot",
-      EndpointStyle: { fill: "rgba(200,0,0,0.5)" },
-      // PaintStyle : { strokeWidth : 3, stroke : "red" },
-      PaintStyle: {
-        strokeWidth: 5,
-        stroke: "rgba(200,0,0,0.5)"
-      }
-    });
-  },
+ 
 
   init: function (jsonData) {
     elements = this.elements;
     this.bindFarmDraw();
     this.bindExtensionMethods();
-    this.plumbInitialize();
     this.bindDbData(jsonData, null);
     this.bootstrapSlider();
     this.contextMenu();

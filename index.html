@@ -178,10 +178,10 @@
                             </div>
                         </div>
                         <!-- routing section -->
-                        <!--ko if : getActiveElement().routingEnabled -->
+                        <!--ko if :  activeElement() ? activeElement().routingEnabled().output : false-->
                         <div class="dropdown mb-2">
                             <a class="dropdown-toggle font-weight-bold" id="routingDropdownMenuButton" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false" data-bind="text:getActiveElement().routingType().type()">
+                                aria-haspopup="true" aria-expanded="false" data-bind="text:activeElement().routingType().type()">
                             </a>
                             <span class="float-right">
                                 Default
@@ -190,7 +190,7 @@
                                 <a class="dropdown-item" href="javascript:void(0)" data-bind="text:type,click:$parent.changeRoutingType.bind($data)">Routing</a>
                             </div>
                         </div>
-                        <!--ko foreach: {data: getActiveElement().routings, as :'routingItem' } -->
+                        <!--ko foreach: {data: activeElement().routings, as :'routingItem' } -->
                         <div class="row pt-2 pb-2 border-bottom border-bottom-1" data-bind="visible:!isDeleted()">
                             <div class="col-sm-2 pr-0 font-weight-bold text-center" data-bind="directionName:$index()"></div>
                             <div class="col-sm-8">
