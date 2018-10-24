@@ -1,8 +1,7 @@
 {
   "devices": [
     {
-      "id": 1,
-      "type": 1,
+      "id": 51,
       "order": 1,
       "color": "rgb(195, 10, 20)",
       "name": "Astronaut A5",
@@ -11,8 +10,7 @@
       "routingEnabled": { "input": true, "output": true }
     },
     {
-      "id": 2,
-      "type": 1,
+      "id": 43,
       "order": 2,
       "color": "rgb(195, 10, 20)",
       "name": "Astronaut A4",
@@ -21,7 +19,7 @@
       "routingEnabled": { "input": true, "output": true }
     },
     {
-      "id": 3,
+      "id": 1,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -31,7 +29,7 @@
       "routingEnabled": { "input": true, "output": true }
     },
     {
-      "id": 4,
+      "id": 44,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -40,7 +38,7 @@
       "resizable": true
     },
     {
-      "id": 5,
+      "id": 2,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -49,7 +47,7 @@
       "resizable": true
     },
     {
-      "id": 6,
+      "id": 3,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -59,7 +57,7 @@
       "routingEnabled": { "input": true, "output": true }
     },
     {
-      "id": 7,
+      "id": 5,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -68,7 +66,7 @@
       "resizable": true
     },
     {
-      "id": 8,
+      "id": 45,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -77,7 +75,7 @@
       "resizable": true
     },
     {
-      "id": 9,
+      "id": 50,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -86,7 +84,7 @@
       "resizable": true
     },
     {
-      "id": 10,
+      "id": 49,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -95,7 +93,7 @@
       "resizable": true
     },
     {
-      "id": 11,
+      "id": 46,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -104,7 +102,7 @@
       "resizable": true
     },
     {
-      "id": 12,
+      "id": 4,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -113,7 +111,7 @@
       "resizable": true
     },
     {
-      "id": 13,
+      "id": 48,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",
@@ -122,7 +120,7 @@
       "resizable": true
     },
     {
-      "id": 14,
+      "id": 8,
       "type": 1,
       "order": 3,
       "color": "rgb(195, 10, 20)",

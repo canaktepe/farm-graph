@@ -31,11 +31,14 @@ farmGraphModule = {
           $fg(this).click();
         });
         $fg(e).draggable("option", "stop", function (event, ui) {
-          var newPos = vm.setElementPosition(ui.position);
+          // var newPos = vm.setElementPosition(ui.position);
           // $fg(this).css({ top: newPos.y, left: newPos.x });
+
+          var newPos = vm.setElementAbsolutePosition(ui);
+          $fg(this).css({ top: newPos.relative.y, left: newPos.relative.x });
         });
         $fg(e).draggable("option", "drag", function (event, ui) {
-          vm.setElementPosition(ui.position);
+          vm.setElementPosition(ui);
         });
         $fg(e).resizable("option", "resize", function (event, ui) {
           guid = $fg(e).attr("id");
@@ -172,6 +175,17 @@ farmGraphModule = {
     });
   },
 
+  calcRalativeToAbsolutePosition: function (elm) {
+    var offset = { x: parseInt(elm.css("left")), y: parseInt(elm.css("top")), w: parseInt(elm.css("width")), h: parseInt(elm.css("height")) },
+      curr = elm;
+    while (curr.parent().is('.rect')) {
+      curr = curr.parent();
+      offset.x += parseInt(curr.css("left"));
+      offset.y += parseInt(curr.css("top"));
+    }
+    return offset;
+  },
+
   getDrawedElementPosition: function (drawedElement) {
     var position = { w: 0, h: 0, x: 0, y: 0 };
     if (drawedElement.options) {
@@ -272,12 +286,13 @@ farmGraphModule = {
         }, {});
 
       var position = farmGraphModule.getDrawedElementPosition(drawedElement);
+      var absolutePosition = farmGraphModule.calcRalativeToAbsolutePosition(drawedElement);
 
       var options;
       if (update) {
         options = drawedElement;
-
         options.position(position);
+        options.absolutePosition(absolutePosition);
         options.formData(formData);
         vm.setElement(options);
       } else {
@@ -285,6 +300,7 @@ farmGraphModule = {
 
         var guid = farmGraphModule.guid();
         drawedElement.options.position(position);
+        drawedElement.options.absolutePosition(absolutePosition);
         drawedElement.options.guid(guid);
         drawedElement.options.parentGuid(parentGuid);
         options = drawedElement.options;
@@ -477,19 +493,17 @@ farmGraphModule = {
             $fg(this).click();
           },
           drag: function (event, ui) {
-
-            // var zoom  =farmGraphModule.elements.drawArea.farmDraw.getZoom();
-
-            // console.log(zoom);
-
-            // ui.position.top = Math.round(ui.position.top / zoom);
-            // ui.position.left =Math.round(ui.position.left / zoom);
-
-            vm.setElementPosition(ui.position);
+            // var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
+            // var original = ui.originalPosition;
+            // ui.position = {
+            //     left: (event.clientX - click.x + original.left) / zoom,
+            //     top:  (event.clientY - click.y + original.top ) / zoom
+            // };
+            vm.setElementAbsolutePosition(ui);
           },
           stop: function (event, ui) {
-            var newPos = vm.setElementPosition(ui.position);
-            $fg(this).css({ top: newPos.y, left: newPos.x });
+            var newPos = vm.setElementAbsolutePosition(ui);
+            $fg(this).css({ top: newPos.relative.y, left: newPos.relative.x });
           }
         });
 
@@ -610,7 +624,7 @@ farmGraphModule = {
       }
     });
   },
- 
+
 
   init: function (jsonData) {
     elements = this.elements;

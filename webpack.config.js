@@ -19,7 +19,8 @@ const debugPlugin  =   new webpack.LoaderOptionsPlugin({
 
 const jqueryPlugin = new webpack.ProvidePlugin({
   jQuery: "jquery",
-  $fg: "jquery"
+  $fg: "jquery",
+  "window.fg$" : "jquery"
 });
 
 const knockoutPlugin = new webpack.ProvidePlugin({
@@ -27,8 +28,8 @@ const knockoutPlugin = new webpack.ProvidePlugin({
 });
 
 module.exports = env => {
-  const FORMS_PATH = env ? env.production ? '/farm_graph/forms/' : '/forms/' : '/forms/';
-  const DEVICES_PATH = env ? env.production ? '/farm_graph/devices.json' : 'assets/devices.json' : 'assets/devices.json';
+  const FORMS_PATH = env ? env.production ? '/farm_graph/dist/forms/' : '/forms/' : '/forms/';
+  const DEVICES_PATH = env ? env.production ? '/farm_graph/dist/devices.json' : 'assets/devices.json' : 'assets/devices.json';
   return {
     entry: "./assets/js/app.js",
     output: {
