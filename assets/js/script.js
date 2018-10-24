@@ -718,21 +718,55 @@ farmGraphModule.bindJsonElements(function (callback) {
         };
 
         self.saveCanvas = function () {
-            farmGraphModule.elements.drawArea.css({
-                width: self.canvasProperties().width() + "px",
-                height: self.canvasProperties().height() + "px"
-            });
-            farmGraphModule.elements.farm.mCustomScrollbar("update");
-            farmGraphModule.elements.drawArea.farmDraw.reDrawGrid();
+            var size = {
+                Length: self.canvasProperties().width(),
+                Width: self.canvasProperties().height()
+            };
+
+            farmGraphModule.farmDb.updatefarmSize(size, function (data) {
+                if (data) {
+                    console.log(data);
+                    farmGraphModule.elements.drawArea.css({
+                        width: size.Length + "px",
+                        height: size.Width + "px"
+                    });
+                    farmGraphModule.elements.farm.mCustomScrollbar("update");
+                    farmGraphModule.elements.drawArea.farmDraw.reDrawGrid();
+                }
+            })
+
+
         };
 
         self.loadFarmElements();
     };
 
-    vm = new viewModel();
-    ko.applyBindings(vm);
+
 
     (function () {
-        farmGraphModule.init(jsonData);
+
+
+        farmGraphModule.farmDb.getFarm(
+            function (farm) {
+                if (farm) {
+
+
+                    farmGraphModule.elements.farmDrawPluginOptions.canvas.width = farm.width;
+                    farmGraphModule.elements.farmDrawPluginOptions.canvas.height = farm.height;
+
+
+                    vm = new viewModel();
+                    ko.applyBindings(vm);
+
+                    farmGraphModule.init(jsonData);
+
+                }
+            }
+        )
+
+
+
+
+
     })();
 });

@@ -1,5 +1,7 @@
+
 var elements;
 farmGraphModule = {
+  farmDb: new farmDbModel(),
   elements: {
     farmDrawPluginOptions: {
       drawNewButton: "#draw",
@@ -628,6 +630,7 @@ farmGraphModule = {
 
   init: function (jsonData) {
     elements = this.elements;
+
     this.bindFarmDraw();
     this.bindExtensionMethods();
     this.bindDbData(jsonData, null);
