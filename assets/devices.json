@@ -2,35 +2,46 @@
   "devices": [
     {
       "id": 51,
+      "type": 3,
       "order": 1,
       "color": "rgb(195, 10, 20)",
       "name": "Astronaut A5",
       "pageTemplate": "astronaut.html",
       "resizable": true,
-      "routingEnabled": { "input": true, "output": true }
+      "routingEnabled": {
+        "input": true,
+        "output": true
+      }
     },
     {
       "id": 43,
+      "type": 3,
       "order": 2,
       "color": "rgb(195, 10, 20)",
       "name": "Astronaut A4",
       "pageTemplate": "astronaut.html",
       "resizable": true,
-      "routingEnabled": { "input": true, "output": true }
+      "routingEnabled": {
+        "input": true,
+        "output": true
+      }
     },
     {
       "id": 1,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "Astronaut A3",
       "pageTemplate": "astronaut.html",
       "resizable": true,
-      "routingEnabled": { "input": true, "output": true }
+      "routingEnabled": {
+        "input": true,
+        "output": true
+      }
     },
     {
       "id": 44,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "Central Unit",
@@ -39,7 +50,7 @@
     },
     {
       "id": 2,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "Cosmix",
@@ -48,17 +59,20 @@
     },
     {
       "id": 3,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "Grazeway",
       "pageTemplate": "grazeway.html",
       "resizable": true,
-      "routingEnabled": { "input": true, "output": true }
+      "routingEnabled": {
+        "input": true,
+        "output": true
+      }
     },
     {
       "id": 5,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "ID Station",
@@ -67,7 +81,7 @@
     },
     {
       "id": 45,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "Qwes LD Receiver",
@@ -76,7 +90,7 @@
     },
     {
       "id": 50,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "Qwes ISO LD Receiver",
@@ -85,7 +99,7 @@
     },
     {
       "id": 49,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "Qwes ISO VPU",
@@ -94,7 +108,7 @@
     },
     {
       "id": 46,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "Vector",
@@ -103,7 +117,7 @@
     },
     {
       "id": 4,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "CRS+",
@@ -112,7 +126,7 @@
     },
     {
       "id": 48,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "CRS M3",
@@ -121,7 +135,7 @@
     },
     {
       "id": 8,
-      "type": 1,
+      "type": 3,
       "order": 3,
       "color": "rgb(195, 10, 20)",
       "name": "Light",
@@ -131,18 +145,18 @@
   ],
   "physicals": [
     {
-      "id": 15,
-      "type": 2,
+      "id": 9000,
+      "type": 9,
       "order": 1,
       "color": "rgb(232, 255, 241)",
       "name": "Barn",
       "pageTemplate": "barn.html",
       "resizable": true,
-      "acceptable": [16]
+      "acceptable": [ 7000 ]
     },
     {
-      "id": 16,
-      "type": 2,
+      "id": 7000,
+      "type": 7,
       "order": 2,
       "color": "rgb(251, 255, 204)",
       "name": "Location",
@@ -172,30 +186,36 @@
         23,
         24
       ],
-      "routingEnabled": { "input": true, "output": false }
+      "routingEnabled": {
+        "input": true,
+        "output": false
+      }
     },
     {
-      "id": 17,
+      "id": 0,
       "type": 4,
       "order": 3,
       "color": "rgb(255, 135, 135)",
       "name": "Fence",
       "pageTemplate": "fence.html",
-      "resizable": true  
+      "resizable": true
     },
     {
-      "id": 18,
-      "type": 4,
+      "id": 0,
+      "type": 10,
       "order": 4,
       "color": "rgb(92, 252, 177)",
       "name": "Area:strawpen",
       "pageTemplate": "area-strawpen.html",
       "resizable": true,
-      "routingEnabled": { "input": true, "output": false }
+      "routingEnabled": {
+        "input": true,
+        "output": false
+      }
     },
     {
-      "id": 19,
-      "type": 4,
+      "id": 0,
+      "type": 10,
       "order": 4,
       "color": "rgb(92, 252, 177)",
       "name": "Area:sep.room",
@@ -203,8 +223,8 @@
       "resizable": true
     },
     {
-      "id": 20,
-      "type": 4,
+      "id": 0,
+      "type": 10,
       "order": 4,
       "color": "rgb(92, 252, 177)",
       "name": "Area:Grazing A",
@@ -214,7 +234,7 @@
   ],
   "objects": [
     {
-      "id": 21,
+      "id": 0,
       "type": 5,
       "order": 1,
       "color": "rgb(255, 125, 93)",
@@ -223,7 +243,7 @@
       "resizable": false
     },
     {
-      "id": 22,
+      "id": 0,
       "type": 5,
       "order": 2,
       "color": "rgb(185, 155, 255)",
@@ -232,7 +252,7 @@
       "resizable": false
     },
     {
-      "id": 23,
+      "id": 0,
       "type": 5,
       "order": 3,
       "color": "rgb(255, 135, 135)",
@@ -241,7 +261,7 @@
       "resizable": true
     },
     {
-      "id": 24,
+      "id": 0,
       "type": 5,
       "order": 4,
       "color": "rgb(92, 252, 177)",

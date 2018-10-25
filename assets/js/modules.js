@@ -33,9 +33,6 @@ farmGraphModule = {
           $fg(this).click();
         });
         $fg(e).draggable("option", "stop", function (event, ui) {
-          // var newPos = vm.setElementPosition(ui.position);
-          // $fg(this).css({ top: newPos.y, left: newPos.x });
-
           var newPos = vm.setElementAbsolutePosition(ui);
           $fg(this).css({ top: newPos.relative.y, left: newPos.relative.x });
         });
@@ -62,7 +59,7 @@ farmGraphModule = {
     bsSliderFarmZoom: $fg("#bsSliderFarmZoom"),
     ctxMenuSelector: $fg(".context"),
     drawArea: $fg("#draw-area"),
-    mainAcceptable: ko.observableArray([15]),
+    mainAcceptable: ko.observableArray([9000]),
     elementModal: {
       selector: $fg("#elementModal"),
       typesBody: $fg("#modalBodyTypes"),
@@ -121,8 +118,12 @@ farmGraphModule = {
     var acceptable = elements.mainAcceptable();
 
     if (isChild) {
+
       var type = drawedElement.parent().data("type");
+
       var options = vm.getTypeOptions(type);
+
+
       acceptable = options.acceptable();
     }
     vm.setEnable(acceptable);

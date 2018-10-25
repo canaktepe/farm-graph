@@ -95,7 +95,12 @@ jsonToModel = function (data) {
 
 var jsonData = JSON.parse(localStorage.getItem("JSONData")) || [];
 
+// farmGraphModule.farmDb.getFarmItems(function(data){
+//     jsonData = data;
+// })
+
 farmGraphModule.bindJsonElements(function (callback) {
+    
     if (jsonData.length > 0) {
         jsonData = jsonData.map(function (item) {
             return new jsonToModel(item);
@@ -518,8 +523,10 @@ farmGraphModule.bindJsonElements(function (callback) {
                 .devices()
                 .concat(self.physicals())
                 .concat(self.objects());
+
             ko.utils.arrayForEach(data, function (el) {
                 ko.utils.arrayFilter(acceptable, function (acc) {
+
                     if (acc == el.id()) {
                         el.status(true);
                     }
@@ -725,7 +732,6 @@ farmGraphModule.bindJsonElements(function (callback) {
 
             farmGraphModule.farmDb.updatefarmSize(size, function (data) {
                 if (data) {
-                    console.log(data);
                     farmGraphModule.elements.drawArea.css({
                         width: size.Length + "px",
                         height: size.Width + "px"
@@ -742,31 +748,17 @@ farmGraphModule.bindJsonElements(function (callback) {
     };
 
 
-
     (function () {
-
-
         farmGraphModule.farmDb.getFarm(
             function (farm) {
                 if (farm) {
-
-
                     farmGraphModule.elements.farmDrawPluginOptions.canvas.width = farm.width;
                     farmGraphModule.elements.farmDrawPluginOptions.canvas.height = farm.height;
-
-
                     vm = new viewModel();
                     ko.applyBindings(vm);
-
                     farmGraphModule.init(jsonData);
-
                 }
             }
         )
-
-
-
-
-
     })();
 });

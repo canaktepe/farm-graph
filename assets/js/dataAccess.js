@@ -1,48 +1,53 @@
 farmDbModel = function () {
     var self = this;
     self.serviceUrl = "/Content/FarmGraph.aspx";
-    self.getFarm = function (callback) {
-        $fg.ajax({
-            url: self.serviceUrl + '/GetFarm',
-            type: 'POST',
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            success: function (response) {
-                if (response.d) {
-                    var data = response.d;
+    self.options = {
+        type: 'POST',
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8'
+    };
 
-                    return callback({ width: data.Length, height: data.Width });
-                }
+    self.post = function (u, data, callback) {
+        var url = self.serviceUrl + u;
+        var options = $fg.extend(true, self.options, {
+            url: url,
+            data: data,
+            success: function (response) {
+                if (response) callback(response);
             },
-            error: function (err) {
-                return callback(null);
+            error: function (error) {
+                callback(error);
             }
         });
+
+        $fg.ajax(options);
+    }
+
+    self.getFarm = function (callback) {
+        self.post("/GetFarm", {}, function (response) {
+            if (response.d) {
+                var data = response.d;
+                callback({ width: data.Length, height: data.Width });
+            }
+        })
     }
 
     self.updatefarmSize = function (size, callback) {
-        var data = { farm: { Length: size.Length, Width: size.Width } };
-        $fg.ajax({
-            url: self.serviceUrl + '/UpdateFarmSize',
-            type: 'POST',
-            data: JSON.stringify(data),
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            success: function (response) {
-                if (response.d) {
-                    var data = response.d;
-                    return callback(data);
-                }
-            },
-            error: function (err) {
-                return callback(null);
+        var data = JSON.stringify({ farm: { Length: size.Length, Width: size.Width } })
+        self.post("/UpdateFarmSize", data, function (response) {
+            if (response.d) {
+                var data = response.d;
+                callback(data);
             }
-        });
+        })
     }
 
-    self.getFarmItems = function () {
-        $fg.ajax({
-            url: self.serviceUrl + '/GetFarmItems',
+    self.getFarmItems = function (callback) {
+        self.post("/GetFarmItems", {}, function (response) {
+            if (response.d) {
+                var data = response.d;
+                callback(data);
+            }
         })
     }
 }

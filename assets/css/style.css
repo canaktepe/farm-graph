@@ -1,8 +1,14 @@
-@import "~jquery-ui-dist/jquery-ui.min.css";
+/*@import "~jquery-ui-dist/jquery-ui.min.css";
 @import "~bootstrap/dist/css/bootstrap.min.css";
 @import "~@fortawesome/fontawesome-free/css/all.css";
 @import "~malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css";
-@import "~bootstrap-slider/dist/css/bootstrap-slider.min.css";
+@import "~bootstrap-slider/dist/css/bootstrap-slider.min.css";*/
+
+@import "../../node_modules/jquery-ui-dist/jquery-ui.min.css";
+@import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "../../node_modules/@fortawesome/fontawesome-free/css/all.css";
+@import "../../node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css";
+@import "../../node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css";
 
 html,
 body,
