@@ -72,8 +72,6 @@ farmGraphModule = {
   },
 
   bindCustomScrollBar: function () {
-
-
     elements.farm.mCustomScrollbar({
       autoDraggerLength: true,
       autoHideScrollbar: true,
@@ -434,7 +432,7 @@ farmGraphModule = {
       .getJSON(process.env.DEVICES_PATH)
       .done(function (data) {
         farmGraphModule.elements.jsonElements = data;
-        return callback("success");
+        callback(data);
       })
       .fail(function (jqxhr, textStatus, error) {
         console.log("Request Failed: " + error);

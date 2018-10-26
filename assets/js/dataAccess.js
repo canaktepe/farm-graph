@@ -42,8 +42,11 @@ farmDbModel = function () {
         })
     }
 
-    self.getFarmItems = function (callback) {
-        self.post("/GetFarmItems", {}, function (response) {
+    self.getFarmItems = function (default_data, callback) {
+        var template = default_data.devices.concat(default_data.objects).concat(default_data.physicals);
+        var data = JSON.stringify({ template });
+        self.post("/GetFarmItems", data, function (response) {
+
             if (response.d) {
                 var data = response.d;
                 callback(data);
