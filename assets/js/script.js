@@ -94,10 +94,7 @@ jsonToModel = function (data) {
 };
 
 var jsonData = [];
-
-console.log('x'),
 farmGraphModule.bindJsonElements(function (jsonResponse) {
-    console.log('a')
     farmGraphModule.farmDb.getFarmItems(jsonResponse, function (data) {
         jsonData = data;
 
@@ -106,8 +103,6 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 return new jsonToModel(item);
             });
         }
-
-        console.log(jsonData);
 
         ko.bindingHandlers.directionName = {
             update: function (element, valueAccessor) {
