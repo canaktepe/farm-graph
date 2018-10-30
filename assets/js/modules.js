@@ -94,6 +94,29 @@ farmGraphModule = {
     String.prototype.getClass = function () {
       return this.substr(1, this.length);
     };
+
+    Object.defineProperty(Object.prototype, "setElementPosition", {
+      value: function setElementPosition() {
+        var options = this.data('options');
+
+        var position = {
+          left: options.position.x,
+          top: options.position.y
+        };
+
+
+        var parents = $fg.grep(this.parents(), function (parent) {
+          if ($fg(parent).hasClass('rectangle')) {
+            position.left -= parseInt($fg(parent).css("left")),
+              position.top -= parseInt($fg(parent).css("top"))
+          }
+        })
+        this.css(position)
+
+      },
+      writable: true,
+      configurable: true
+    });
   },
 
   bindFarmDraw: function () {
@@ -216,7 +239,7 @@ farmGraphModule = {
     }
 
     var options = element.options;
-    if (options.formData().Name && options.type() == 1) {
+    if (options.formData().Name && options.type() == 3 /*device*/) {
       var existElement = element.find("div.rect-name");
       if (existElement.length > 0) {
         existElement.text(options.formData().Name);
@@ -326,7 +349,6 @@ farmGraphModule = {
     //binding modal next button event
     elements.elementModal.nextButton.on("click", function (e) {
       if (update) {
-        console.log("update mode");
         elements.elementModal.contentBody.load(
           process.env.FORMS_PATH + drawedElement.pageTemplate(),
           function (responseText, textStatus, XMLHttpRequest) {
@@ -470,114 +492,294 @@ farmGraphModule = {
     e.stopPropagation();
   },
 
+  dataBindModel: function () {
+    var self = this;
+    self.createItem = function (data, callback) {
+
+      var elem = $fg('<div>', {
+        attr: {
+          id: data.guid()
+        }
+      })
+        .addClass('rect')
+        .css({
+          backgroundColor: data.color(),
+          top: data.position().y,
+          left: data.position().x,
+          width: data.position().w,
+          height: data.position().h
+        })
+        .text(data.name())
+        .data('options', data)
+      callback(elem);
+    }
+
+    self.addItem = function (createdItem) {
+      var parent = self.detectPosition(createdItem);
+      if (parent) {
+        /*   .css({
+             top: parent.position.y,
+             left: parent.position.x
+           })
+           */
+
+
+        createdItem.appendTo($fg('div.rect[id=' + parent.id + ']'));
+        createdItem.setElementPosition();
+
+      } else {
+        createdItem.appendTo(farmGraphModule.elements.drawArea);
+      }
+    }
+
+    self.detectPosition = function (createdItem) {
+
+
+      var options = createdItem.data('options');
+      var parent = null;
+      var canvasElements = $fg('div.rect').not(createdItem);
+
+      console.log(canvasElements);
+
+
+      canvasElements.filter(function (i, item) {
+
+        var left_right = {
+          start: item.offsetLeft,
+          end: item.offsetLeft + item.offsetWidth
+        };
+
+        var top_bottom = {
+          start: item.offsetTop,
+          end: item.offsetTop + item.offsetHeight
+        }
+
+        if ((options.position().x >= left_right.start && options.position().x <= left_right.end) && (options.position().y >= top_bottom.start && options.position().y <= top_bottom.end)) {
+          parent = {
+            id: $fg(item).attr('id'),
+            position: self.calcPos($fg(item))
+          };
+        }
+
+      })
+      return parent;
+    }
+
+    self.calcPos = function (elm) {
+      var position = {
+        x: parseInt(elm.css("left")),
+        y: parseInt(elm.css("top")),
+      },
+        curr = elm;
+      while (curr.parent().is('.rectangle')) {
+        curr = curr.parent();
+        position.x -= parseInt(curr.css("left"));
+        position.y -= parseInt(curr.css("top"));
+      }
+      return position;
+    }
+  },
+
   bindDbData: function (JSONData, parentObj) {
     if (JSONData == null) return;
+    var dbModel = new farmGraphModule.dataBindModel();
+    $fg.each(JSONData, function (i, data) {
+      dbModel.createItem(data, function (createdItem) {
+        if (createdItem) {
+          dbModel.addItem(createdItem);
+          createdItem.dblclick(farmGraphModule.elementUpdatedblClick)
+            .click(farmGraphModule.elementSelectClick)
+            .draggable({
+              containment: "parent",
+              grid: elements.farmDrawPluginOptions.canvas.gridSize,
+              start: function (event, ui) {
+                $fg(this).click();
+              },
+              drag: function (event, ui) {
+                // var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
+                // var original = ui.originalPosition;
+                // ui.position = {
+                //     left: (event.clientX - click.x + original.left) / zoom,
+                //     top:  (event.clientY - click.y + original.top ) / zoom
+                // };
+                vm.setElementAbsolutePosition(ui);
+              },
+              stop: function (event, ui) {
+                var newPos = vm.setElementAbsolutePosition(ui);
+                $fg(this).css({ top: newPos.relative.y, left: newPos.relative.x });
+              }
+            });
 
-    $fg.each(JSONData, function (i, elem) {
-      var elementModel = new jsonToModel(ko.toJS(elem));
-      var el = $fg("<div />")
-        .attr({ id: elementModel.guid(), "data-type": elementModel.id() })
-        .css({
-          backgroundColor: elementModel.color(),
-          width: elementModel.position().w,
-          height: elementModel.position().h,
-          top: elementModel.position().y,
-          left: elementModel.position().x
-        })
-        .addClass("rect")
-        .dblclick(farmGraphModule.elementUpdatedblClick)
-        .click(farmGraphModule.elementSelectClick)
-        .draggable({
-          containment: "parent",
-          grid: elements.farmDrawPluginOptions.canvas.gridSize,
-          start: function (event, ui) {
-            $fg(this).click();
-          },
-          drag: function (event, ui) {
-            // var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
-            // var original = ui.originalPosition;
-            // ui.position = {
-            //     left: (event.clientX - click.x + original.left) / zoom,
-            //     top:  (event.clientY - click.y + original.top ) / zoom
-            // };
-            vm.setElementAbsolutePosition(ui);
-          },
-          stop: function (event, ui) {
-            var newPos = vm.setElementAbsolutePosition(ui);
-            $fg(this).css({ top: newPos.relative.y, left: newPos.relative.x });
+          if (data.resizable()) {
+            $fg("<div>", {
+              class: "ui-resizable-handle ui-resizable-nw",
+              attr: { id: "nwgrip" }
+            }).appendTo(createdItem);
+            $fg("<div>", {
+              class: "ui-resizable-handle ui-resizable-ne",
+              attr: { id: "negrip" }
+            }).appendTo(createdItem);
+            $fg("<div>", {
+              class: "ui-resizable-handle ui-resizable-sw",
+              attr: { id: "swgrip" }
+            }).appendTo(createdItem);
+            $fg("<div>", {
+              class: "ui-resizable-handle ui-resizable-se",
+              attr: { id: "segrip" }
+            }).appendTo(createdItem);
+            $fg("<div>", {
+              class: "ui-resizable-handle ui-resizable-n",
+              attr: { id: "ngrip" }
+            }).appendTo(createdItem);
+            $fg("<div>", {
+              class: "ui-resizable-handle ui-resizable-e",
+              attr: { id: "egrip" }
+            }).appendTo(createdItem);
+            $fg("<div>", {
+              class: "ui-resizable-handle ui-resizable-s",
+              attr: { id: "sgrip" }
+            }).appendTo(createdItem);
+            $fg("<div>", {
+              class: "ui-resizable-handle ui-resizable-w",
+              attr: { id: "wgrip" }
+            }).appendTo(createdItem);
+            createdItem.resizable({
+              handles: {
+                nw: "#nwgrip",
+                ne: "#negrip",
+                sw: "#swgrip",
+                se: "#segrip",
+                n: "#ngrip",
+                e: "#egrip",
+                s: "#sgrip",
+                w: "#wgrip"
+              },
+              minWidth: 30,
+              minHeight: 30,
+              containment: "parent",
+              autoHide: true,
+              grid: elements.farmDrawPluginOptions.canvas.gridSize,
+              resize: function (event, ui) {
+                var guid = $fg(ui.helper).attr("id");
+                vm.setElementPosition(ui.size);
+                vm.selectElement(guid);
+              },
+              stop: function (event, ui) {
+                var newPos = vm.setElementPosition(ui.position);
+                $fg(this).css({ top: newPos.y, left: newPos.x });
+              }
+            });
           }
-        });
-
-      if (elem.resizable) {
-        $fg("<div>", {
-          class: "ui-resizable-handle ui-resizable-nw",
-          attr: { id: "nwgrip" }
-        }).appendTo(el);
-        $fg("<div>", {
-          class: "ui-resizable-handle ui-resizable-ne",
-          attr: { id: "negrip" }
-        }).appendTo(el);
-        $fg("<div>", {
-          class: "ui-resizable-handle ui-resizable-sw",
-          attr: { id: "swgrip" }
-        }).appendTo(el);
-        $fg("<div>", {
-          class: "ui-resizable-handle ui-resizable-se",
-          attr: { id: "segrip" }
-        }).appendTo(el);
-        $fg("<div>", {
-          class: "ui-resizable-handle ui-resizable-n",
-          attr: { id: "ngrip" }
-        }).appendTo(el);
-        $fg("<div>", {
-          class: "ui-resizable-handle ui-resizable-e",
-          attr: { id: "egrip" }
-        }).appendTo(el);
-        $fg("<div>", {
-          class: "ui-resizable-handle ui-resizable-s",
-          attr: { id: "sgrip" }
-        }).appendTo(el);
-        $fg("<div>", {
-          class: "ui-resizable-handle ui-resizable-w",
-          attr: { id: "wgrip" }
-        }).appendTo(el);
-        el.resizable({
-          handles: {
-            nw: "#nwgrip",
-            ne: "#negrip",
-            sw: "#swgrip",
-            se: "#segrip",
-            n: "#ngrip",
-            e: "#egrip",
-            s: "#sgrip",
-            w: "#wgrip"
-          },
-          minWidth: 30,
-          minHeight: 30,
-          containment: "parent",
-          autoHide: true,
-          grid: elements.farmDrawPluginOptions.canvas.gridSize,
-          resize: function (event, ui) {
-            var guid = $fg(ui.helper).attr("id");
-            vm.setElementPosition(ui.size);
-            vm.selectElement(guid);
-          },
-          stop: function (event, ui) {
-            var newPos = vm.setElementPosition(ui.position);
-            $fg(this).css({ top: newPos.y, left: newPos.x });
-          }
-        });
-
-        if (parentObj == null) farmGraphModule.elements.drawArea.append(el);
-        else parentObj.append(el);
-
-        farmGraphModule.setElementRectangleNameText(elementModel, true);
-
-        if (elementModel.children().length > 0) {
-          farmGraphModule.bindDbData(elementModel.children(), el);
         }
-      }
-    });
+      })
+    })
+
+    // $fg.each(JSONData, function (i, elem) {
+    //   var elementModel = new jsonToModel(ko.toJS(elem));
+    //   var el = $fg("<div />")
+    //     .attr({ id: elementModel.guid(), "data-type": elementModel.id() })
+    //     .css({
+    //       backgroundColor: elementModel.color(),
+    //       width: elementModel.position().w,
+    //       height: elementModel.position().h,
+    //       top: elementModel.position().y,
+    //       left: elementModel.position().x
+    //     })
+    //     .addClass("rect")
+    //     .dblclick(farmGraphModule.elementUpdatedblClick)
+    //     .click(farmGraphModule.elementSelectClick)
+    //     .draggable({
+    //       containment: "parent",
+    //       grid: elements.farmDrawPluginOptions.canvas.gridSize,
+    //       start: function (event, ui) {
+    //         $fg(this).click();
+    //       },
+    //       drag: function (event, ui) {
+    //         // var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
+    //         // var original = ui.originalPosition;
+    //         // ui.position = {
+    //         //     left: (event.clientX - click.x + original.left) / zoom,
+    //         //     top:  (event.clientY - click.y + original.top ) / zoom
+    //         // };
+    //         vm.setElementAbsolutePosition(ui);
+    //       },
+    //       stop: function (event, ui) {
+    //         var newPos = vm.setElementAbsolutePosition(ui);
+    //         $fg(this).css({ top: newPos.relative.y, left: newPos.relative.x });
+    //       }
+    //     });
+
+    //   if (elem.resizable) {
+    //     $fg("<div>", {
+    //       class: "ui-resizable-handle ui-resizable-nw",
+    //       attr: { id: "nwgrip" }
+    //     }).appendTo(el);
+    //     $fg("<div>", {
+    //       class: "ui-resizable-handle ui-resizable-ne",
+    //       attr: { id: "negrip" }
+    //     }).appendTo(el);
+    //     $fg("<div>", {
+    //       class: "ui-resizable-handle ui-resizable-sw",
+    //       attr: { id: "swgrip" }
+    //     }).appendTo(el);
+    //     $fg("<div>", {
+    //       class: "ui-resizable-handle ui-resizable-se",
+    //       attr: { id: "segrip" }
+    //     }).appendTo(el);
+    //     $fg("<div>", {
+    //       class: "ui-resizable-handle ui-resizable-n",
+    //       attr: { id: "ngrip" }
+    //     }).appendTo(el);
+    //     $fg("<div>", {
+    //       class: "ui-resizable-handle ui-resizable-e",
+    //       attr: { id: "egrip" }
+    //     }).appendTo(el);
+    //     $fg("<div>", {
+    //       class: "ui-resizable-handle ui-resizable-s",
+    //       attr: { id: "sgrip" }
+    //     }).appendTo(el);
+    //     $fg("<div>", {
+    //       class: "ui-resizable-handle ui-resizable-w",
+    //       attr: { id: "wgrip" }
+    //     }).appendTo(el);
+    //     el.resizable({
+    //       handles: {
+    //         nw: "#nwgrip",
+    //         ne: "#negrip",
+    //         sw: "#swgrip",
+    //         se: "#segrip",
+    //         n: "#ngrip",
+    //         e: "#egrip",
+    //         s: "#sgrip",
+    //         w: "#wgrip"
+    //       },
+    //       minWidth: 30,
+    //       minHeight: 30,
+    //       containment: "parent",
+    //       autoHide: true,
+    //       grid: elements.farmDrawPluginOptions.canvas.gridSize,
+    //       resize: function (event, ui) {
+    //         var guid = $fg(ui.helper).attr("id");
+    //         vm.setElementPosition(ui.size);
+    //         vm.selectElement(guid);
+    //       },
+    //       stop: function (event, ui) {
+    //         var newPos = vm.setElementPosition(ui.position);
+    //         $fg(this).css({ top: newPos.y, left: newPos.x });
+    //       }
+    //     });
+
+    //     if (parentObj == null) farmGraphModule.elements.drawArea.append(el);
+    //     else parentObj.append(el);
+
+
+    //     farmGraphModule.setElementRectangleNameText(elementModel, true);
+
+    //     if (elementModel.children().length > 0) {
+    //       farmGraphModule.bindDbData(elementModel.children(), el);
+    //     }
+    //   }
+    // });
   },
   bootstrapSlider: function () {
     var slider = elements.bsSliderFarmZoom.bootstrapSlider({
@@ -633,6 +835,9 @@ farmGraphModule = {
     this.bindFarmDraw();
     this.bindExtensionMethods();
     this.bindDbData(jsonData, null);
+
+
+
     this.bootstrapSlider();
     this.contextMenu();
     this.bindCustomScrollBar();

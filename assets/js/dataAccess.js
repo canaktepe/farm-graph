@@ -27,7 +27,7 @@ farmDbModel = function () {
         self.post("/GetFarm", {}, function (response) {
             if (response.d) {
                 var data = response.d;
-                callback({ width: data.Length, height: data.Width });
+                callback({ width: data.Width, height: data.Length });
             }
         })
     }

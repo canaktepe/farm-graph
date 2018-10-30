@@ -243,8 +243,8 @@
       "resizable": false
     },
     {
-      "id": 0,
-      "type": 5,
+      "id": 13000,
+      "type": 13,
       "order": 2,
       "color": "rgb(185, 155, 255)",
       "name": "Feed Area",
@@ -252,8 +252,8 @@
       "resizable": false
     },
     {
-      "id": 0,
-      "type": 5,
+      "id": 6000,
+      "type": 6,
       "order": 3,
       "color": "rgb(255, 135, 135)",
       "name": "Wall",
@@ -261,8 +261,8 @@
       "resizable": true
     },
     {
-      "id": 0,
-      "type": 5,
+      "id": 14000,
+      "type": 14,
       "order": 4,
       "color": "rgb(92, 252, 177)",
       "name": "Bulk Tank",
