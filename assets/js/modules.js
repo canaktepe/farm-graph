@@ -567,7 +567,7 @@ farmGraphModule = {
         y: parseInt(elm.css("top")),
       },
         curr = elm;
-      while (curr.parent().is('.rectangle')) {
+      while (curr.parent().is('.rect')) {
         curr = curr.parent();
         position.x -= parseInt(curr.css("left"));
         position.y -= parseInt(curr.css("top"));
