@@ -34,9 +34,11 @@ farmGraphModule = {
         });
         $fg(e).draggable("option", "stop", function (event, ui) {
           var newPos = vm.setElementAbsolutePosition(ui);
-          $fg(this).css({ top: newPos.relative.y, left: newPos.relative.x });
+          $fg(this).css({ bottom: newPos.relative.y, left: newPos.relative.x });
         });
         $fg(e).draggable("option", "drag", function (event, ui) {
+
+          
           vm.setElementPosition(ui);
         });
         $fg(e).resizable("option", "resize", function (event, ui) {
@@ -50,7 +52,7 @@ farmGraphModule = {
         });
         $fg(e).resizable("option", "stop", function (event, ui) {
           var newPos = vm.setElementPosition(ui.position);
-          $fg(this).css({ top: newPos.y, left: newPos.x });
+          $fg(this).css({ bottom: newPos.y, left: newPos.x });
         });
       }
     },
@@ -495,7 +497,6 @@ farmGraphModule = {
   dataBindModel: function () {
     var self = this;
     self.createItem = function (data, callback) {
-
       var elem = $fg('<div>', {
         attr: {
           id: data.guid()
@@ -504,7 +505,7 @@ farmGraphModule = {
         .addClass('rect')
         .css({
           backgroundColor: data.color(),
-          top: data.position().y,
+          bottom: data.position().y,
           left: data.position().x,
           width: data.position().w,
           height: data.position().h
@@ -516,31 +517,26 @@ farmGraphModule = {
 
     self.addItem = function (createdItem) {
       var parent = self.detectPosition(createdItem);
-      if (parent) {
-        /*   .css({
-             top: parent.position.y,
-             left: parent.position.x
-           })
-           */
+      // if (parent) {
+      //   /*   .css({
+      //        top: parent.position.y,
+      //        left: parent.position.x
+      //      })
+      //      */
 
+      //   createdItem.appendTo($fg('div.rect[id=' + parent.id + ']'));
+      //   createdItem.setElementPosition();
 
-        createdItem.appendTo($fg('div.rect[id=' + parent.id + ']'));
-        createdItem.setElementPosition();
-
-      } else {
-        createdItem.appendTo(farmGraphModule.elements.drawArea);
-      }
+      // } else {
+      createdItem.appendTo(farmGraphModule.elements.drawArea);
+      // }
     }
 
     self.detectPosition = function (createdItem) {
 
-
       var options = createdItem.data('options');
       var parent = null;
       var canvasElements = $fg('div.rect').not(createdItem);
-
-      console.log(canvasElements);
-
 
       canvasElements.filter(function (i, item) {
 
@@ -596,12 +592,6 @@ farmGraphModule = {
                 $fg(this).click();
               },
               drag: function (event, ui) {
-                // var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
-                // var original = ui.originalPosition;
-                // ui.position = {
-                //     left: (event.clientX - click.x + original.left) / zoom,
-                //     top:  (event.clientY - click.y + original.top ) / zoom
-                // };
                 vm.setElementAbsolutePosition(ui);
               },
               stop: function (event, ui) {
@@ -831,13 +821,9 @@ farmGraphModule = {
 
   init: function (jsonData) {
     elements = this.elements;
-
     this.bindFarmDraw();
     this.bindExtensionMethods();
     this.bindDbData(jsonData, null);
-
-
-
     this.bootstrapSlider();
     this.contextMenu();
     this.bindCustomScrollBar();

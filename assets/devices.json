@@ -243,8 +243,8 @@
       "resizable": false
     },
     {
-      "id": 13000,
-      "type": 13,
+      "id": 8000,
+      "type": 8,
       "order": 2,
       "color": "rgb(185, 155, 255)",
       "name": "Feed Area",

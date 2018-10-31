@@ -438,7 +438,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                         $fg("div[id=" + self.activeElement().guid() + "]").css({
                             width: self.activeElement().position().w,
                             height: self.activeElement().position().h,
-                            top: self.activeElement().position().y,
+                            bottom: self.activeElement().position().y,
                             left: self.activeElement().position().x
                         });
                         localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
@@ -480,23 +480,22 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
             };
 
             self.setElementAbsolutePosition = function (ui) {
-
                 var offsetAbsolute = farmGraphModule.calcRalativeToAbsolutePosition(ui.helper);
 
                 var absolutePos = {
-                    left:
+                    x:
                         typeof offsetAbsolute.x == "number"
                             ? offsetAbsolute.x
                             : self.getActiveElement().absolutePosition().x,
-                    top:
+                    y:
                         typeof offsetAbsolute.y == "number"
                             ? offsetAbsolute.y
                             : self.getActiveElement().absolutePosition().y,
-                    width:
+                    w:
                         typeof offsetAbsolute.w == "number"
                             ? offsetAbsolute.w
                             : self.getActiveElement().absolutePosition().w,
-                    height:
+                    h:
                         typeof offsetAbsolute.h == "number"
                             ? offsetAbsolute.h
                             : self.getActiveElement().absolutePosition().h
@@ -508,6 +507,8 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     absolutePos.w,
                     absolutePos.h
                 );
+
+                
 
                 var relativePos = self.setElementPosition(ui.position);
                 self.getActiveElement().absolutePosition(offsetAbsolute);
@@ -677,15 +678,10 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
             self.selectElement = function (guid) {
                 if (!guid) return;
-
-
                 self.getCreatedElement(guid, function (item) {
-
                     self.activeElement(item);
-
                     var textColor = self.setTextColor(item.color);
                     self.textColor(textColor);
-
                     if (item.routingEnabled().output) {
                         self.changeRoutingType(item.routingType());
                         self.routingButtonVisible();
