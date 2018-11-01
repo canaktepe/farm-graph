@@ -237,7 +237,7 @@
       "id": 5000,
       "type": 5,
       "order": 1,
-      "color": "rgb(255, 125, 93)",
+      "color": "rgb(224, 224, 224)",
       "name": "Cubicle",
       "pageTemplate": "cubicle.html",
       "resizable": false

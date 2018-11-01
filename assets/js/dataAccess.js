@@ -7,11 +7,12 @@ farmDbModel = function () {
         contentType: 'application/json; charset=utf-8'
     };
 
-    self.post = function (u, data, callback) {
+    self.post = function (u, data, async, callback) {
         var url = self.serviceUrl + u;
         var options = $fg.extend(true, self.options, {
             url: url,
             data: data,
+            async: async,
             success: function (response) {
                 if (response) callback(response);
             },
@@ -24,7 +25,7 @@ farmDbModel = function () {
     }
 
     self.getFarm = function (callback) {
-        self.post("/GetFarm", {}, function (response) {
+        self.post("/GetFarm", {}, false, function (response) {
             if (response.d) {
                 var data = response.d;
                 callback({ width: data.Width, height: data.Length });
@@ -34,7 +35,7 @@ farmDbModel = function () {
 
     self.updatefarmSize = function (size, callback) {
         var data = JSON.stringify({ farm: { Length: size.Length, Width: size.Width } })
-        self.post("/UpdateFarmSize", data, function (response) {
+        self.post("/UpdateFarmSize", data, false, function (response) {
             if (response.d) {
                 var data = response.d;
                 callback(data);
@@ -45,8 +46,7 @@ farmDbModel = function () {
     self.getFarmItems = function (default_data, callback) {
         var template = default_data.devices.concat(default_data.objects).concat(default_data.physicals);
         var data = JSON.stringify({ template });
-        self.post("/GetFarmItems", data, function (response) {
-
+        self.post("/GetFarmItems", data, false, function (response) {
             if (response.d) {
                 var data = response.d;
                 callback(data);

@@ -62,7 +62,6 @@ jsonToModel = function (data) {
     self.order = ko.observable(data.order);
     self.pageTemplate = ko.observable(data.pageTemplate);
     self.position = ko.observable(data.position);
-    self.absolutePosition = ko.observable(data.absolutePosition);
     self.resizable = ko.observable(data.resizable);
     self.status = ko.observable(data.status);
     self.type = ko.observable(data.type);
@@ -219,7 +218,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
             self.filteredCreatingElementsByRoutable = ko.observableArray([]);
             self.canvasProperties = ko.observable(
                 new canvasModel({
-                    zoom: 50,
+                    zoom: 10,
                     width: farmGraphModule.elements.farmDrawPluginOptions.canvas.width,
                     height: farmGraphModule.elements.farmDrawPluginOptions.canvas.height
                 })
@@ -293,16 +292,9 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 else self.newRoutingVisible(true);
             };
 
-            // self.getRoutingMaxID = function () {
-            //   var activeElement = self.activeElement();
-            //   return Math.max.apply(Math, activeElement.routings().map(function (o) { return o.id() })) + 1;
-            // }
-
             self.addNewRouting = function () {
                 var activeElement = self.activeElement();
                 if (!activeElement) return;
-
-                // var maxId = self.getRoutingMaxID();
 
                 var deletedRouting = $fg.grep(activeElement.routings(), function (
                     route,
@@ -407,66 +399,74 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 });
             };
 
-            self.getActiveElement = ko.pureComputed(
-                {
-                    read: function () {
-                        return self.activeElement()
-                            ? self.activeElement()
-                            : {
-                                name: "Not Selected",
-                                position: ko.observable({ x: 0, y: 0, w: 0, h: 0 }),
-                                absolutePosition: ko.observable({ x: 0, y: 0, w: 0, h: 0 })
-                            };
-                    },
-                    write: function () {
-                        var positionToSnap = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
-                            self.activeElement().position().x,
-                            self.activeElement().position().y,
-                            self.activeElement().position().w,
-                            self.activeElement().position().h
-                        );
-                        var absolutePositionToSnap = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
-                            self.activeElement().absolutePosition().x,
-                            self.activeElement().absolutePosition().y,
-                            self.activeElement().position().w,
-                            self.activeElement().position().h
-                        );
-                        self.activeElement().position(positionToSnap);
-                        self.activeElement().absolutePosition(absolutePositionToSnap);
-
-                        //set canvas element position
-                        $fg("div[id=" + self.activeElement().guid() + "]").css({
-                            width: self.activeElement().position().w,
-                            height: self.activeElement().position().h,
-                            bottom: self.activeElement().position().y,
-                            left: self.activeElement().position().x
-                        });
-                        localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
-                    }
+            self.getActiveElement = ko.pureComputed({
+                read: function () {
+                    return self.activeElement()
+                        ? self.activeElement()
+                        : {
+                            name: "Not Selected",
+                            position: ko.observable({ x: 0, y: 0, w: 0, h: 0 })
+                        };
                 },
+                write: function () {
+                    var positionToSnap = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
+                        self.activeElement().position().x,
+                        self.activeElement().position().y,
+                        self.activeElement().position().w,
+                        self.activeElement().position().h
+                    );
+
+                    self.activeElement().position(positionToSnap);
+
+                    //set canvas element position
+                    $fg("div[id=" + self.activeElement().guid() + "]").css({
+                        width: self.activeElement().position().w,
+                        height: self.activeElement().position().h,
+                        top: self.activeElement().position().y,
+                        left: self.activeElement().position().x
+                    });
+
+
+                    localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
+                }
+            },
                 viewModel
             );
 
-            self.setElementPosition = function (pos) {
-                pos = {
+
+
+            self.setElementPosition = function (event, ui) {
+
+                var pos = {
                     left:
-                        typeof pos.left == "number"
-                            ? pos.left
+                        typeof ui.position.left == "number"
+                            ? ui.position.left
                             : self.getActiveElement().position().x,
                     top:
-                        typeof pos.top == "number"
-                            ? pos.top
+                        typeof ui.position.top == "number"
+                            ? ui.position.top
                             : self.getActiveElement().position().y,
                     width:
-                        typeof pos.width == "number"
-                            ? pos.width
+                        typeof ui.position.width == "number"
+                            ? ui.position.width
                             : self.getActiveElement().position().w,
                     height:
-                        typeof pos.height == "number"
-                            ? pos.height
+                        typeof ui.position.height == "number"
+                            ? ui.position.height
                             : self.getActiveElement().position().h
                 };
 
+
+                // this section is setting location inputs on Object Information parts
+                var posToObjectInf = {
+                    left: pos.left,
+                    top: (self.canvasProperties().getHeight() - pos.top) - pos.height,
+                    width: pos.width,
+                    height: pos.height
+                }
+
+
+                // this section is set size of elements on canvas
                 pos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
                     pos.left,
                     pos.top,
@@ -474,46 +474,15 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     pos.height
                 );
 
-                self.getActiveElement().position(pos);
+                posToObjectInf = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
+                    posToObjectInf.left,
+                    posToObjectInf.top,
+                    posToObjectInf.width,
+                    posToObjectInf.height
+                )
 
+                self.getActiveElement().position(posToObjectInf);
                 return pos;
-            };
-
-            self.setElementAbsolutePosition = function (ui) {
-                var offsetAbsolute = farmGraphModule.calcRalativeToAbsolutePosition(ui.helper);
-
-                var absolutePos = {
-                    x:
-                        typeof offsetAbsolute.x == "number"
-                            ? offsetAbsolute.x
-                            : self.getActiveElement().absolutePosition().x,
-                    y:
-                        typeof offsetAbsolute.y == "number"
-                            ? offsetAbsolute.y
-                            : self.getActiveElement().absolutePosition().y,
-                    w:
-                        typeof offsetAbsolute.w == "number"
-                            ? offsetAbsolute.w
-                            : self.getActiveElement().absolutePosition().w,
-                    h:
-                        typeof offsetAbsolute.h == "number"
-                            ? offsetAbsolute.h
-                            : self.getActiveElement().absolutePosition().h
-                };
-
-                absolutePos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
-                    absolutePos.x,
-                    absolutePos.y,
-                    absolutePos.w,
-                    absolutePos.h
-                );
-
-                
-
-                var relativePos = self.setElementPosition(ui.position);
-                self.getActiveElement().absolutePosition(offsetAbsolute);
-
-                return { relative: relativePos, absolute: absolutePos };
             };
 
             self.setEnable = function (acceptable) {
@@ -647,13 +616,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
             self.getCreatedElement = function (guid, callback) {
                 if (!guid) return;
-
-
                 self.createdElements().some(function iter(o, i, a) {
-
-      
-
-
                     if (o.guid() == guid) {
                         callback(o);
                     }
@@ -698,8 +661,6 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
                 routeableElements.some(function iter(o, i, a) {
                     if (o !== activeElement && o.routingEnabled().input) {
-                        // var ruleForObjectType = o.
-
                         var ruleForRoutingType =
                             activeElement.routingType().id() == self.routingTypes()[0].id()
                                 ? o.parentGuid() == activeElement.parentGuid() ||
