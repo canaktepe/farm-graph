@@ -51,7 +51,7 @@ farmGraphModule = {
           vm.selectElement(guid);
         });
         $fg(e).resizable("option", "stop", function (event, ui) {
-          // var newPos = vm.setElementPosition(event,ui);
+          var newPos = vm.setElementPosition(event,ui);
           // $fg(this).css({ top: newPos.y, left: newPos.x });
         });
       }

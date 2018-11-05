@@ -33,12 +33,10 @@ the production-ready jquery.farmdraw.min.js which contains the plugin
 and dependencies (minified). 
 */
 (function ($) {
-
     $.fn.farmDraw = function (options) {
         $("html").on('keydown', $.proxy(keydown, this));
 
         var self = this;
-
         $.fn.farmDraw.reDrawGrid = function () {
             drawGrid(self, true);
         };
@@ -47,7 +45,7 @@ and dependencies (minified).
             return snapElementToGrid(x, y, w, h);
         }
 
-        $.fn.farmDraw.getZoom = function(){
+        $.fn.farmDraw.getZoom = function () {
             return getZoom();
         }
 
@@ -85,7 +83,6 @@ and dependencies (minified).
         var settings = $.extend(true, {}, defaults, options);
 
         function snapElementToGrid(x, y, w, h) {
-            
             var position = { x: parseInt(x), y: parseInt(y), w: parseInt(w), h: parseInt(h) };
             var gridX = settings.canvas.gridSize[0];
             var gridY = settings.canvas.gridSize[1];
@@ -106,7 +103,6 @@ and dependencies (minified).
         }
 
         function createRectangle(e, w, h) {
-
             var drawBox = $(e);
             var el = $("<div />").css({
                 // left: e.drawStartX,
@@ -171,23 +167,19 @@ and dependencies (minified).
                     grid: settings.canvas.gridSize
                 });
             }
-
             return el;
         };
 
         function draw(e) {
             var currentX = e.pageX - this.canvasOffsetLeft;
             var currentY = e.pageY - this.canvasOffsetTop;
-
             var position = calcPosition(this, currentX, currentY);
-
             this.drawingRect.css(position);
             settings.onDraw.call(this, this);
         };
 
         function getZoom() {
             var zoom = self.css('zoom') || self.css('-moz-transform');
-
             var values = zoom.match(/-?[\d\.]+/g);
             return values[0] || zoom;
         }
@@ -197,9 +189,7 @@ and dependencies (minified).
 
             var target = $(e.target);
             var offset = target.offset();
-
             var zoom = getZoom();
-
 
             this.canvasOffsetLeft = offset.left;
             this.canvasOffsetTop = offset.top;
@@ -242,7 +232,6 @@ and dependencies (minified).
             $(this).off('mousemove');
             $(this).off('mouseup');
 
-
             settings.onDrawComplete.call(this, this);
         };
 
@@ -257,10 +246,10 @@ and dependencies (minified).
 
         function calcPosition(obj, endX, endY) {
             var zoom = getZoom();
-            var factor = (1 / zoom) - 1;
+            var factor = (1 / zoom);
 
-            var width = (endX - obj.drawStartX)*factor;
-            var height = (endY - obj.drawStartY)*factor;
+            var width = (endX - obj.drawStartX) * factor;
+            var height = (endY - obj.drawStartY) * factor;
             var posX = Math.round(obj.drawStartX / zoom);
             var posY = Math.round(obj.drawStartY / zoom);
 
@@ -374,14 +363,9 @@ and dependencies (minified).
                     drawGrid($base);
                     $base.css("border", "none");
                 }
-
-
                 this.on('mouseover', $.proxy(drawBoxmouseOver, this));
                 this.on('mousedown', $.proxy(startDraw, this));
-
-
             };
-
             $base.init();
         });
 

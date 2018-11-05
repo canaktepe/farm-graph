@@ -434,41 +434,46 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
             );
 
 
-
             self.setElementPosition = function (event, ui) {
 
                 var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
                 var factor = (1 / zoom) - 1;
 
+                var pos;
+
                 if (ui.size) {
                     ui.size.width += Math.round((ui.size.width - ui.originalSize.width) * factor);
                     ui.size.height += Math.round((ui.size.height - ui.originalSize.height) * factor);
+
+                    pos = {
+                        left: self.getActiveElement().position().x,
+                        top: self.getActiveElement().position().y,
+                        width: typeof ui.size.width == "number"
+                            ? ui.size.width
+                            : self.getActiveElement().position().w,
+                        height: typeof ui.size.height == "number"
+                            ? ui.size.height
+                            : self.getActiveElement().position().h
+                    }
                 }
                 else {
                     ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
                     ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
+
+                    pos = {
+                        left:
+                            typeof ui.position.left == "number"
+                                ? ui.position.left
+                                : self.getActiveElement().position().x,
+                        top:
+                            typeof ui.position.top == "number"
+                                ? ui.position.top
+                                : self.getActiveElement().position().y,
+                        width: self.getActiveElement().position().w,
+                        height: self.getActiveElement().position().h
+                    }
+
                 }
-
-
-                var pos = {
-                    left:
-                        typeof ui.position.left == "number"
-                            ? ui.position.left
-                            : self.getActiveElement().position().x,
-                    top:
-                        typeof ui.position.top == "number"
-                            ? ui.position.top
-                            : self.getActiveElement().position().y,
-                    width:
-                        typeof ui.position.width == "number"
-                            ? ui.position.width
-                            : self.getActiveElement().position().w,
-                    height:
-                        typeof ui.position.height == "number"
-                            ? ui.position.height
-                            : self.getActiveElement().position().h
-                };
-
 
                 // this section is setting location inputs on Object Information parts
                 var posToObjectInf = {
@@ -477,7 +482,6 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     width: pos.width,
                     height: pos.height
                 }
-
 
                 // this section is set size of elements on canvas
                 pos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
