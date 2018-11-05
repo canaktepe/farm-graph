@@ -33,17 +33,17 @@ farmGraphModule = {
           $fg(this).click();
         });
         $fg(e).draggable("option", "stop", function (event, ui) {
-          var newPos = vm.setElementPosition(ui);
-          $fg(this).css({ top: newPos.y, left: newPos.x });
+          // var newPos = vm.setElementPosition(event,ui);
+          // $fg(this).css({ top: newPos.y, left: newPos.x });
         });
         $fg(e).draggable("option", "drag", function (event, ui) {
 
 
-          vm.setElementPosition(ui);
+          vm.setElementPosition(event,ui);
         });
         $fg(e).resizable("option", "resize", function (event, ui) {
           guid = $fg(e).attr("id");
-          vm.setElementPosition(ui.size);
+          vm.setElementPosition(event,ui);
           vm.selectElement(guid);
         });
         $fg(e).resizable("option", "start", function (event, ui) {
@@ -51,8 +51,8 @@ farmGraphModule = {
           vm.selectElement(guid);
         });
         $fg(e).resizable("option", "stop", function (event, ui) {
-          var newPos = vm.setElementPosition(ui.position);
-          $fg(this).css({ top: newPos.y, left: newPos.x });
+          // var newPos = vm.setElementPosition(event,ui);
+          // $fg(this).css({ top: newPos.y, left: newPos.x });
         });
       }
     },
@@ -588,21 +588,19 @@ farmGraphModule = {
               },
               drag: function (event, ui) {
 
-                var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
-                var original = ui.originalPosition;
+                // var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
+                // var factor = (1 / zoom) - 1;
 
-                ui.position = {
-                  left: (event.clientX - click.x + original.left) / zoom,
-                  top: (event.clientY - click.y + original.top) / zoom
-                };
+                // ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
+                // ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
 
                 vm.setElementPosition(event, ui);
 
               },
               stop: function (event, ui) {
-            
-                var newPos = vm.setElementPosition(event, ui);
-                $fg(this).css({ top: newPos.y, left: newPos.x });
+
+                // var newPos = vm.setElementPosition(event, ui);
+                // $fg(this).css({ top: newPos.y, left: newPos.x });
               }
             });
 
@@ -657,12 +655,12 @@ farmGraphModule = {
               grid: elements.farmDrawPluginOptions.canvas.gridSize,
               resize: function (event, ui) {
                 var guid = $fg(ui.helper).attr("id");
-                vm.setElementPosition(ui.size);
+                vm.setElementPosition(event,ui);
                 vm.selectElement(guid);
               },
               stop: function (event, ui) {
-                var newPos = vm.setElementPosition(ui.position);
-                $fg(this).css({ top: newPos.y, l });
+                // var newPos = vm.setElementPosition(event,ui);
+                // $fg(this).css({ top: newPos.y, l });
               }
             });
           }

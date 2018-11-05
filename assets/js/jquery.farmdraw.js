@@ -257,9 +257,10 @@ and dependencies (minified).
 
         function calcPosition(obj, endX, endY) {
             var zoom = getZoom();
+            var factor = (1 / zoom) - 1;
 
-            var width = endX - obj.drawStartX;
-            var height = endY - obj.drawStartY;
+            var width = (endX - obj.drawStartX)*factor;
+            var height = (endY - obj.drawStartY)*factor;
             var posX = Math.round(obj.drawStartX / zoom);
             var posY = Math.round(obj.drawStartY / zoom);
 

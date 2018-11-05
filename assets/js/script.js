@@ -437,6 +437,19 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
             self.setElementPosition = function (event, ui) {
 
+                var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
+                var factor = (1 / zoom) - 1;
+
+                if (ui.size) {
+                    ui.size.width += Math.round((ui.size.width - ui.originalSize.width) * factor);
+                    ui.size.height += Math.round((ui.size.height - ui.originalSize.height) * factor);
+                }
+                else {
+                    ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
+                    ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
+                }
+
+
                 var pos = {
                     left:
                         typeof ui.position.left == "number"
