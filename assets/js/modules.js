@@ -304,7 +304,6 @@ farmGraphModule = {
 
       var position = farmGraphModule.getDrawedElementPosition(drawedElement);
 
-
       var options;
       if (update) {
         options = drawedElement;
@@ -330,7 +329,9 @@ farmGraphModule = {
             "data-type": options.id()
           })
           .css({
-            backgroundColor: options.color()
+            backgroundColor: options.color(),
+            border :options.border(),
+            zIndex : options.zIndex()
           })
           .dblclick(farmGraphModule.elementUpdatedblClick);
       }
@@ -496,6 +497,8 @@ farmGraphModule = {
         .addClass('rect')
         .css({
           backgroundColor: data.color(),
+          border:data.border(),
+          zIndex:data.zIndex(),
           top:/* data.position().y*/(vm.canvasProperties().getHeight() - data.position().y) - data.position().h,
           left: data.position().x,
           width: data.position().w,
@@ -579,7 +582,7 @@ farmGraphModule = {
             .click(farmGraphModule.elementSelectClick)
             .draggable({
               containment: "parent",
-              grid: elements.farmDrawPluginOptions.canvas.gridSize,
+               grid: elements.farmDrawPluginOptions.canvas.gridSize,
               start: function (event, ui) {
                 $fg(this).click();
                 click.x = event.clientX;

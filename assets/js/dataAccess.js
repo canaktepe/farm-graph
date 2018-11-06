@@ -27,8 +27,8 @@ farmDbModel = function () {
     self.getFarm = function (callback) {
         self.post("/GetFarm", {}, false, function (response) {
             if (response.d) {
-                var data = response.d;
-                callback({ width: data.Width, height: data.Length });
+                var result = response.d;
+                callback({ width: result.Width, height: result.Length });
             }
         })
     }
@@ -37,8 +37,8 @@ farmDbModel = function () {
         var data = JSON.stringify({ farm: { Length: size.Length, Width: size.Width } })
         self.post("/UpdateFarmSize", data, false, function (response) {
             if (response.d) {
-                var data = response.d;
-                callback(data);
+                var result = response.d;
+                callback(result);
             }
         })
     }
@@ -48,8 +48,28 @@ farmDbModel = function () {
         var data = JSON.stringify({ template });
         self.post("/GetFarmItems", data, false, function (response) {
             if (response.d) {
-                var data = response.d;
-                callback(data);
+                var result = response.d;
+                callback(result);
+            }
+        })
+    }
+
+    self.setFarmItemSizeAndLocation = function (farmItem,callback) {
+        var data = JSON.stringify({ farmItem })
+        self.post('/UpdateFarmItemSizeAndLocation', data,false,function(response){
+            if(response.d){
+                var result = response.d;
+                callback(result);
+            }
+        })
+    }
+
+    self.RemoveFarmItem = function(guid,callback){
+        var data = JSON.stringify({guid});
+        self.post('/RemoveFarmItem',data,false,function(response){
+            if(response.d){
+                var result = response.d;
+                callback(result);
             }
         })
     }

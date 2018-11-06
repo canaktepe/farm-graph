@@ -54,7 +54,9 @@ jsonToModel = function (data) {
             });
         }
     }
+    self.border = ko.observable(data.border);
     self.color = ko.observable(data.color);
+    self.zIndex = ko.observable(data.zIndex);
     self.formData = ko.observable(data.formData);
     self.guid = ko.observable(data.guid);
     self.id = ko.observable(data.id);
@@ -218,7 +220,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
             self.filteredCreatingElementsByRoutable = ko.observableArray([]);
             self.canvasProperties = ko.observable(
                 new canvasModel({
-                    zoom: 10,
+                    zoom: 20,
                     width: farmGraphModule.elements.farmDrawPluginOptions.canvas.width,
                     height: farmGraphModule.elements.farmDrawPluginOptions.canvas.height
                 })
@@ -416,14 +418,26 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                         self.activeElement().position().h
                     );
 
-                    self.activeElement().position(positionToSnap);
 
-                    //set canvas element position
-                    $fg("div[id=" + self.activeElement().guid() + "]").css({
-                        width: self.activeElement().position().w,
-                        height: self.activeElement().position().h,
-                        top: self.activeElement().position().y,
-                        left: self.activeElement().position().x
+
+                    var farmItem = { guid: self.activeElement().guid(), position: self.activeElement().position() };
+
+                    farmGraphModule.farmDb.setFarmItemSizeAndLocation(farmItem, function (success) {
+
+                        if (!success) return;
+
+                        self.activeElement().position(positionToSnap);
+
+                        //set canvas element position
+                        $fg("div[id=" + self.activeElement().guid() + "]").css({
+                            width: positionToSnap.w,
+                            height: positionToSnap.h,
+                            // top: self.activeElement().position().y,
+                            top: self.convertToBottomPosition(positionToSnap),
+                            left: positionToSnap.x
+                        });
+
+
                     });
 
 
@@ -433,74 +447,83 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 viewModel
             );
 
+            self.convertToBottomPosition = function (pos) {
+                return (self.canvasProperties().getHeight() - pos.y) - pos.h;
+            },
 
-            self.setElementPosition = function (event, ui) {
 
-                var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
-                var factor = (1 / zoom) - 1;
+                self.setElementPosition = function (event, ui) {
 
-                var pos;
+                    var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
+                    var factor = (1 / zoom) - 1;
 
-                if (ui.size) {
-                    ui.size.width += Math.round((ui.size.width - ui.originalSize.width) * factor);
-                    ui.size.height += Math.round((ui.size.height - ui.originalSize.height) * factor);
+                    var pos;
 
-                    pos = {
-                        left: self.getActiveElement().position().x,
-                        top: self.getActiveElement().position().y,
-                        width: typeof ui.size.width == "number"
-                            ? ui.size.width
-                            : self.getActiveElement().position().w,
-                        height: typeof ui.size.height == "number"
-                            ? ui.size.height
-                            : self.getActiveElement().position().h
-                    }
-                }
-                else {
-                    ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
-                    ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
+                    if (ui.size) {
+                        ui.size.width += Math.round((ui.size.width - ui.originalSize.width) * factor);
+                        ui.size.height += Math.round((ui.size.height - ui.originalSize.height) * factor);
+                        ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
+                        ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
 
-                    pos = {
-                        left:
-                            typeof ui.position.left == "number"
+
+                        pos = {
+                            x: typeof ui.position.left == "number"
                                 ? ui.position.left
                                 : self.getActiveElement().position().x,
-                        top:
-                            typeof ui.position.top == "number"
+                            y: typeof ui.position.top == "number"
                                 ? ui.position.top
                                 : self.getActiveElement().position().y,
-                        width: self.getActiveElement().position().w,
-                        height: self.getActiveElement().position().h
+                            w: typeof ui.size.width == "number"
+                                ? ui.size.width
+                                : self.getActiveElement().position().w,
+                            h: typeof ui.size.height == "number"
+                                ? ui.size.height
+                                : self.getActiveElement().position().h
+                        }
+                    }
+                    else {
+                        ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
+                        ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
+
+                        pos = {
+                            x: typeof ui.position.left == "number"
+                                ? ui.position.left
+                                : self.getActiveElement().position().x,
+                            y: typeof ui.position.top == "number"
+                                ? ui.position.top
+                                : self.getActiveElement().position().y,
+                            w: self.getActiveElement().position().w,
+                            h: self.getActiveElement().position().h
+                        }
+
                     }
 
-                }
+                    // this section is setting location inputs on Object Information parts
+                    var posToObjectInf = {
+                        left: pos.x,
+                        top: self.convertToBottomPosition(pos),
+                        width: pos.w,
+                        height: pos.h
+                    }
 
-                // this section is setting location inputs on Object Information parts
-                var posToObjectInf = {
-                    left: pos.left,
-                    top: (self.canvasProperties().getHeight() - pos.top) - pos.height,
-                    width: pos.width,
-                    height: pos.height
-                }
+                    // this section is set size of elements on canvas
+                    pos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
+                        pos.x,
+                        pos.y,
+                        pos.w,
+                        pos.h
+                    );
 
-                // this section is set size of elements on canvas
-                pos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
-                    pos.left,
-                    pos.top,
-                    pos.width,
-                    pos.height
-                );
+                    posToObjectInf = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
+                        posToObjectInf.left,
+                        posToObjectInf.top,
+                        posToObjectInf.width,
+                        posToObjectInf.height
+                    )
 
-                posToObjectInf = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
-                    posToObjectInf.left,
-                    posToObjectInf.top,
-                    posToObjectInf.width,
-                    posToObjectInf.height
-                )
-
-                self.getActiveElement().position(posToObjectInf);
-                return pos;
-            };
+                    self.getActiveElement().position(posToObjectInf);
+                    return pos;
+                };
 
             self.setEnable = function (acceptable) {
                 var data = self
@@ -544,23 +567,37 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
                 // remove active element
                 if (activeElement) {
-                    self.createdElements().some(function iter(o, i, a) {
-                        removeAllRoutingRelations(o);
-                        if (o.guid() === activeElement.guid()) {
-                            a.splice(i, 1);
-                            $fg("div[id=" + activeElement.guid() + "]").remove();
-                            self.activeElement(null);
-                        }
-                        var children =
-                            typeof o.children === "function" ? o.children() : o.children;
-                        return children && children.some(iter);
-                    });
-                    localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
+
+                
+                    farmGraphModule.farmDb.RemoveFarmItem(activeElement.guid(),function (success) {
+                        if (!success) return;
+
+                        self.createdElements().some(function iter(o, i, a) {
+                            removeAllRoutingRelations(o);
+                            if (o.guid() === activeElement.guid()) {
+                                a.splice(i, 1);
+                                $fg("div[id=" + activeElement.guid() + "]").remove();
+                                self.activeElement(null);
+                            }
+                            var children =
+                                typeof o.children === "function" ? o.children() : o.children;
+                            return children && children.some(iter);
+                        });
+                        localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
+                    })
+
+
                 }
             };
 
             self.setTextColor = function () {
+
+
                 var rgb = self.activeElement().color();
+
+
+                if(rgb=='transparent') return "rgb(0,0,0)";
+
                 var colors = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
                 var brightness = 5;
 
@@ -623,11 +660,12 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
             self.pushElement = function (parentGuid, element) {
                 var newElement = new jsonToModel(ko.toJS(element));
-                if (parentGuid == null) self.createdElements.push(newElement);
+                // if (parentGuid == null) 
+                self.createdElements.push(newElement);
 
-                self.getCreatedElement(parentGuid, function (data) {
-                    data.children.push(newElement);
-                });
+                // self.getCreatedElement(parentGuid, function (data) {
+                //     data.children.push(newElement);
+                // });
                 localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
             };
 
