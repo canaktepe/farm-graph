@@ -54,19 +54,49 @@ farmDbModel = function () {
         })
     }
 
-    self.setFarmItemSizeAndLocation = function (farmItem,callback) {
+    self.setFarmItemSizeAndLocation = function (farmItem, callback) {
         var data = JSON.stringify({ farmItem })
-        self.post('/UpdateFarmItemSizeAndLocation', data,false,function(response){
-            if(response.d){
+        self.post('/UpdateFarmItemSizeAndLocation', data, false, function (response) {
+            if (response.d) {
                 var result = response.d;
                 callback(result);
             }
         })
     }
 
-    self.RemoveFarmItem = function(guid,callback){
-        var data = JSON.stringify({guid});
-        self.post('/RemoveFarmItem',data,false,function(response){
+    self.RemoveFarmItem = function (guid, callback) {
+        var data = JSON.stringify({ guid });
+        self.post('/RemoveFarmItem', data, false, function (response) {
+            if (response.d) {
+                var result = response.d;
+                callback(result);
+            }
+        })
+    }
+
+    self.getDevices = function (dtyId, callback) {
+        var data = JSON.stringify({ dtyId });
+        self.post('/GetDevices', data, false, function (response) {
+            if (response.d) {
+                var result = response.d;
+                callback(result);
+            }
+        })
+    }
+
+    self.SetFarmItemDeviceNodeId = function (farmItem, callback) {
+        var data = JSON.stringify({ farmItem });
+        self.post('/SetFarmItemDeviceNodeId', data, false, function (response) {
+            if (response.d) {
+                var result = response.d;
+                callback(result);
+            }
+        })
+    }
+
+    self.addDeviceTofarmItem = function(farmItem,callback){
+        var data = JSON.stringify({farmItem});
+        self.post('/addDeviceTofarmItem',data,false,function(response){
             if(response.d){
                 var result = response.d;
                 callback(result);

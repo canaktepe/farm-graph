@@ -9,7 +9,8 @@ farmGraphModule = {
         width: 3000,
         height: 2000,
         grid: true,
-        gridSize: [25, 25]
+        snapGrid: false,
+        gridSize: [150, 150]
       },
       rectangle: {
         color: "#9b9b9b",
@@ -18,8 +19,9 @@ farmGraphModule = {
         resizable: true
       },
       onDrawComplete(e) {
+
         if (!e.drawingRect) return;
-        farmGraphModule.openModal(false, e.drawingRect, function (item) {
+        farmGraphModule.openModal(false, e, function (item) {
           if (typeof item === "object") {
             e.drawingRect.click();
           }
@@ -37,13 +39,11 @@ farmGraphModule = {
           // $fg(this).css({ top: newPos.y, left: newPos.x });
         });
         $fg(e).draggable("option", "drag", function (event, ui) {
-
-
-          vm.setElementPosition(event,ui);
+          vm.setElementPosition(event, ui);
         });
         $fg(e).resizable("option", "resize", function (event, ui) {
           guid = $fg(e).attr("id");
-          vm.setElementPosition(event,ui);
+          vm.setElementPosition(event, ui);
           vm.selectElement(guid);
         });
         $fg(e).resizable("option", "start", function (event, ui) {
@@ -51,7 +51,7 @@ farmGraphModule = {
           vm.selectElement(guid);
         });
         $fg(e).resizable("option", "stop", function (event, ui) {
-          var newPos = vm.setElementPosition(event,ui);
+          // var newPos = vm.setElementPosition(event,ui);
           // $fg(this).css({ top: newPos.y, left: newPos.x });
         });
       }
@@ -106,7 +106,6 @@ farmGraphModule = {
           top: options.position.y
         };
 
-
         var parents = $fg.grep(this.parents(), function (parent) {
           if ($fg(parent).hasClass('rectangle')) {
             position.left -= parseInt($fg(parent).css("left")),
@@ -136,13 +135,15 @@ farmGraphModule = {
     e.stopPropagation();
   },
 
-  setEnableElementsType: function (drawedElement) {
-    var isChild = drawedElement.parent().hasClass("rect");
+  setEnableElementsType: function (drct) {
+
+    var parent = $fg(drct.parent);
+    var isChild = parent.hasClass("rect");
     var acceptable = elements.mainAcceptable();
 
     if (isChild) {
 
-      var type = drawedElement.parent().data("type");
+      var type = parent.data("type");
 
       var options = vm.getTypeOptions(type);
 
@@ -191,10 +192,11 @@ farmGraphModule = {
                   .find("option[value=" + e + "]")
                   .attr("selected", true);
               });
-            } else
+            } else {
               formObject
                 .find("option[value=" + value + "]")
                 .attr("selected", true);
+            }
             break;
         }
       }
@@ -219,10 +221,13 @@ farmGraphModule = {
         position.y = parseInt(savedElement.css("top"));
       }
     }
+    position.y = vm.convertToBottomPosition(position);
     return position;
   },
 
   setElementRectangleNameText: function (el, update) {
+
+
     var element;
     if (update) {
       element = $fg("div.rect[id='" + el.guid() + "']");
@@ -232,19 +237,26 @@ farmGraphModule = {
     }
 
     var options = element.options;
-    if (options.formData().Name && options.type() == 3 /*device*/) {
+
+    if (options.formData() && options.formData().DevName && options.type() == 3 /*device*/) {
       var existElement = element.find("div.rect-name");
       if (existElement.length > 0) {
-        existElement.text(options.formData().Name);
+        existElement.text(options.formData().DevName);
       } else {
         $fg("<div/>", { attr: { class: "rect-name" } })
-          .text(options.formData().Name)
+          .text(options.formData().DevName)
           .appendTo(element);
       }
     }
   },
 
-  openModal: function (update, drawedElement, callback) {
+  openModal: function (update, drct, callback) {
+
+
+    var drawedElement = drct.drawingRect ? drct.drawingRect : drct;
+
+
+
     // off button events
     elements.elementModal.selector.off("shown.bs.modal");
     elements.elementModal.selector.off("hidden.bs.modal");
@@ -330,12 +342,34 @@ farmGraphModule = {
           })
           .css({
             backgroundColor: options.color(),
-            border :options.border(),
-            zIndex : options.zIndex()
+            border: options.border(),
+            zIndex: options.zIndex()
           })
           .dblclick(farmGraphModule.elementUpdatedblClick);
       }
-      farmGraphModule.setElementRectangleNameText(drawedElement, update);
+
+      if (typeof (options.guid()) == 'string') {
+
+        var newId = fm.newDataId();
+
+        options.guid(newId);
+        options.id(elements.elementModal.selector.data('type'));
+        //add items to database
+        farmGraphModule.farmDb.addDeviceTofarmItem(ko.toJS(options), function (data) {
+          if (data) {
+            farmGraphModule.setElementRectangleNameText(drawedElement, update);
+          }
+        })
+      }
+      else {
+        //update the item in the database
+        farmGraphModule.farmDb.SetFarmItemDeviceNodeId(ko.toJS(options), function (data) {
+          if (data) {
+            farmGraphModule.setElementRectangleNameText(drawedElement, update);
+          }
+        })
+      }
+
 
       callback(drawedElement);
     });
@@ -343,6 +377,11 @@ farmGraphModule = {
     //binding modal next button event
     elements.elementModal.nextButton.on("click", function (e) {
       if (update) {
+
+        var typeForDbModal = vm.activeElement().id();
+        if (typeForDbModal.toString().indexOf('000') > -1) typeForDbModal = typeForDbModal.toString().slice(0, 1);
+        elements.elementModal.selector.data('type', typeForDbModal)
+
         elements.elementModal.contentBody.load(
           process.env.FORMS_PATH + drawedElement.pageTemplate(),
           function (responseText, textStatus, XMLHttpRequest) {
@@ -364,6 +403,10 @@ farmGraphModule = {
 
       if (!elementOptions) return;
 
+      typeForDbModal = selectedType;
+      if (typeForDbModal.indexOf('000') > -1) typeForDbModal = typeForDbModal.slice(0, 1);
+      elements.elementModal.selector.data('type', typeForDbModal)
+
       console.log("insert mode");
       drawedElement.options = elementOptions;
       var pageTemplate = drawedElement.options.pageTemplate();
@@ -371,6 +414,7 @@ farmGraphModule = {
         process.env.FORMS_PATH + pageTemplate,
         function (responseText, textStatus, XMLHttpRequest) {
           if (XMLHttpRequest.status == 200) {
+
             elements.elementModal.selector
               .find(".modal-title")
               .text("Add New " + drawedElement.options.name());
@@ -418,6 +462,7 @@ farmGraphModule = {
       elements.elementModal.saveButton.hide();
       elements.elementModal.backButton.hide();
       elements.elementModal.nextButton.show();
+      vm.activeElement(null);
     });
 
     if (!update) {
@@ -425,7 +470,7 @@ farmGraphModule = {
       vm.setDisableAllTypes();
       //object Types page set enabled according to drawed elements acceptable values
       elements.elementModal.selector.find(".modal-title").text("Select Type");
-      farmGraphModule.setEnableElementsType(drawedElement);
+      farmGraphModule.setEnableElementsType(drct);
       elements.elementModal.contentBody.hide();
       elements.elementModal.typesBody.show();
     } else {
@@ -489,6 +534,9 @@ farmGraphModule = {
   dataBindModel: function () {
     var self = this;
     self.createItem = function (data, callback) {
+
+
+      var devName = data.formData() ? data.formData().DevName : '';
       var elem = $fg('<div>', {
         attr: {
           id: data.guid()
@@ -497,14 +545,14 @@ farmGraphModule = {
         .addClass('rect')
         .css({
           backgroundColor: data.color(),
-          border:data.border(),
-          zIndex:data.zIndex(),
+          border: data.border(),
+          zIndex: data.zIndex(),
           top:/* data.position().y*/(vm.canvasProperties().getHeight() - data.position().y) - data.position().h,
           left: data.position().x,
           width: data.position().w,
           height: data.position().h
         })
-        .text(data.name())
+        .text(devName)
         .data('options', data)
       callback(elem);
     }
@@ -582,7 +630,7 @@ farmGraphModule = {
             .click(farmGraphModule.elementSelectClick)
             .draggable({
               containment: "parent",
-               grid: elements.farmDrawPluginOptions.canvas.gridSize,
+              //  grid: elements.farmDrawPluginOptions.canvas.gridSize,
               start: function (event, ui) {
                 $fg(this).click();
                 click.x = event.clientX;
@@ -655,10 +703,10 @@ farmGraphModule = {
               minHeight: 30,
               containment: "parent",
               autoHide: true,
-              grid: elements.farmDrawPluginOptions.canvas.gridSize,
+              // grid: elements.farmDrawPluginOptions.canvas.gridSize,
               resize: function (event, ui) {
                 var guid = $fg(ui.helper).attr("id");
-                vm.setElementPosition(event,ui);
+                vm.setElementPosition(event, ui);
                 vm.selectElement(guid);
               },
               stop: function (event, ui) {
@@ -667,6 +715,8 @@ farmGraphModule = {
               }
             });
           }
+          createdItem.options = data;
+          farmGraphModule.setElementRectangleNameText(createdItem, false);
         }
       })
     })

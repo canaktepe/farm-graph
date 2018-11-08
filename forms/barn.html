@@ -1,10 +1,32 @@
 <div class="container">
     <form id="controlData">
         <div class="form-group row">
-            <label for="Name" class="col-sm-2 col-form-label">Name</label>
+            <label for="DevId" class="col-sm-2 col-form-label">Barn</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="Name" id="Name" placeholder="">
+                <select class="form-control" name="DevId" id="DevId" data-bind="options: fm.data(),value:'vm.activeElement().formData().DevId',optionsText: 'DevName',optionsValue: 'DevId'"></select>
             </div>
+            <input type="hidden" name="DevName" id="DevName" bind="value:vm.activeElement().formData().DevName">
         </div>
     </form>
 </div>
+<script>
+
+    var dtyId = farmGraphModule.elements.elementModal.selector.data('type');
+
+    farmGraphModule.farmDb.getDevices(dtyId, function (response) {
+        if (response == null) return;
+        fm = new formPageModel();
+        fm.data(response)
+        ko.applyBindings(formPageModel, document.getElementById('controlData'));
+    })
+
+
+    var devEl = $fg('#DevId');
+    fm.newDataId(devEl.find('option:selected').val());
+
+    devEl.change(function (e) {
+        var text = $fg(this).find('option:selected').text();
+        fm.newDataId($fg(this).find('option:selected').val());
+        $fg('#DevName').val(text);
+    })
+</script>

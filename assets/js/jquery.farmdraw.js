@@ -83,7 +83,11 @@ and dependencies (minified).
         var settings = $.extend(true, {}, defaults, options);
 
         function snapElementToGrid(x, y, w, h) {
+
             var position = { x: parseInt(x), y: parseInt(y), w: parseInt(w), h: parseInt(h) };
+
+            if (!settings.canvas.snapGrid) return position;
+
             var gridX = settings.canvas.gridSize[0];
             var gridY = settings.canvas.gridSize[1];
 
@@ -104,6 +108,10 @@ and dependencies (minified).
 
         function createRectangle(e, w, h) {
             var drawBox = $(e);
+
+
+
+
             var el = $("<div />").css({
                 // left: e.drawStartX,
                 // top: e.drawStartY,
@@ -126,6 +134,9 @@ and dependencies (minified).
                     cev.stopPropagation();
                 })
             }
+
+            // without children structure
+            // var drawBox = farmGraphModule.elements.drawArea;
 
             el.appendTo(drawBox);
 
@@ -187,7 +198,13 @@ and dependencies (minified).
         function startDraw(e) {
             if (!drawingEnabled && settings.drawNewButton !== '') return;
 
-            var target = $(e.target);
+            // with child structure
+            // var target = $(e.target);
+
+            //without child structure
+            var parent = $(e.target)
+            var target = $(e.currentTarget)
+
             var offset = target.offset();
             var zoom = getZoom();
 
@@ -205,6 +222,7 @@ and dependencies (minified).
             this.drawStartY = position.y;
 
             this.drawingRect = createRectangle(target, 0, 0);
+            this.parent = parent;
 
             $(this).on('mousemove', $.proxy(draw, this));
             $(this).on('mouseup', $.proxy(endDraw, this));
