@@ -3,12 +3,7 @@ formPageModel = function (data) {
     var self = this;
     self.data = ko.observableArray(data);
     self.newDataId = ko.observable();
-    self.getDevName = function (devId) {
-        return ko.utils.arrayFirst(self.data(), function (filter) {
-            return filter.DevId == devId;
-        })
-
-    }
+  
 };
 
 canvasModel = function (data) {
@@ -277,7 +272,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     if (route.id() == data.id()) {
                         route.to({
                             guid: $this.guid(),
-                            name: $this.formData().DevName
+                            name: $this.formData().NodeName
                         });
                     }
                 });

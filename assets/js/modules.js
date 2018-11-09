@@ -138,15 +138,18 @@ farmGraphModule = {
   setEnableElementsType: function (drct) {
 
     var parent = $fg(drct.parent);
+
+  
     var isChild = parent.hasClass("rect");
     var acceptable = elements.mainAcceptable();
 
     if (isChild) {
 
-      var type = parent.data("type");
+      var type = parent.attr("data-type") || parent.data().options.id();
 
       var options = vm.getTypeOptions(type);
 
+      
 
       acceptable = options.acceptable();
     }
@@ -238,13 +241,13 @@ farmGraphModule = {
 
     var options = element.options;
 
-    if (options.formData() && options.formData().DevName && options.type() == 3 /*device*/) {
+    if (options.formData() && options.formData().NodeName && options.type() == 3 /*device*/) {
       var existElement = element.find("div.rect-name");
       if (existElement.length > 0) {
-        existElement.text(options.formData().DevName);
+        existElement.text(options.formData().NodeName);
       } else {
         $fg("<div/>", { attr: { class: "rect-name" } })
-          .text(options.formData().DevName)
+          .text(options.formData().NodeName)
           .appendTo(element);
       }
     }
@@ -354,6 +357,9 @@ farmGraphModule = {
 
         options.guid(newId);
         options.id(elements.elementModal.selector.data('type'));
+
+
+
         //add items to database
         farmGraphModule.farmDb.addDeviceTofarmItem(ko.toJS(options), function (data) {
           if (data) {
@@ -379,7 +385,9 @@ farmGraphModule = {
       if (update) {
 
         var typeForDbModal = vm.activeElement().id();
-        if (typeForDbModal.toString().indexOf('000') > -1) typeForDbModal = typeForDbModal.toString().slice(0, 1);
+  
+        if (typeForDbModal.toString().indexOf('000') > -1) typeForDbModal = typeForDbModal.toString().slice(0, -3);
+
         elements.elementModal.selector.data('type', typeForDbModal)
 
         elements.elementModal.contentBody.load(
@@ -404,7 +412,9 @@ farmGraphModule = {
       if (!elementOptions) return;
 
       typeForDbModal = selectedType;
-      if (typeForDbModal.indexOf('000') > -1) typeForDbModal = typeForDbModal.slice(0, 1);
+      console.log(typeForDbModal)
+      if (typeForDbModal.indexOf('000') > -1) typeForDbModal = typeForDbModal.slice(0, -3);
+      console.log(typeForDbModal)
       elements.elementModal.selector.data('type', typeForDbModal)
 
       console.log("insert mode");
@@ -536,7 +546,7 @@ farmGraphModule = {
     self.createItem = function (data, callback) {
 
 
-      var devName = data.formData() ? data.formData().DevName : '';
+      var NodeName = data.formData() ? data.formData().NodeName : '';
       var elem = $fg('<div>', {
         attr: {
           id: data.guid()
@@ -552,7 +562,7 @@ farmGraphModule = {
           width: data.position().w,
           height: data.position().h
         })
-        .text(devName)
+        .text(NodeName)
         .data('options', data)
       callback(elem);
     }

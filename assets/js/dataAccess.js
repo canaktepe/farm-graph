@@ -74,9 +74,9 @@ farmDbModel = function () {
         })
     }
 
-    self.getDevices = function (dtyId, callback) {
-        var data = JSON.stringify({ dtyId });
-        self.post('/GetDevices', data, false, function (response) {
+    self.GetNodes = function (typeId, callback) {
+        var data = JSON.stringify({ typeId });
+        self.post('/GetNodes', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
                 callback(result);
