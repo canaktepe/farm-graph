@@ -1,4 +1,3 @@
-
 var elements;
 farmGraphModule = {
   farmDb: new farmDbModel(),
@@ -28,7 +27,10 @@ farmGraphModule = {
         });
       },
       onSelectElement(e) {
+        
         var guid = $fg(e).attr("id");
+        if(!guid) return;
+
         vm.selectElement(guid);
 
         $fg(e).draggable("option", "start", function (event, ui) {
@@ -77,7 +79,9 @@ farmGraphModule = {
     elements.farm.mCustomScrollbar({
       autoDraggerLength: true,
       autoHideScrollbar: true,
-      keyboard: { enable: true },
+      keyboard: {
+        enable: true
+      },
       autoExpandScrollbar: true,
       contentTouchScroll: true,
       documentTouchScroll: true,
@@ -139,17 +143,17 @@ farmGraphModule = {
 
     var parent = $fg(drct.parent);
 
-  
+
     var isChild = parent.hasClass("rect");
     var acceptable = elements.mainAcceptable();
 
     if (isChild) {
 
-      var type = parent.attr("data-type") || parent.data().options.id();
+      var type = parent.attr("data-type") || parent.data().options.type();
 
       var options = vm.getTypeOptions(type);
 
-      
+
 
       acceptable = options.acceptable();
     }
@@ -209,7 +213,12 @@ farmGraphModule = {
 
 
   getDrawedElementPosition: function (drawedElement) {
-    var position = { w: 0, h: 0, x: 0, y: 0 };
+    var position = {
+      w: 0,
+      h: 0,
+      x: 0,
+      y: 0
+    };
     if (drawedElement.options) {
       position.w = parseInt(drawedElement.css("width"));
       position.h = parseInt(drawedElement.css("height"));
@@ -241,12 +250,16 @@ farmGraphModule = {
 
     var options = element.options;
 
-    if (options.formData() && options.formData().NodeName && options.type() == 3 /*device*/) {
+    if (options.formData() && options.formData().NodeName /*device*/ ) {
       var existElement = element.find("div.rect-name");
       if (existElement.length > 0) {
         existElement.text(options.formData().NodeName);
       } else {
-        $fg("<div/>", { attr: { class: "rect-name" } })
+        $fg("<div/>", {
+            attr: {
+              class: "rect-name"
+            }
+          })
           .text(options.formData().NodeName)
           .appendTo(element);
       }
@@ -254,11 +267,7 @@ farmGraphModule = {
   },
 
   openModal: function (update, drct, callback) {
-
-
     var drawedElement = drct.drawingRect ? drct.drawingRect : drct;
-
-
 
     // off button events
     elements.elementModal.selector.off("shown.bs.modal");
@@ -269,7 +278,9 @@ farmGraphModule = {
     elements.elementModal.selector.data("saved", false);
 
     //modal showing
-    elements.elementModal.selector.modal({ show: true });
+    elements.elementModal.selector.modal({
+      show: true
+    });
 
     //binding modal save button event
     elements.elementModal.saveButton.on("click", function (e) {
@@ -320,6 +331,7 @@ farmGraphModule = {
       var position = farmGraphModule.getDrawedElementPosition(drawedElement);
 
       var options;
+
       if (update) {
         options = drawedElement;
         options.position(position);
@@ -341,7 +353,7 @@ farmGraphModule = {
         drawedElement
           .attr({
             id: guid,
-            "data-type": options.id()
+            "data-type": options.type()
           })
           .css({
             backgroundColor: options.color(),
@@ -353,21 +365,24 @@ farmGraphModule = {
 
       if (typeof (options.guid()) == 'string') {
 
-        var newId = fm.newDataId();
+        var newId = fm.newNodeId();
+
+        var oldId = options.guid();
 
         options.guid(newId);
         options.id(elements.elementModal.selector.data('type'));
 
-
-
         //add items to database
         farmGraphModule.farmDb.addDeviceTofarmItem(ko.toJS(options), function (data) {
           if (data) {
+            vm.setElementGuid(oldId,data.guid);
+            drawedElement.attr('id', data.guid);
+            options.guid(data.guid);
             farmGraphModule.setElementRectangleNameText(drawedElement, update);
           }
         })
-      }
-      else {
+      } else {
+
         //update the item in the database
         farmGraphModule.farmDb.SetFarmItemDeviceNodeId(ko.toJS(options), function (data) {
           if (data) {
@@ -376,7 +391,6 @@ farmGraphModule = {
         })
       }
 
-
       callback(drawedElement);
     });
 
@@ -384,9 +398,9 @@ farmGraphModule = {
     elements.elementModal.nextButton.on("click", function (e) {
       if (update) {
 
-        var typeForDbModal = vm.activeElement().id();
-  
-        if (typeForDbModal.toString().indexOf('000') > -1) typeForDbModal = typeForDbModal.toString().slice(0, -3);
+        var typeForDbModal = vm.activeElement().type();
+
+        // if (typeForDbModal.toString().indexOf('000') > -1) typeForDbModal = typeForDbModal.toString().slice(0, -3);
 
         elements.elementModal.selector.data('type', typeForDbModal)
 
@@ -412,9 +426,7 @@ farmGraphModule = {
       if (!elementOptions) return;
 
       typeForDbModal = selectedType;
-      console.log(typeForDbModal)
       if (typeForDbModal.indexOf('000') > -1) typeForDbModal = typeForDbModal.slice(0, -3);
-      console.log(typeForDbModal)
       elements.elementModal.selector.data('type', typeForDbModal)
 
       console.log("insert mode");
@@ -467,12 +479,13 @@ farmGraphModule = {
       var saved = elements.elementModal.selector.data("saved");
       if (!update && !saved) {
         drawedElement.remove();
+        vm.activeElement(null);
       }
       //show next, hide back button
       elements.elementModal.saveButton.hide();
       elements.elementModal.backButton.hide();
       elements.elementModal.nextButton.show();
-      vm.activeElement(null);
+     
     });
 
     if (!update) {
@@ -548,21 +561,21 @@ farmGraphModule = {
 
       var NodeName = data.formData() ? data.formData().NodeName : '';
       var elem = $fg('<div>', {
-        attr: {
-          id: data.guid()
-        }
-      })
+          attr: {
+            id: data.guid()
+          }
+        })
         .addClass('rect')
         .css({
           backgroundColor: data.color(),
           border: data.border(),
           zIndex: data.zIndex(),
-          top:/* data.position().y*/(vm.canvasProperties().getHeight() - data.position().y) - data.position().h,
+          top: /* data.position().y*/ (vm.canvasProperties().getHeight() - data.position().y) - data.position().h,
           left: data.position().x,
           width: data.position().w,
           height: data.position().h
         })
-        .text(NodeName)
+        // .text(NodeName)
         .data('options', data)
       callback(elem);
     }
@@ -615,9 +628,9 @@ farmGraphModule = {
 
     self.calcPos = function (elm) {
       var position = {
-        x: parseInt(elm.css("left")),
-        y: parseInt(elm.css("top")),
-      },
+          x: parseInt(elm.css("left")),
+          y: parseInt(elm.css("top")),
+        },
         curr = elm;
       while (curr.parent().is('.rect')) {
         curr = curr.parent();
@@ -631,7 +644,10 @@ farmGraphModule = {
   bindDbData: function (JSONData, parentObj) {
     if (JSONData == null) return;
     var dbModel = new farmGraphModule.dataBindModel();
-    var click = { x: 0, y: 0 };
+    var click = {
+      x: 0,
+      y: 0
+    };
     $fg.each(JSONData, function (i, data) {
       dbModel.createItem(data, function (createdItem) {
         if (createdItem) {
@@ -668,35 +684,51 @@ farmGraphModule = {
           if (data.resizable()) {
             $fg("<div>", {
               class: "ui-resizable-handle ui-resizable-nw",
-              attr: { id: "nwgrip" }
+              attr: {
+                id: "nwgrip"
+              }
             }).appendTo(createdItem);
             $fg("<div>", {
               class: "ui-resizable-handle ui-resizable-ne",
-              attr: { id: "negrip" }
+              attr: {
+                id: "negrip"
+              }
             }).appendTo(createdItem);
             $fg("<div>", {
               class: "ui-resizable-handle ui-resizable-sw",
-              attr: { id: "swgrip" }
+              attr: {
+                id: "swgrip"
+              }
             }).appendTo(createdItem);
             $fg("<div>", {
               class: "ui-resizable-handle ui-resizable-se",
-              attr: { id: "segrip" }
+              attr: {
+                id: "segrip"
+              }
             }).appendTo(createdItem);
             $fg("<div>", {
               class: "ui-resizable-handle ui-resizable-n",
-              attr: { id: "ngrip" }
+              attr: {
+                id: "ngrip"
+              }
             }).appendTo(createdItem);
             $fg("<div>", {
               class: "ui-resizable-handle ui-resizable-e",
-              attr: { id: "egrip" }
+              attr: {
+                id: "egrip"
+              }
             }).appendTo(createdItem);
             $fg("<div>", {
               class: "ui-resizable-handle ui-resizable-s",
-              attr: { id: "sgrip" }
+              attr: {
+                id: "sgrip"
+              }
             }).appendTo(createdItem);
             $fg("<div>", {
               class: "ui-resizable-handle ui-resizable-w",
-              attr: { id: "wgrip" }
+              attr: {
+                id: "wgrip"
+              }
             }).appendTo(createdItem);
             createdItem.resizable({
               handles: {

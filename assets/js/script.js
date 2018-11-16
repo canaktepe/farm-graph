@@ -1,9 +1,14 @@
-
-formPageModel = function (data) {
+formNodeModel = function (data) {
     var self = this;
     self.data = ko.observableArray(data);
-    self.newDataId = ko.observable();
-  
+
+    self.data().push({
+        NodeId: -1,
+        NodeName: "Select"
+    });
+
+    self.newNodeId = ko.observable();
+    self.newNodeName = ko.observable();
 };
 
 canvasModel = function (data) {
@@ -37,8 +42,14 @@ routingTypeModel = function (data) {
 };
 
 const routingTypes = [
-    new routingTypeModel({ id: 1, type: "Routing" }),
-    new routingTypeModel({ id: 2, type: "Routing (DDS)" })
+    new routingTypeModel({
+        id: 1,
+        type: "Routing"
+    }),
+    new routingTypeModel({
+        id: 2,
+        type: "Routing (DDS)"
+    })
 ];
 
 routingModel = function (prop) {
@@ -76,14 +87,17 @@ jsonToModel = function (data) {
     self.status = ko.observable(data.status);
     self.type = ko.observable(data.type);
     self.routingEnabled = ko.observable(
-        data.routingEnabled || { input: false, output: false }
+        data.routingEnabled || {
+            input: false,
+            output: false
+        }
     );
 
     if (self.routingEnabled().output) {
         self.routings = ko.observableArray([]);
-        self.routingType = data.routingType
-            ? ko.observable(new routingTypeModel(data.routingType))
-            : ko.observable(routingTypes[0]);
+        self.routingType = data.routingType ?
+            ko.observable(new routingTypeModel(data.routingType)) :
+            ko.observable(routingTypes[0]);
         if (data.routings) {
             if (data.routings.length > 0) {
                 $fg.each(data.routings, function (i, item) {
@@ -134,20 +148,20 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 var directionName;
                 if (
                     vm
-                        .activeElement()
-                        .routingType()
-                        .id() == 1
+                    .activeElement()
+                    .routingType()
+                    .id() == 1
                 ) {
                     directionName = ldnDirections[index];
                     if (!directionName)
                         $fg(element)
-                            .parent()
-                            .remove();
+                        .parent()
+                        .remove();
                 } else if (
                     vm
-                        .activeElement()
-                        .routingType()
-                        .id() == 2
+                    .activeElement()
+                    .routingType()
+                    .id() == 2
                 )
                     directionName = ddsDirections[index];
 
@@ -248,7 +262,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 var activeElement = self.activeElement();
                 activeElement.routingType(routingType);
 
-                if (routingType === self.routingTypes()[0] /*ldn*/) {
+                if (routingType === self.routingTypes()[0] /*ldn*/ ) {
                     var activeElementRoutings = self.activeElement().routings();
 
                     if (activeElementRoutings.length > 4) {
@@ -410,40 +424,47 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
             };
 
             self.getActiveElement = ko.pureComputed({
-                read: function () {
-                    return self.activeElement()
-                        ? self.activeElement()
-                        : {
-                            name: "Not Selected",
-                            position: ko.observable({ x: 0, y: 0, w: 0, h: 0 })
+                    read: function () {
+                        return self.activeElement() ?
+                            self.activeElement() : {
+                                name: "Not Selected",
+                                position: ko.observable({
+                                    x: 0,
+                                    y: 0,
+                                    w: 0,
+                                    h: 0
+                                })
+                            };
+                    },
+                    write: function () {
+                        var positionToSnap = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
+                            self.activeElement().position().x,
+                            self.activeElement().position().y,
+                            self.activeElement().position().w,
+                            self.activeElement().position().h
+                        );
+
+                        var farmItem = {
+                            guid: self.activeElement().guid(),
+                            position: self.activeElement().position()
                         };
-                },
-                write: function () {
-                    var positionToSnap = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
-                        self.activeElement().position().x,
-                        self.activeElement().position().y,
-                        self.activeElement().position().w,
-                        self.activeElement().position().h
-                    );
-
-                    var farmItem = { guid: self.activeElement().guid(), position: self.activeElement().position() };
-                    farmGraphModule.farmDb.setFarmItemSizeAndLocation(farmItem, function (success) {
-                        if (!success) return;
-                        self.activeElement().position(positionToSnap);
-                        //set canvas element position
-                        $fg("div[id=" + self.activeElement().guid() + "]").css({
-                            width: positionToSnap.w,
-                            height: positionToSnap.h,
-                            // top: self.activeElement().position().y,
-                            top: self.convertToBottomPosition(positionToSnap),
-                            left: positionToSnap.x
+                        farmGraphModule.farmDb.setFarmItemSizeAndLocation(farmItem, function (success) {
+                            if (!success) return;
+                            self.activeElement().position(positionToSnap);
+                            //set canvas element position
+                            $fg("div[id=" + self.activeElement().guid() + "]").css({
+                                width: positionToSnap.w,
+                                height: positionToSnap.h,
+                                // top: self.activeElement().position().y,
+                                top: self.convertToBottomPosition(positionToSnap),
+                                left: positionToSnap.x
+                            });
                         });
-                    });
 
-                    self.saveDbData();
-                    localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
-                }
-            },
+                        self.saveDbData();
+                        localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
+                    }
+                },
                 viewModel
             );
 
@@ -471,31 +492,24 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
 
                     pos = {
-                        x: typeof ui.position.left == "number"
-                            ? ui.position.left
-                            : self.getActiveElement().position().x,
-                        y: typeof ui.position.top == "number"
-                            ? ui.position.top
-                            : self.getActiveElement().position().y,
-                        w: typeof ui.size.width == "number"
-                            ? ui.size.width
-                            : self.getActiveElement().position().w,
-                        h: typeof ui.size.height == "number"
-                            ? ui.size.height
-                            : self.getActiveElement().position().h
+                        x: typeof ui.position.left == "number" ?
+                            ui.position.left : self.getActiveElement().position().x,
+                        y: typeof ui.position.top == "number" ?
+                            ui.position.top : self.getActiveElement().position().y,
+                        w: typeof ui.size.width == "number" ?
+                            ui.size.width : self.getActiveElement().position().w,
+                        h: typeof ui.size.height == "number" ?
+                            ui.size.height : self.getActiveElement().position().h
                     }
-                }
-                else {
+                } else {
                     ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
                     ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
 
                     pos = {
-                        x: typeof ui.position.left == "number"
-                            ? ui.position.left
-                            : self.getActiveElement().position().x,
-                        y: typeof ui.position.top == "number"
-                            ? ui.position.top
-                            : self.getActiveElement().position().y,
+                        x: typeof ui.position.left == "number" ?
+                            ui.position.left : self.getActiveElement().position().x,
+                        y: typeof ui.position.top == "number" ?
+                            ui.position.top : self.getActiveElement().position().y,
                         w: self.getActiveElement().position().w,
                         h: self.getActiveElement().position().h
                     }
@@ -556,10 +570,10 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
                     if (item.routings().length > 0) {
                         var ruleForRoutingType =
-                            item.routingType().id() == self.routingTypes()[0].id()
-                                ? item.parentGuid() == activeElement.parentGuid() ||
-                                item.guid() == activeElement.parentGuid()
-                                : true;
+                            item.routingType().id() == self.routingTypes()[0].id() ?
+                            item.parentGuid() == activeElement.parentGuid() ||
+                            item.guid() == activeElement.parentGuid() :
+                            true;
 
                         if (ruleForRoutingType) {
                             ko.utils.arrayForEach(item.routings(), function (route, i) {
@@ -571,7 +585,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     }
                 };
 
-                deleteelementOnCanvas = function(){
+                deleteelementOnCanvas = function () {
                     self.createdElements().some(function iter(o, i, a) {
                         removeAllRoutingRelations(o);
                         if (o.guid() === activeElement.guid()) {
@@ -590,12 +604,12 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 if (activeElement) {
 
                     //working this part if new drawed element removing
-                    if (typeof (activeElement.guid()) === 'string'){
+                    if (typeof (activeElement.guid()) === 'string') {
                         deleteelementOnCanvas();
                         return;
                     }
 
-                       //working this part if db element removing
+                    //working this part if db element removing
                     farmGraphModule.farmDb.RemoveFarmItem(activeElement.guid(), function (success) {
                         if (!success) return;
                         deleteelementOnCanvas();
@@ -632,15 +646,16 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 $fg('input[name="farmCheckBox"]').prop("checked", false);
             };
 
-            self.getTypeOptions = function (id) {
-                if (!id) return;
+            self.getTypeOptions = function (type) {
+                if (!type) return;
                 var data = self
                     .devices()
                     .concat(self.physicals())
                     .concat(self.objects());
-                var el = ko.utils.arrayFirst(data, function (type) {
-                    return type.id() == id;
+                var el = ko.utils.arrayFirst(data, function (item) {
+                    return item.type() == type;
                 });
+
                 return el;
             };
 
@@ -704,10 +719,21 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 });
             };
 
+            self.setElementGuid = function (oldGuid, guid) {
+                self.getCreatedElement(oldGuid, function (callback) {
+                    callback.guid(guid);
+                });
+            }
+
             self.selectElement = function (guid) {
                 if (!guid) return;
                 self.getCreatedElement(guid, function (item) {
+
+
                     self.activeElement(item);
+
+
+
                     var textColor = self.setTextColor(item.color);
                     self.textColor(textColor);
                     if (item.routingEnabled().output) {
@@ -727,10 +753,10 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 routeableElements.some(function iter(o, i, a) {
                     if (o !== activeElement && o.routingEnabled().input) {
                         var ruleForRoutingType =
-                            activeElement.routingType().id() == self.routingTypes()[0].id()
-                                ? o.parentGuid() == activeElement.parentGuid() ||
-                                o.guid() == activeElement.parentGuid()
-                                : true;
+                            activeElement.routingType().id() == self.routingTypes()[0].id() ?
+                            o.parentGuid() == activeElement.parentGuid() ||
+                            o.guid() == activeElement.parentGuid() :
+                            true;
 
                         if (ruleForRoutingType) {
                             var hasRoute =

@@ -1,32 +1,37 @@
 <div class="container">
-    <form id="controlData">
-        <div class="form-group row">
-            <label for="DevId" class="col-sm-2 col-form-label">Device</label>
-            <div class="col-sm-10">
-                <select class="form-control" name="NodeId" id="NodeId" data-bind="options: fm.data(),value:'vm.activeElement().formData().NodeId',optionsText: 'NodeName',optionsValue: 'NodeId'"></select>
+        <form id="controlData">
+            <div class="form-group row">
+                <label for="NodeId" class="col-sm-2 col-form-label">Device</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="NodeId" id="NodeId" data-bind="options: fm.data(),value:'vm.activeElement().formData().NodeId',optionsText: 'NodeName',optionsValue: 'NodeId'"></select>
+                </div>
+                <input type="hidden" name="NodeName" id="NodeName" bind="value:vm.activeElement().formData().NodeName">
             </div>
-            <input type="hidden" name="NodeName" id="NodeName" bind="value:vm.activeElement().formData().NodeName">
-        </div>
-    </form>
-</div>
-<script>
-
-    var typeId = farmGraphModule.elements.elementModal.selector.data('type');
-
-farmGraphModule.farmDb.GetNodes(typeId, function (response) {
-    if (response == null) return;
-    fm = new formPageModel();
-    fm.data(response)
-    ko.applyBindings(formPageModel, document.getElementById('controlData'));
-})
-
-
-var devEl = $fg('#NodeId');
-fm.newDataId(devEl.find('option:selected').val());
-
-devEl.change(function (e) {
-    var text = $fg(this).find('option:selected').text();
-    fm.newDataId($fg(this).find('option:selected').val());
-    $fg('#NodeName').val(text);
-})
-</script>
+        </form>
+    </div>
+    <script>
+        var selectEl = $fg('#NodeId'),
+            nameHdnEl = $fg('#NodeName'),
+            typeId = farmGraphModule.elements.elementModal.selector.data('type');
+    
+        farmGraphModule.farmDb.GetNodes(typeId, function (response) {
+            if (response == null) return;
+            fm = new formNodeModel();
+            fm.data(response)
+            ko.applyBindings(formNodeModel, document.getElementById('controlData'));
+        })
+    
+        var selectedOption = selectEl.find('option:selected');
+        setNodeElement(selectedOption);
+    
+        selectEl.change(function (e) {
+            var option = $fg(this).find('option:selected');
+            setNodeElement(option);
+        })
+    
+        function setNodeElement(option) {
+            fm.newNodeId(option.val());
+            fm.newNodeName(option.text())
+            nameHdnEl.val(option.text());
+        }
+    </script>
