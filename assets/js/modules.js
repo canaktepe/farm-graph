@@ -27,9 +27,9 @@ farmGraphModule = {
         });
       },
       onSelectElement(e) {
-        
+
         var guid = $fg(e).attr("id");
-        if(!guid) return;
+        if (!guid) return;
 
         vm.selectElement(guid);
 
@@ -140,21 +140,14 @@ farmGraphModule = {
   },
 
   setEnableElementsType: function (drct) {
-
     var parent = $fg(drct.parent);
-
 
     var isChild = parent.hasClass("rect");
     var acceptable = elements.mainAcceptable();
 
     if (isChild) {
-
       var type = parent.attr("data-type") || parent.data().options.type();
-
       var options = vm.getTypeOptions(type);
-
-
-
       acceptable = options.acceptable();
     }
     vm.setEnable(acceptable);
@@ -364,18 +357,17 @@ farmGraphModule = {
       }
 
       if (typeof (options.guid()) == 'string') {
-
+        var oldId = options.guid();
         var newId = fm.newNodeId();
 
-        var oldId = options.guid();
-
         options.guid(newId);
-        options.id(elements.elementModal.selector.data('type'));
+        // options.id(elements.elementModal.selector.data('type'));
 
         //add items to database
-        farmGraphModule.farmDb.addDeviceTofarmItem(ko.toJS(options), function (data) {
+        farmGraphModule.farmDb.AddNodeItem(ko.toJS(options), function (data) {
+
           if (data) {
-            vm.setElementGuid(oldId,data.guid);
+            vm.setElementGuid(oldId, data.guid);
             drawedElement.attr('id', data.guid);
             options.guid(data.guid);
             farmGraphModule.setElementRectangleNameText(drawedElement, update);
@@ -384,7 +376,7 @@ farmGraphModule = {
       } else {
 
         //update the item in the database
-        farmGraphModule.farmDb.SetFarmItemDeviceNodeId(ko.toJS(options), function (data) {
+        farmGraphModule.farmDb.SetNodeItem(ko.toJS(options), function (data) {
           if (data) {
             farmGraphModule.setElementRectangleNameText(drawedElement, update);
           }
@@ -424,9 +416,9 @@ farmGraphModule = {
       var elementOptions = vm.getTypeOptions(selectedType);
 
       if (!elementOptions) return;
-
       typeForDbModal = selectedType;
-      if (typeForDbModal.indexOf('000') > -1) typeForDbModal = typeForDbModal.slice(0, -3);
+
+      // if (typeForDbModal.indexOf('000') > -1) typeForDbModal = typeForDbModal.slice(0, -3);
       elements.elementModal.selector.data('type', typeForDbModal)
 
       console.log("insert mode");
@@ -436,7 +428,6 @@ farmGraphModule = {
         process.env.FORMS_PATH + pageTemplate,
         function (responseText, textStatus, XMLHttpRequest) {
           if (XMLHttpRequest.status == 200) {
-
             elements.elementModal.selector
               .find(".modal-title")
               .text("Add New " + drawedElement.options.name());
@@ -485,7 +476,7 @@ farmGraphModule = {
       elements.elementModal.saveButton.hide();
       elements.elementModal.backButton.hide();
       elements.elementModal.nextButton.show();
-     
+
     });
 
     if (!update) {
@@ -557,9 +548,6 @@ farmGraphModule = {
   dataBindModel: function () {
     var self = this;
     self.createItem = function (data, callback) {
-
-
-      var NodeName = data.formData() ? data.formData().NodeName : '';
       var elem = $fg('<div>', {
           attr: {
             id: data.guid()
@@ -575,7 +563,6 @@ farmGraphModule = {
           width: data.position().w,
           height: data.position().h
         })
-        // .text(NodeName)
         .data('options', data)
       callback(elem);
     }
@@ -664,18 +651,9 @@ farmGraphModule = {
 
               },
               drag: function (event, ui) {
-
-                // var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
-                // var factor = (1 / zoom) - 1;
-
-                // ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
-                // ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
-
                 vm.setElementPosition(event, ui);
-
               },
               stop: function (event, ui) {
-
                 // var newPos = vm.setElementPosition(event, ui);
                 // $fg(this).css({ top: newPos.y, left: newPos.x });
               }
@@ -762,113 +740,6 @@ farmGraphModule = {
         }
       })
     })
-
-    // $fg.each(JSONData, function (i, elem) {
-    //   var elementModel = new jsonToModel(ko.toJS(elem));
-    //   var el = $fg("<div />")
-    //     .attr({ id: elementModel.guid(), "data-type": elementModel.id() })
-    //     .css({
-    //       backgroundColor: elementModel.color(),
-    //       width: elementModel.position().w,
-    //       height: elementModel.position().h,
-    //       top: elementModel.position().y,
-    //       left: elementModel.position().x
-    //     })
-    //     .addClass("rect")
-    //     .dblclick(farmGraphModule.elementUpdatedblClick)
-    //     .click(farmGraphModule.elementSelectClick)
-    //     .draggable({
-    //       containment: "parent",
-    //       grid: elements.farmDrawPluginOptions.canvas.gridSize,
-    //       start: function (event, ui) {
-    //         $fg(this).click();
-    //       },
-    //       drag: function (event, ui) {
-    //         // var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
-    //         // var original = ui.originalPosition;
-    //         // ui.position = {
-    //         //     left: (event.clientX - click.x + original.left) / zoom,
-    //         //     top:  (event.clientY - click.y + original.top ) / zoom
-    //         // };
-    //         vm.setElementAbsolutePosition(ui);
-    //       },
-    //       stop: function (event, ui) {
-    //         var newPos = vm.setElementAbsolutePosition(ui);
-    //         $fg(this).css({ top: newPos.relative.y, left: newPos.relative.x });
-    //       }
-    //     });
-
-    //   if (elem.resizable) {
-    //     $fg("<div>", {
-    //       class: "ui-resizable-handle ui-resizable-nw",
-    //       attr: { id: "nwgrip" }
-    //     }).appendTo(el);
-    //     $fg("<div>", {
-    //       class: "ui-resizable-handle ui-resizable-ne",
-    //       attr: { id: "negrip" }
-    //     }).appendTo(el);
-    //     $fg("<div>", {
-    //       class: "ui-resizable-handle ui-resizable-sw",
-    //       attr: { id: "swgrip" }
-    //     }).appendTo(el);
-    //     $fg("<div>", {
-    //       class: "ui-resizable-handle ui-resizable-se",
-    //       attr: { id: "segrip" }
-    //     }).appendTo(el);
-    //     $fg("<div>", {
-    //       class: "ui-resizable-handle ui-resizable-n",
-    //       attr: { id: "ngrip" }
-    //     }).appendTo(el);
-    //     $fg("<div>", {
-    //       class: "ui-resizable-handle ui-resizable-e",
-    //       attr: { id: "egrip" }
-    //     }).appendTo(el);
-    //     $fg("<div>", {
-    //       class: "ui-resizable-handle ui-resizable-s",
-    //       attr: { id: "sgrip" }
-    //     }).appendTo(el);
-    //     $fg("<div>", {
-    //       class: "ui-resizable-handle ui-resizable-w",
-    //       attr: { id: "wgrip" }
-    //     }).appendTo(el);
-    //     el.resizable({
-    //       handles: {
-    //         nw: "#nwgrip",
-    //         ne: "#negrip",
-    //         sw: "#swgrip",
-    //         se: "#segrip",
-    //         n: "#ngrip",
-    //         e: "#egrip",
-    //         s: "#sgrip",
-    //         w: "#wgrip"
-    //       },
-    //       minWidth: 30,
-    //       minHeight: 30,
-    //       containment: "parent",
-    //       autoHide: true,
-    //       grid: elements.farmDrawPluginOptions.canvas.gridSize,
-    //       resize: function (event, ui) {
-    //         var guid = $fg(ui.helper).attr("id");
-    //         vm.setElementPosition(ui.size);
-    //         vm.selectElement(guid);
-    //       },
-    //       stop: function (event, ui) {
-    //         var newPos = vm.setElementPosition(ui.position);
-    //         $fg(this).css({ top: newPos.y, left: newPos.x });
-    //       }
-    //     });
-
-    //     if (parentObj == null) farmGraphModule.elements.drawArea.append(el);
-    //     else parentObj.append(el);
-
-
-    //     farmGraphModule.setElementRectangleNameText(elementModel, true);
-
-    //     if (elementModel.children().length > 0) {
-    //       farmGraphModule.bindDbData(elementModel.children(), el);
-    //     }
-    //   }
-    // });
   },
   bootstrapSlider: function () {
     var slider = elements.bsSliderFarmZoom.bootstrapSlider({
@@ -916,7 +787,6 @@ farmGraphModule = {
       }
     });
   },
-
 
   init: function (jsonData) {
     elements = this.elements;

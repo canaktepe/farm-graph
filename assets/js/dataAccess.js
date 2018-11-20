@@ -84,9 +84,9 @@ farmDbModel = function () {
         })
     }
 
-    self.SetFarmItemDeviceNodeId = function (farmItem, callback) {
-        var data = JSON.stringify({ farmItem });
-        self.post('/SetFarmItemDeviceNodeId', data, false, function (response) {
+    self.SetNodeItem = function (nodeItem, callback) {
+        var data = JSON.stringify({ nodeItem });
+        self.post('/SetNodeItem', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
                 callback(result);
@@ -94,9 +94,9 @@ farmDbModel = function () {
         })
     }
 
-    self.addDeviceTofarmItem = function(farmItem,callback){
-        var data = JSON.stringify({farmItem});
-        self.post('/addDeviceTofarmItem',data,false,function(response){
+    self.AddNodeItem = function(nodeItem,callback){
+        var data = JSON.stringify({nodeItem});
+        self.post('/AddNodeItem',data,false,function(response){
             if(response.d){
                 var result = response.d;
                 callback(result);

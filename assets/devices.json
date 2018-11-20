@@ -7,7 +7,7 @@
       "color": "rgb(195, 10, 20)",
       "zIndex":3,
       "name": "Device",
-      "pageTemplate": "device.html",
+      "pageTemplate": "../../Content/CosmixAddOld.aspx",
       "resizable": true,
       "routingEnabled": {
         "input": true,
