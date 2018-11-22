@@ -7,7 +7,7 @@ farmDbModel = function () {
         contentType: 'application/json; charset=utf-8'
     };
 
-    self.post = function (u, data, async, callback) {
+    self.Post = function (u, data, async, callback) {
         var url = self.serviceUrl + u;
         var options = $fg.extend(true, self.options, {
             url: url,
@@ -24,8 +24,8 @@ farmDbModel = function () {
         $fg.ajax(options);
     }
 
-    self.getFarm = function (callback) {
-        self.post("/GetFarm", {}, false, function (response) {
+    self.GetFarm = function (callback) {
+        self.Post("/GetFarm", {}, false, function (response) {
             if (response.d) {
                 var result = response.d;
                 callback({ width: result.Width, height: result.Length });
@@ -33,9 +33,9 @@ farmDbModel = function () {
         })
     }
 
-    self.updatefarmSize = function (size, callback) {
+    self.UpdatefarmSize = function (size, callback) {
         var data = JSON.stringify({ farm: { Length: size.Length, Width: size.Width } })
-        self.post("/UpdateFarmSize", data, false, function (response) {
+        self.Post("/UpdateFarmSize", data, false, function (response) {
             if (response.d) {
                 var result = response.d;
                 callback(result);
@@ -43,10 +43,10 @@ farmDbModel = function () {
         })
     }
 
-    self.getFarmItems = function (default_data, callback) {
+    self.GetFarmItems = function (default_data, callback) {
         var template = default_data.devices.concat(default_data.objects).concat(default_data.physicals);
         var data = JSON.stringify({ template });
-        self.post("/GetFarmItems", data, false, function (response) {
+        self.Post("/GetFarmItems", data, false, function (response) {
             if (response.d) {
                 var result = response.d;
                 callback(result);
@@ -54,9 +54,9 @@ farmDbModel = function () {
         })
     }
 
-    self.setFarmItemSizeAndLocation = function (farmItem, callback) {
+    self.SetFarmItemSizeAndLocation = function (farmItem, callback) {
         var data = JSON.stringify({ farmItem })
-        self.post('/UpdateFarmItemSizeAndLocation', data, false, function (response) {
+        self.Post('/UpdateFarmItemSizeAndLocation', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
                 callback(result);
@@ -64,9 +64,9 @@ farmDbModel = function () {
         })
     }
 
-    self.RemoveFarmItem = function (guid, callback) {
-        var data = JSON.stringify({ guid });
-        self.post('/RemoveFarmItem', data, false, function (response) {
+    self.RemoveNodeItem = function (fitId, callback) {
+        var data = JSON.stringify({ fitId });
+        self.Post('/RemoveNodeItem', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
                 callback(result);
@@ -74,9 +74,9 @@ farmDbModel = function () {
         })
     }
 
-    self.GetNodes = function (typeId, callback) {
+    self.GetNodeItems = function (typeId, callback) {
         var data = JSON.stringify({ typeId });
-        self.post('/GetNodes', data, false, function (response) {
+        self.Post('/GetNodeItems', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
                 callback(result);
@@ -86,7 +86,7 @@ farmDbModel = function () {
 
     self.SetNodeItem = function (nodeItem, callback) {
         var data = JSON.stringify({ nodeItem });
-        self.post('/SetNodeItem', data, false, function (response) {
+        self.Post('/SetNodeItem', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
                 callback(result);
@@ -96,7 +96,7 @@ farmDbModel = function () {
 
     self.AddNodeItem = function(nodeItem,callback){
         var data = JSON.stringify({nodeItem});
-        self.post('/AddNodeItem',data,false,function(response){
+        self.Post('/AddNodeItem',data,false,function(response){
             if(response.d){
                 var result = response.d;
                 callback(result);

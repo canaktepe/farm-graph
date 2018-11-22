@@ -14,7 +14,7 @@
             nameHdnEl = $fg('#NodeName'),
             typeId = farmGraphModule.elements.elementModal.selector.data('type');
     
-        farmGraphModule.farmDb.GetNodes(typeId, function (response) {
+        farmGraphModule.farmDb.GetNodeItems(typeId, function (response) {
             if (response == null) return;
             fm = new formNodeModel();
             fm.data(response)

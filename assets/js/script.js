@@ -118,7 +118,9 @@ jsonToModel = function (data) {
 
 var jsonData = [];
 farmGraphModule.bindJsonElements(function (jsonResponse) {
-    farmGraphModule.farmDb.getFarmItems(jsonResponse, function (data) {
+
+    farmGraphModule.farmDb.GetFarmItems(jsonResponse, function (data) {
+        if(data==null) return;
         jsonData = data;
 
         if (jsonData.length > 0) {
@@ -448,7 +450,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                             guid: self.activeElement().guid(),
                             position: self.activeElement().position()
                         };
-                        farmGraphModule.farmDb.setFarmItemSizeAndLocation(farmItem, function (success) {
+                        farmGraphModule.farmDb.SetFarmItemSizeAndLocation(farmItem, function (success) {
                             if (!success) return;
                             self.activeElement().position(positionToSnap);
                             //set canvas element position
@@ -610,7 +612,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     }
 
                     //working this part if db element removing
-                    farmGraphModule.farmDb.RemoveFarmItem(activeElement.guid(), function (success) {
+                    farmGraphModule.farmDb.RemoveNodeItem(activeElement.guid(), function (success) {
                         if (!success) return;
                         deleteelementOnCanvas();
                     });
@@ -784,7 +786,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     Width: self.canvasProperties().height()
                 };
 
-                farmGraphModule.farmDb.updatefarmSize(size, function (data) {
+                farmGraphModule.farmDb.UpdatefarmSize(size, function (data) {
                     if (data) {
                         farmGraphModule.elements.drawArea.css({
                             width: size.Length + "px",
@@ -800,7 +802,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
         };
 
         (function () {
-            farmGraphModule.farmDb.getFarm(
+            farmGraphModule.farmDb.GetFarm(
                 function (farm) {
                     if (farm) {
                         farmGraphModule.elements.farmDrawPluginOptions.canvas.width = farm.width;
