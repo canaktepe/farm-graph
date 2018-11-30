@@ -1,3 +1,9 @@
+const createQueryParams = params => 
+      Object.keys(params)
+            .map(k => `${k}=${encodeURI(params[k])}`)
+            .join('&');
+
+
 formNodeModel = function (data) {
     var self = this;
     self.data = ko.observableArray(data);
@@ -118,11 +124,8 @@ jsonToModel = function (data) {
 
 var jsonData = [];
 farmGraphModule.bindJsonElements(function (jsonResponse) {
-
     farmGraphModule.farmDb.GetFarmItems(jsonResponse, function (data) {
-        if(data==null) return;
         jsonData = data;
-
         if (jsonData.length > 0) {
             jsonData = jsonData.map(function (item) {
                 return new jsonToModel(item);
@@ -804,6 +807,26 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
         (function () {
             farmGraphModule.farmDb.GetFarm(
                 function (farm) {
+
+                    if (farm == null) {
+                        //create a new when it has not farm in sytFarmItems table
+                        var farmNodeModel = {
+                            nodeId: 1,
+                            name: 'Tests',
+                            width: 8010,
+                            length: 2350
+                        }
+
+                        farmGraphModule.farmDb.CreateNewFarmNode(farmNodeModel, function (data) {
+                            if (data) {
+                                farm = {
+                                    width : data.Width,
+                                    height : data.Length
+                                };
+                            }
+                        })
+                    }
+
                     if (farm) {
                         farmGraphModule.elements.farmDrawPluginOptions.canvas.width = farm.width;
                         farmGraphModule.elements.farmDrawPluginOptions.canvas.height = farm.height;

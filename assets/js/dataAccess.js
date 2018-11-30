@@ -24,17 +24,42 @@ farmDbModel = function () {
         $fg.ajax(options);
     }
 
-    self.GetFarm = function (callback) {
-        self.Post("/GetFarm", {}, false, function (response) {
+    self.CreateNewFarmNode = function (farm, callback) {
+        var data = JSON.stringify({
+            farmNode: {
+                Width: farm.width,
+                Length: farm.length,
+                NodeId: farm.nodeId,
+                Name : farm.name
+            }
+        })
+        self.Post('/CreateNewFarmNode', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
-                callback({ width: result.Width, height: result.Length });
+                callback(result);
             }
         })
     }
 
+    self.GetFarm = function (callback) {
+        self.Post("/GetFarm", {}, false, function (response) {
+            if (response.d) {
+                var result = response.d;
+                callback({
+                    width: result.Width,
+                    height: result.Length
+                });
+            } else callback(null);
+        })
+    }
+
     self.UpdatefarmSize = function (size, callback) {
-        var data = JSON.stringify({ farm: { Length: size.Length, Width: size.Width } })
+        var data = JSON.stringify({
+            farm: {
+                Length: size.Length,
+                Width: size.Width
+            }
+        })
         self.Post("/UpdateFarmSize", data, false, function (response) {
             if (response.d) {
                 var result = response.d;
@@ -45,17 +70,22 @@ farmDbModel = function () {
 
     self.GetFarmItems = function (default_data, callback) {
         var template = default_data.devices.concat(default_data.objects).concat(default_data.physicals);
-        var data = JSON.stringify({ template });
+        var data = JSON.stringify({
+            template
+        });
         self.Post("/GetFarmItems", data, false, function (response) {
+            var result = [];
             if (response.d) {
-                var result = response.d;
-                callback(result);
+                result = response.d;
             }
+            callback(result);
         })
     }
 
     self.SetFarmItemSizeAndLocation = function (farmItem, callback) {
-        var data = JSON.stringify({ farmItem })
+        var data = JSON.stringify({
+            farmItem
+        })
         self.Post('/UpdateFarmItemSizeAndLocation', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
@@ -65,7 +95,9 @@ farmDbModel = function () {
     }
 
     self.RemoveNodeItem = function (fitId, callback) {
-        var data = JSON.stringify({ fitId });
+        var data = JSON.stringify({
+            fitId
+        });
         self.Post('/RemoveNodeItem', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
@@ -75,7 +107,9 @@ farmDbModel = function () {
     }
 
     self.GetNodeItems = function (typeId, callback) {
-        var data = JSON.stringify({ typeId });
+        var data = JSON.stringify({
+            typeId
+        });
         self.Post('/GetNodeItems', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
@@ -85,7 +119,9 @@ farmDbModel = function () {
     }
 
     self.SetNodeItem = function (nodeItem, callback) {
-        var data = JSON.stringify({ nodeItem });
+        var data = JSON.stringify({
+            nodeItem
+        });
         self.Post('/SetNodeItem', data, false, function (response) {
             if (response.d) {
                 var result = response.d;
@@ -94,10 +130,12 @@ farmDbModel = function () {
         })
     }
 
-    self.AddNodeItem = function(nodeItem,callback){
-        var data = JSON.stringify({nodeItem});
-        self.Post('/AddNodeItem',data,false,function(response){
-            if(response.d){
+    self.AddNodeItem = function (nodeItem, callback) {
+        var data = JSON.stringify({
+            nodeItem
+        });
+        self.Post('/AddNodeItem', data, false, function (response) {
+            if (response.d) {
                 var result = response.d;
                 callback(result);
             }

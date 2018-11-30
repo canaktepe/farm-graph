@@ -31,11 +31,13 @@
 
     function setNodeElement(option) {
         if (option.length == 0) {
-            location.href='/Content/BarnAdd.aspx';
+            farmGraphModule.redirectForm('/Content/BarnAdd.aspx')
             return;
         }
+
         fm.newNodeId(option.val());
         fm.newNodeName(option.text())
         nameHdnEl.val(option.text());
     }
+
 </script>

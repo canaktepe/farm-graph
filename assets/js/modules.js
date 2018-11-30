@@ -20,6 +20,7 @@ farmGraphModule = {
       onDrawComplete(e) {
 
         if (!e.drawingRect) return;
+
         farmGraphModule.openModal(false, e, function (item) {
           if (typeof item === "object") {
             e.drawingRect.click();
@@ -64,6 +65,10 @@ farmGraphModule = {
     ctxMenuSelector: $fg(".context"),
     drawArea: $fg("#draw-area"),
     mainAcceptable: ko.observableArray([9000]),
+    redirectModal: {
+      selector: $fg('#redirectModal'),
+      contentBody: $fg('#redirectContent')
+    },
     elementModal: {
       selector: $fg("#elementModal"),
       typesBody: $fg("#modalBodyTypes"),
@@ -270,6 +275,27 @@ farmGraphModule = {
     elements.elementModal.backButton.off("click");
     elements.elementModal.selector.data("saved", false);
 
+    if (!update) {
+      var element = drawedElement.get(0);
+      var position = {
+        x: element.offsetLeft,
+        y: element.offsetTop,
+        w: element.offsetWidth,
+        h: element.offsetHeight
+      };
+      position.y = vm.convertToBottomPosition(position);
+
+      const params = {
+        returnUrl: 'FarmGraph.aspx',
+        x: position.x,
+        y: position.y,
+        w: position.w,
+        h: position.h
+      }
+      const queryParams = createQueryParams(params);
+      elements.elementModal.selector.data('redirectParams', queryParams);
+    }
+
     //modal showing
     elements.elementModal.selector.modal({
       show: true
@@ -359,9 +385,7 @@ farmGraphModule = {
       if (typeof (options.guid()) == 'string') {
         var oldId = options.guid();
         var newId = fm.newNodeId();
-
         options.guid(newId);
-        // options.id(elements.elementModal.selector.data('type'));
 
         //add items to database
         farmGraphModule.farmDb.AddNodeItem(ko.toJS(options), function (data) {
@@ -374,7 +398,6 @@ farmGraphModule = {
           }
         })
       } else {
-
         //update the item in the database
         farmGraphModule.farmDb.SetNodeItem(ko.toJS(options), function (data) {
           if (data) {
@@ -382,18 +405,14 @@ farmGraphModule = {
           }
         })
       }
-
       callback(drawedElement);
     });
 
     //binding modal next button event
     elements.elementModal.nextButton.on("click", function (e) {
+      elements.elementModal.contentBody.html('loading page...');
       if (update) {
-
         var typeForDbModal = vm.activeElement().type();
-
-        // if (typeForDbModal.toString().indexOf('000') > -1) typeForDbModal = typeForDbModal.toString().slice(0, -3);
-
         elements.elementModal.selector.data('type', typeForDbModal)
 
         elements.elementModal.contentBody.load(
@@ -417,8 +436,6 @@ farmGraphModule = {
 
       if (!elementOptions) return;
       typeForDbModal = selectedType;
-
-      // if (typeForDbModal.indexOf('000') > -1) typeForDbModal = typeForDbModal.slice(0, -3);
       elements.elementModal.selector.data('type', typeForDbModal)
 
       console.log("insert mode");
@@ -472,6 +489,7 @@ farmGraphModule = {
         drawedElement.remove();
         vm.activeElement(null);
       }
+
       //show next, hide back button
       elements.elementModal.saveButton.hide();
       elements.elementModal.backButton.hide();
@@ -626,6 +644,39 @@ farmGraphModule = {
       }
       return position;
     }
+  },
+
+  redirectForm: function (page) {
+    farmGraphModule.elements.elementModal.selector.modal("hide");
+    var redirectParams = farmGraphModule.elements.elementModal.selector.data('redirectParams');
+    var src = page + '?' + redirectParams;
+    windowManager.ShowModalDialog(src,
+      'Add Item',
+      null,
+      'Height:560px;Width:900px;Border:thick;AutoCenter:yes',
+      farmGraphModule.formCloseCallBack);
+  },
+
+
+  formCloseCallBack: function (sender, args) {
+    if (args.device) {
+       setTimeout(() => {
+        windowManager.ShowModalDialog(args.url,
+          'Add Device',
+          null,
+          'Height:560px;Width:900px;Border:thick;AutoCenter:yes', farmGraphModule.formDeviceCallBack);
+       }, 500);
+    } else {
+      var url = args.url || args;
+       if (!url) return;
+      location.href = url;
+    }
+  },
+
+  formDeviceCallBack: function (sender, args) {
+    var url = args.url || args;
+    if (!url) return;
+    location.href = url;
   },
 
   bindDbData: function (JSONData, parentObj) {

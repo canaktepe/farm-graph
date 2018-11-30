@@ -10,7 +10,8 @@
     </form>
 </div>
 <script>
-    var selectEl = $fg('#NodeId'),
+    var formEl = $fg('#controlData'),
+        selectEl = $fg('#NodeId'),
         nameHdnEl = $fg('#NodeName'),
         typeId = farmGraphModule.elements.elementModal.selector.data('type');
 
@@ -30,8 +31,14 @@
     })
 
     function setNodeElement(option) {
+        if (option.length == 0) {
+            farmGraphModule.redirectForm('/Content/LocationAdd.aspx')
+            return;
+        }
+
         fm.newNodeId(option.val());
         fm.newNodeName(option.text())
         nameHdnEl.val(option.text());
     }
+
 </script>
