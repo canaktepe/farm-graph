@@ -11,7 +11,6 @@
     <!-- <link rel="stylesheet" href="dist/assets/style.css" /> -->
     <link rel="stylesheet" href="/farm_graph/assets/style.css" />
 </head>
-
 <body>
     <div class="container-fluid pt-3 pb-3">
         <!-- Modal -->
@@ -29,33 +28,32 @@
                         <div id="modalBodyTypes">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="border border-primary border-top-0 border-right-0 border-left-0">
-                                        Devices</h5>
-                                    <div class="form type-form" data-bind="foreach:vm.devices">
+                                    <h5 class="border border-primary border-top-0 border-right-0 border-left-0">Devices</h5>
+                                    <div class="form type-form" data-bind="foreach: vm.devices">
                                         <div class="form-check">
-                                            <input class="form-check-input" data-bind="value:id() ,attr: { id:'chk_' + id()},enable:status()"
+                                            <input class="form-check-input" data-bind="value: type(), attr: { id: 'chk_' + type() }, enable: status()"
                                                 type="radio" name="farmCheckBox">
-                                            <label class="form-check-label" data-bind="text:name(),attr: { for:'chk_'+ id() }"></label>
+                                            <label class="form-check-label" data-bind="text: name(), attr: { for: 'chk_' + type() }"></label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <h5 class="border border-success border-top-0 border-right-0 border-left-0">Physicals</h5>
-                                    <div class="form type-form" data-bind="foreach:physicals">
+                                    <div class="form type-form" data-bind="foreach: physicals">
                                         <div class="form-check">
-                                            <input class="form-check-input" data-bind="value:id() ,attr: { id:'chk_' + id()},enable:status()"
+                                            <input class="form-check-input" data-bind="value: type(), attr: { id: 'chk_' + type() }, enable: status()"
                                                 type="radio" name="farmCheckBox">
-                                            <label class="form-check-label" data-bind="text:name(),attr: { for:'chk_'+ id() }"></label>
+                                            <label class="form-check-label" data-bind="text: name(), attr: { for: 'chk_' + type() }"></label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <h5 class="border border-danger border-top-0 border-right-0 border-left-0">Objects</h5>
-                                    <div class="form type-form" data-bind="foreach:objects">
+                                    <div class="form type-form" data-bind="foreach: objects">
                                         <div class="form-check">
-                                            <input class="form-check-input" data-bind="value:id() ,attr: { id:'chk_' + id()},enable:status()"
+                                            <input class="form-check-input" data-bind="value: type(), attr: { id: 'chk_' + type() }, enable: status()"
                                                 type="radio" name="farmCheckBox">
-                                            <label class="form-check-label" data-bind="text:name(),attr: { for:'chk_'+ id() }"></label>
+                                            <label class="form-check-label" data-bind="text: name(), attr: { for: 'chk_' + type() }"></label>
                                         </div>
                                     </div>
                                 </div>
@@ -75,21 +73,21 @@
         <!--Modal end-->
         <!--context menu start-->
         <ul id="context-menu" class="dropdown-menu">
-            <li id="ddlDrawNewItem" class="dropdown-item"> <a class="text-dark nodecor d-flex" href="javascipt:void(0)"><i
-                        class="fa fa-pen-nib pr-1 text-primary mt-1 mr-1"></i> <strong>Draw
+            <li id="ddlDrawNewItem" class="dropdown-item"><a class="text-dark nodecor d-flex" href="javascipt:void(0)"><i
+                class="fa fa-pen-nib pr-1 text-primary mt-1 mr-1"></i><strong>Draw
                         New Item</strong></a></li>
             <li class="dropdown-divider"></li>
-            <li class="dropdown-item pb-2 pt-2"> <a class="text-dark nodecor d-flex" href="javascript:void(0)"
-                    data-bind="click:editElement"><i class="fas fa-pen pr-1 text-secondary mt-1 mr-1"></i>Edit</a></li>
-            <li class="dropdown-item pb-2 pt-2"> <a class="text-dark nodecor d-flex" href="javascript:void(0)"
-                    data-bind="click:deleteElement"><i class="fas fa-trash pr-1 text-danger mt-1 mr-1"></i>Delete</a></li>
+            <li class="dropdown-item pb-2 pt-2"><a class="text-dark nodecor d-flex" href="javascript:void(0)"
+                data-bind="click: editElement"><i class="fas fa-pen pr-1 text-secondary mt-1 mr-1"></i>Edit</a></li>
+            <li class="dropdown-item pb-2 pt-2"><a class="text-dark nodecor d-flex" href="javascript:void(0)"
+                data-bind="click: deleteElement"><i class="fas fa-trash pr-1 text-danger mt-1 mr-1"></i>Delete</a></li>
         </ul>
         <!--context menu end-->
         <div class="row h-100">
             <div class="col-xl-10 col-lg-8 col-md-8 col-sm- col-xs-">
                 <div id="designCard" class="card h-100">
                     <div class="card-header bg-light">
-                        <strong> Farm Design Canvas</strong>
+                        <strong>Farm Design Canvas</strong>
                     </div>
                     <div class="card-body h-100">
                         <div class="farm h-100">
@@ -101,7 +99,7 @@
             </div>
             <div class="col-xl-2 col-lg-4 col-md-4 col-sm- col-xs-">
                 <button type="button" id="draw" class="btn btn-primary btn-sm btn-block">
-                    <i class="fa fa-pen-nib" aria-hidden="true"></i> Draw New Item
+                    <i class="fa fa-pen-nib" aria-hidden="true"></i>Draw New Item
                 </button>
                 <div id="canvasProperties" class="card mt-3">
                     <div class="card-header">
@@ -116,65 +114,66 @@
                             <div class="form-group row">
                                 <label for="canvasW" class="col-sm-4 col-form-label font-weight-bold">Zoom</label>
                                 <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control-plaintext" id="canvasW" data-bind="value:canvasProperties().zoom()+'%'">
+                                    <input type="text" readonly class="form-control-plaintext" id="canvasW" data-bind="value: canvasProperties().zoom() + '%'">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <input id="bsSliderFarmZoom" type="text" data-slider-min="20" data-slider-max="50"
-                                    data-slider-step="5" data-bind="attr:{'data-slider-value':canvasProperties().zoom(),'data-value':canvasProperties().zoom()}" />
+                                <input id="bsSliderFarmZoom" type="text" data-slider-min="5" data-slider-max="50"
+                                    data-slider-step="5" data-bind="attr: { 'data-slider-value': canvasProperties().zoom(), 'data-value': canvasProperties().zoom() }" />
                             </div>
                             <div class="form-group row">
                                 <label for="canvasW" class="col-sm-7 col-form-label font-weight-bold pr-0">Width</label>
                                 <div class="col-sm-5 pl-0">
                                     <input min="640" step="5" max="10000" type="number" class="form-control form-control-sm text-center"
-                                        id="canvasW" value="0" placeholder="w" data-bind="value:canvasProperties().getWidth, valueUpdate: 'afterkeydown'">
+                                        id="canvasW" value="0" placeholder="w" data-bind="value: canvasProperties().getWidth, valueUpdate: 'afterkeydown'">
                                 </div>
                                 <label for="canvasH" class="col-sm-7 col-form-label font-weight-bold pr-0">Length</label>
                                 <div class="col-sm-5 pl-0">
                                     <input min="480" step="5" max="10000" type="number" class="form-control form-control-sm text-center"
-                                        id="canvasH" value="0" placeholder="h" data-bind="value:canvasProperties().getHeight,valueUpdate:'afterkeydown'">
+                                        id="canvasH" value="0" placeholder="h" data-bind="value: canvasProperties().getHeight, valueUpdate: 'afterkeydown'">
                                 </div>
                             </div>
                             <button id="updateCanvas" type="button" class="btn btn-sm btn-success w-100 font-weight-bold"
-                                data-bind="click:saveCanvas">Save</button>
+                                data-bind="click: saveCanvas">
+                                Save</button>
                         </div>
                     </div>
                 </div>
 
                 <div id="objectInfCard" class="card mt-3">
                     <div class="card-header bg-light text-dark">
-                        <strong> Object Information</strong>
+                        <strong>Object Information</strong>
                     </div>
                     <div class="card-body">
-                        <div class="form-group row" data-bind="style:{backgroundColor:getActiveElement().color,color:textColor}">
+                        <div class="form-group row" data-bind="style: { backgroundColor: getActiveElement().color, color: textColor }">
                             <label for="objectType" class="col-sm-4 col-form-label font-weight-bold pr-0">Type</label>
                             <label id="lblObjectType" class="col-sm-8 col-form-label" data-bind="text: getActiveElement().name"></label>
                         </div>
-                        <div class="form-group row" data-bind="visible:activeElement" style="display:none;">
+                        <div class="form-group row" data-bind="visible: activeElement" style="display: none;">
                             <label for="objectName" class="col-sm-4 col-form-label font-weight-bold pr-0">Name</label>
-                            <label id="lblObjectName" class="col-sm-8 col-form-label" data-bind="text: activeElement() ? getActiveElement().formData().DeviceName:''"></label>
+                            <label id="lblObjectName" class="col-sm-8 col-form-label" data-bind="text: activeElement() ? getActiveElement().formData().NodeName : ''"></label>
                         </div>
                         <div class="form-group row">
                             <label for="txtObjectX" class="col-sm-2 col-form-label font-weight-bold pr-0">X</label>
                             <div class="col-sm-4 pl-0">
-                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center"
+                                <input min="0" step="5" type="number" class="form-control form-control-sm text-center"
                                     id="txtObjectX" value="0" placeholder="x" data-bind="value: getActiveElement().position().x">
                             </div>
                             <label for="txtObjectY" class="col-sm-2 col-form-label font-weight-bold pr-0">Y</label>
                             <div class="col-sm-4 pl-0">
-                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center"
+                                <input min="0" step="5" type="number" class="form-control form-control-sm text-center"
                                     id="txtObjectY" value="0" placeholder="y" data-bind="value: getActiveElement().position().y">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="txtObjectW" class="col-sm-2 col-form-label font-weight-bold pr-0">L</label>
                             <div class="col-sm-4 pl-0">
-                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center"
+                                <input min="0" step="5" type="number" class="form-control form-control-sm text-center"
                                     id="txtObjectW" value="0" placeholder="w" data-bind="value: getActiveElement().position().w">
                             </div>
                             <label for="txtObjectH" class="col-sm-2 col-form-label font-weight-bold pr-0">W</label>
                             <div class="col-sm-4 pl-0">
-                                <input min="0" step="25" type="number" class="form-control form-control-sm text-center"
+                                <input min="0" step="5" type="number" class="form-control form-control-sm text-center"
                                     id="txtObjectH" value="0" placeholder="h" data-bind="value: getActiveElement().position().h">
                             </div>
                         </div>
@@ -182,25 +181,22 @@
                         <!--ko if :  activeElement() ? activeElement().routingEnabled().output : false-->
                         <div class="dropdown mb-2">
                             <a class="dropdown-toggle font-weight-bold" id="routingDropdownMenuButton" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false" data-bind="text:activeElement().routingType().type()">
-                            </a>
-                            <span class="float-right">
-                                Default
+                                aria-haspopup="true" aria-expanded="false" data-bind="text: activeElement().routingType().type()"></a>
+                            <span class="float-right">Default
                             </span>
-                            <div class="dropdown-menu" aria-labelledby="routingDropdownMenuButton" data-bind="foreach:routingTypes">
-                                <a class="dropdown-item" href="javascript:void(0)" data-bind="text:type,click:$parent.changeRoutingType.bind($data)">Routing</a>
+                            <div class="dropdown-menu" aria-labelledby="routingDropdownMenuButton" data-bind="foreach: routingTypes">
+                                <a class="dropdown-item" href="javascript:void(0)" data-bind="text: type, click: $parent.changeRoutingType.bind($data)">Routing</a>
                             </div>
                         </div>
                         <!--ko foreach: {data: activeElement().routings, as :'routingItem' } -->
-                        <div class="row pt-2 pb-2 border-bottom border-bottom-1" data-bind="visible:!isDeleted()">
-                            <div class="col-sm-2 pr-0 font-weight-bold text-center" data-bind="directionName:$index()"></div>
+                        <div class="row pt-2 pb-2 border-bottom border-bottom-1" data-bind="visible: !isDeleted()">
+                            <div class="col-sm-2 pr-0 font-weight-bold text-center" data-bind="directionName: $index()"></div>
                             <div class="col-sm-8">
                                 <div class="dropdown btn-group w-100" role="group">
                                     <a class="dropdown-toggle nodecor text-dark w-100" href="#" id="" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false" data-bind="click:$root.getSelectableRouteElement, attr:{id:'routeItem_'+$index()},text:to().guid!='' ? to().name : 'Select Object'">
-                                    </a>
+                                        aria-haspopup="true" aria-expanded="false" data-bind="click: $root.getSelectableRouteElement, attr: { id: 'routeItem_' + $index() }, text: to().guid != '' ? to().name : 'Select Object'"></a>
                                     <div class="dropdown-menu border-bottom-2 w-100" aria-labelledby="dropdownMenuLink"
-                                        data-bind="attr:{id:'routeItem_'+$index()}">
+                                        data-bind="attr: { id: 'routeItem_' + $index() }">
                                         <div class="container">
                                             <div class="form-group">
                                                 <div class="input-group-btn">
@@ -209,18 +205,18 @@
                                                             <i class="fas fa-search" aria-hidden="true"></i>
                                                         </span>
                                                         <input type="text" class="form-control form-control-sm"
-                                                            placeholder="Search..." id="search" name="search" data-bind="value:$root.searchElementKeyword, valueUpdate: 'keyup'" />
+                                                            placeholder="Search..." id="search" name="search" data-bind="value: $root.searchElementKeyword, valueUpdate: 'keyup'" />
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="dropdown-scroller" style="max-height:150px;overflow: hidden;">
-                                                <div class="dropdown-item text-center" data-bind="visible:$root.filteredCreatingElementsByRoutable().length==0">
+                                            <div class="dropdown-scroller" style="max-height: 150px; overflow: hidden;">
+                                                <div class="dropdown-item text-center" data-bind="visible: $root.filteredCreatingElementsByRoutable().length == 0">
                                                     No Result
                                                 </div>
                                                 <!--ko foreach:$root.filteredCreatingElementsByRoutable-->
-                                                <button class="dropdown-item p-1" type="button" data-bind="click:$root.selectRoutingElement.bind($data,routingItem),hoverToggle:guid">
-                                                    <div class="float-left mt-1 mr-1 routing-selector-box" data-bind="style:{backgroundColor:color}"></div>
-                                                    <label data-bind="text:formData().Name"></label>
+                                                <button class="dropdown-item p-1" type="button" data-bind="click: $root.selectRoutingElement.bind($data, routingItem), hoverToggle: guid">
+                                                    <div class="float-left mt-1 mr-1 routing-selector-box" data-bind="style: { backgroundColor: color }"></div>
+                                                    <label data-bind="text: formData().NodeName"></label>
                                                 </button>
                                                 <!--/ko-->
                                             </div>
@@ -231,23 +227,25 @@
                             <div class="col-sm-2 p-0">
                                 <input type="radio" name="routingDefault" data-bind="routingSetDefault: routingItem" />
                                 <!--ko if:$index()>-1-->
-                                <a href="javascript:void(0)" class="remove-routing-icon" data-bind="click:$root.removeRouting.bind($data)">
+                                <a href="javascript:void(0)" class="remove-routing-icon" data-bind="click: $root.removeRouting.bind($data)">
                                     <i class="far fa-trash-alt"></i>
                                 </a>
                                 <!--/ko-->
                             </div>
                         </div>
                         <!--/ko-->
-                        <button class="btn btn-sm btn-muted w-100 mb-2 add-new-routing-element" data-bind="visible:newRoutingVisible,click:$root.addNewRouting.bind()">
+                        <button class="btn btn-sm btn-muted w-100 mb-2 add-new-routing-element" data-bind="visible: newRoutingVisible, click: $root.addNewRouting.bind()">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                         </button>
                         <!--/ko-->
                         <!-- routing section end -->
                         <div class="btn-group d-flex" role="group" aria-label="Basic example">
                             <button id="updateObject" disabled type="button" class="btn btn-sm btn-success w-100 font-weight-bold"
-                                data-bind="enable:activeElement,click:getActiveElement">Save</button>
+                                data-bind="enable: activeElement, click: getActiveElement">
+                                Save</button>
                             <button id="deleteObject" disabled type="button" class="btn btn-sm btn-danger w-100 font-weight-bold"
-                                data-toggle="confirmation" data-bind="enable:activeElement,click:deleteElement">Delete</button>
+                                data-toggle="confirmation" data-bind="enable: activeElement, click: deleteElement">
+                                Delete</button>
                         </div>
                     </div>
                 </div>
