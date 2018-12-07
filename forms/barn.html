@@ -12,6 +12,7 @@
 <script>
     var selectEl = $fg('#NodeId'),
         nameHdnEl = $fg('#NodeName'),
+        update = farmGraphModule.elements.elementModal.selector.data('update'),
         typeId = farmGraphModule.elements.elementModal.selector.data('type');
 
     farmGraphModule.farmDb.GetNodeItems(typeId, function (response) {
@@ -29,9 +30,17 @@
         setNodeElement(option);
     })
 
+    var link = '/Content/BarnAdd.aspx';
+
     function setNodeElement(option) {
+        if (update) {
+            link = '/Content/BarnEdit.aspx';
+            farmGraphModule.redirectForm(link)
+            return;
+        }
+
         if (option.length == 0) {
-            farmGraphModule.redirectForm('/Content/BarnAdd.aspx')
+            farmGraphModule.redirectForm(link)
             return;
         }
 
@@ -39,5 +48,4 @@
         fm.newNodeName(option.text())
         nameHdnEl.val(option.text());
     }
-
 </script>

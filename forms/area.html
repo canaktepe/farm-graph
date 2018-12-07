@@ -12,6 +12,7 @@
 <script>
     var selectEl = $fg('#NodeId'),
         nameHdnEl = $fg('#NodeName'),
+        update = farmGraphModule.elements.elementModal.selector.data('update'),
         typeId = farmGraphModule.elements.elementModal.selector.data('type');
 
     farmGraphModule.farmDb.GetNodeItems(typeId, function (response) {
@@ -29,9 +30,17 @@
         setNodeElement(option);
     })
 
+    var link = '/Content/RoutingAreaAdd.aspx';
+
     function setNodeElement(option) {
+        if (update) {
+            link = '/Content/RoutingAreaEdit.aspx';
+            farmGraphModule.redirectForm(link)
+            return;
+        }
+
         if (option.length == 0) {
-            farmGraphModule.redirectForm('/Content/RoutingAreaAdd.aspx')
+            farmGraphModule.redirectForm(link)
             return;
         }
 

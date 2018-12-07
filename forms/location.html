@@ -10,10 +10,13 @@
     </form>
 </div>
 <script>
-    var formEl = $fg('#controlData'),
-        selectEl = $fg('#NodeId'),
+    var selectEl = $fg('#NodeId'),
         nameHdnEl = $fg('#NodeName'),
-        typeId = farmGraphModule.elements.elementModal.selector.data('type');
+        update = farmGraphModule.elements.elementModal.selector.data('update'),
+        typeId = farmGraphModule.elements.elementModal.selector.data('type'),
+        link = '/Content/LocationAdd.aspx';
+
+    console.log(50, update);
 
     farmGraphModule.farmDb.GetNodeItems(typeId, function (response) {
         if (response == null) return;
@@ -30,9 +33,20 @@
         setNodeElement(option);
     })
 
+
     function setNodeElement(option) {
+        console.log(60, option);
+        if (update) {
+            console.log(100, update);
+            link = '/Content/LocationEdit.aspx';
+            farmGraphModule.redirectForm(link)
+            return;
+        }
+
+        console.log(70, link);
         if (option.length == 0) {
-            farmGraphModule.redirectForm('/Content/LocationAdd.aspx')
+            console.log(80, option.length);
+            farmGraphModule.redirectForm(link)
             return;
         }
 
@@ -40,5 +54,4 @@
         fm.newNodeName(option.text())
         nameHdnEl.val(option.text());
     }
-
 </script>

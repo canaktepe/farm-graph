@@ -274,27 +274,35 @@ farmGraphModule = {
     elements.elementModal.nextButton.off("click");
     elements.elementModal.backButton.off("click");
     elements.elementModal.selector.data("saved", false);
+    elements.elementModal.selector.data('update', update);
 
-    if (!update) {
-      var element = drawedElement.get(0);
-      var position = {
-        x: element.offsetLeft,
-        y: element.offsetTop,
-        w: element.offsetWidth,
-        h: element.offsetHeight
-      };
-      position.y = vm.convertToBottomPosition(position);
 
-      const params = {
-        returnUrl: 'FarmGraph.aspx',
-        x: position.x,
-        y: position.y,
-        w: position.w,
-        h: position.h
-      }
-      const queryParams = createQueryParams(params);
-      elements.elementModal.selector.data('redirectParams', queryParams);
+    var element = typeof drawedElement.get === 'function' ? drawedElement.get(0) : drawedElement.position();
+    var position = {
+      x: element.offsetLeft || element.x,
+      y: element.offsetTop || element.y,
+      w: element.offsetWidth || element.w,
+      h: element.offsetHeight || element.h
+    };
+    position.y = vm.convertToBottomPosition(position);
+
+    const params = {
+      returnUrl: 'FarmGraph.aspx',
+      x: position.x,
+      y: position.y,
+      w: position.w,
+      h: position.h
     }
+
+    //update elemen redirect with NodeId
+    if (update) {
+      params.ID = drawedElement.formData().NodeId;
+      if (drawedElement.formData().DeviceTypeId)
+        params.deviceType = drawedElement.formData().DeviceTypeId;
+    }
+
+    const queryParams = createQueryParams(params);
+    elements.elementModal.selector.data('redirectParams', queryParams);
 
     //modal showing
     elements.elementModal.selector.modal({
@@ -348,7 +356,6 @@ farmGraphModule = {
         }, {});
 
       var position = farmGraphModule.getDrawedElementPosition(drawedElement);
-
       var options;
 
       if (update) {
@@ -647,33 +654,46 @@ farmGraphModule = {
   },
 
   redirectForm: function (page) {
-    farmGraphModule.elements.elementModal.selector.modal("hide");
+
     var redirectParams = farmGraphModule.elements.elementModal.selector.data('redirectParams');
     var src = page + '?' + redirectParams;
+
+    farmGraphModule.formOpenDialog(src, function () {
+      farmGraphModule.elements.elementModal.selector.modal("hide");
+    })
+  },
+
+  formOpenDialog: function (src, callback) {
     windowManager.ShowModalDialog(src,
       'Add Item',
       null,
       'Height:560px;Width:900px;Border:thick;AutoCenter:yes',
       farmGraphModule.formCloseCallBack);
+    setTimeout(() => {
+      callback();
+    }, 1000);
   },
 
-
   formCloseCallBack: function (sender, args) {
+    farmGraphModule.elements.elementModal.selector.modal("hide");
+    if (!args) return;
+
     if (args.device) {
-       setTimeout(() => {
-        windowManager.ShowModalDialog(args.url,
-          'Add Device',
-          null,
-          'Height:560px;Width:900px;Border:thick;AutoCenter:yes', farmGraphModule.formDeviceCallBack);
-       }, 500);
+      setTimeout(() => {
+        farmGraphModule.formOpenDialog(args.url, function () {
+          farmGraphModule.elements.elementModal.selector.modal("hide");
+        })
+      }, 500);
     } else {
       var url = args.url || args;
-       if (!url) return;
+      if (!url) return;
       location.href = url;
     }
   },
 
   formDeviceCallBack: function (sender, args) {
+    farmGraphModule.elements.elementModal.selector.modal("hide");
+    if (!args) return;
     var url = args.url || args;
     if (!url) return;
     location.href = url;

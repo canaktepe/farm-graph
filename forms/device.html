@@ -12,7 +12,9 @@
 <script>
     var selectEl = $fg('#NodeId'),
         nameHdnEl = $fg('#NodeName'),
-        typeId = farmGraphModule.elements.elementModal.selector.data('type');
+        update = farmGraphModule.elements.elementModal.selector.data('update'),
+        typeId = farmGraphModule.elements.elementModal.selector.data('type'),
+        link = '/Content/AddLdnDevice.aspx';
 
     farmGraphModule.farmDb.GetNodeItems(typeId, function (response) {
         if (response == null) return;
@@ -30,8 +32,14 @@
     })
 
     function setNodeElement(option) {
+        if (update) {
+            console.log(110,link);
+            farmGraphModule.redirectForm(link)
+            return;
+        }
+
         if (option.length == 0) {
-            farmGraphModule.redirectForm('/Content/AddLdnDevice.aspx')
+            farmGraphModule.redirectForm(link)
             return;
         }
 

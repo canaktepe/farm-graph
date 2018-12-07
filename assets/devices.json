@@ -35,7 +35,7 @@
       "name": "Location",
       "pageTemplate": "location.html",
       "resizable": true,
-      "acceptable": [3000, 10000],
+      "acceptable": [3000, 10000,4000],
       "routingEnabled": {
         "input": true,
         "output": false
