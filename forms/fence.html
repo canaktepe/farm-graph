@@ -12,9 +12,31 @@
 <script>
     var selectEl = $fg('#NodeId'),
         nameHdnEl = $fg('#NodeName'),
+        footer = $fg('.modal-footer'),
         update = farmGraphModule.elements.elementModal.selector.data('update'),
-        typeId = farmGraphModule.elements.elementModal.selector.data('type');
+        typeId = farmGraphModule.elements.elementModal.selector.data('type'),
         link = '/Content/VectorCowAreasEdit.aspx';
+
+    var fenceNextBtn = $fg('<button>', {
+            id: 'fenceNextBtn',
+            class: 'btn btn-default spec-btn'
+        })
+        .text('Next')
+        .hide()
+        .on('click', fenceNextBtnEvent).appendTo(footer);
+
+    function fenceNextBtnEvent() {
+        if (fm.newNodeId() <= 0) {
+            var exParams = createQueryParams({
+                ID: fm.newNodeId()
+            })
+            farmGraphModule.redirectForm(link, exParams);
+        }
+    };
+
+    elements.elementModal.selector.on("hidden.bs.modal", function (e) {
+        fenceNextBtn.remove();
+    })
 
     farmGraphModule.farmDb.GetNodeItems(typeId, function (response) {
         if (response == null) return;
@@ -44,6 +66,17 @@
 
         fm.newNodeId(option.val());
         fm.newNodeName(option.text())
+
+
+        if (fm.newNodeId() <= 0) {
+            farmGraphModule.elements.elementModal.saveButton.hide();
+            fenceNextBtn.show();
+        } else {
+            farmGraphModule.elements.elementModal.saveButton.show();
+            fenceNextBtn.hide();
+        }
+
+
         nameHdnEl.val(option.text());
     }
 </script>

@@ -299,7 +299,11 @@ farmGraphModule = {
       params.ID = drawedElement.formData().NodeId;
       if (drawedElement.formData().DeviceTypeId)
         params.deviceType = drawedElement.formData().DeviceTypeId;
+
+      if (drawedElement.formData().LocationId)
+        params.locationId = drawedElement.formData().LocationId
     }
+
 
     const queryParams = createQueryParams(params);
     elements.elementModal.selector.data('redirectParams', queryParams);
@@ -482,6 +486,8 @@ farmGraphModule = {
       elements.elementModal.saveButton.hide();
       elements.elementModal.contentBody.hide();
       elements.elementModal.typesBody.show();
+
+      $fg('.spec-btn').remove();
     });
 
     //binding modal shown event
@@ -653,11 +659,12 @@ farmGraphModule = {
     }
   },
 
-  redirectForm: function (page) {
+  redirectForm: function (page, exParams) {
 
     var redirectParams = farmGraphModule.elements.elementModal.selector.data('redirectParams');
-    var src = page + '?' + redirectParams;
 
+    var src = page + '?' + redirectParams;
+    if (exParams) src = src + '&' + exParams;
     farmGraphModule.formOpenDialog(src, function () {
       farmGraphModule.elements.elementModal.selector.modal("hide");
     })
