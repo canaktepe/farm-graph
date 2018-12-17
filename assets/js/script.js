@@ -1,7 +1,7 @@
-const createQueryParams = params => 
-      Object.keys(params)
-            .map(k => `${k}=${encodeURI(params[k])}`)
-            .join('&');
+const createQueryParams = params =>
+    Object.keys(params)
+    .map(k => `${k}=${encodeURI(params[k])}`)
+    .join('&');
 
 
 formNodeModel = function (data) {
@@ -443,21 +443,31 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     },
                     write: function () {
                         var positionToSnap = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
-                            self.activeElement().position().x,
-                            self.activeElement().position().y,
-                            self.activeElement().position().w,
-                            self.activeElement().position().h
-                        );
+                                self.activeElement().position().x,
+                                self.activeElement().position().y,
+                                self.activeElement().position().w,
+                                self.activeElement().position().h
+                            ),
+                            farmItem = {
+                                guid: self.activeElement().guid(),
+                                position: self.activeElement().position(),
+                                formData: self.activeElement().formData()
+                            },
+                            activeElementDomObj = $fg("div[id=" + self.activeElement().guid() + "]");
 
-                        var farmItem = {
-                            guid: self.activeElement().guid(),
-                            position: self.activeElement().position()
-                        };
+                        if (farmItem.formData.LocationId) {
+                            var detectedLocation = farmGraphModule.detectPosition(activeElementDomObj)
+                            if (detectedLocation.id != farmItem.formData.LocationId) {
+                                console.log(farmItem.formData.NodeName + "has changed location from " + farmItem.formData.LocationId + " to " + detectedLocation.id + "...")
+                            }
+                            farmItem.formData.LocationId = detectedLocation.id;
+                        }
+
                         farmGraphModule.farmDb.SetFarmItemSizeAndLocation(farmItem, function (success) {
                             if (!success) return;
                             self.activeElement().position(positionToSnap);
                             //set canvas element position
-                            $fg("div[id=" + self.activeElement().guid() + "]").css({
+                            activeElementDomObj.css({
                                 width: positionToSnap.w,
                                 height: positionToSnap.h,
                                 // top: self.activeElement().position().y,
@@ -466,17 +476,11 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                             });
                         });
 
-                        self.saveDbData();
-                        localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
+                        // localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
                     }
                 },
                 viewModel
             );
-
-
-            self.saveDbData = function () {
-
-            }
 
             self.convertToBottomPosition = function (pos) {
                 return (self.canvasProperties().getHeight() - pos.y) - pos.h;
@@ -820,8 +824,8 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                         farmGraphModule.farmDb.CreateNewFarmNode(farmNodeModel, function (data) {
                             if (data) {
                                 farm = {
-                                    width : data.Width,
-                                    height : data.Length
+                                    width: data.Width,
+                                    height: data.Length
                                 };
                             }
                         })

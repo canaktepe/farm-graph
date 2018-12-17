@@ -267,6 +267,9 @@ farmGraphModule = {
   openModal: function (update, drct, callback) {
     var drawedElement = drct.drawingRect ? drct.drawingRect : drct;
 
+
+    var parentNode;
+
     // off button events
     elements.elementModal.selector.off("shown.bs.modal");
     elements.elementModal.selector.off("hidden.bs.modal");
@@ -276,8 +279,8 @@ farmGraphModule = {
     elements.elementModal.selector.data("saved", false);
     elements.elementModal.selector.data('update', update);
 
-
     var element = typeof drawedElement.get === 'function' ? drawedElement.get(0) : drawedElement.position();
+
     var position = {
       x: element.offsetLeft || element.x,
       y: element.offsetTop || element.y,
@@ -302,8 +305,10 @@ farmGraphModule = {
 
       if (drawedElement.formData().LocationId)
         params.locationId = drawedElement.formData().LocationId
+    } else {
+      parentNode = farmGraphModule.getParentNode(drct);
+      params.locationId = parseInt(parentNode.formData().NodeId);
     }
-
 
     const queryParams = createQueryParams(params);
     elements.elementModal.selector.data('redirectParams', queryParams);
@@ -365,7 +370,6 @@ farmGraphModule = {
       if (update) {
         options = drawedElement;
         options.position(position);
-
         options.formData(formData);
         vm.setElement(options);
       } else {
@@ -373,6 +377,10 @@ farmGraphModule = {
 
         var guid = farmGraphModule.guid();
         drawedElement.options.position(position);
+
+        if (parentNode) {
+          formData.locationId = parseInt(parentNode.formData().NodeId);
+        }
 
         drawedElement.options.guid(guid);
         drawedElement.options.parentGuid(parentGuid);
@@ -400,11 +408,12 @@ farmGraphModule = {
 
         //add items to database
         farmGraphModule.farmDb.AddNodeItem(ko.toJS(options), function (data) {
-
           if (data) {
             vm.setElementGuid(oldId, data.guid);
             drawedElement.attr('id', data.guid);
             options.guid(data.guid);
+            options.formData(data.formData);
+            vm.setElement(options);
             farmGraphModule.setElementRectangleNameText(drawedElement, update);
           }
         })
@@ -527,6 +536,16 @@ farmGraphModule = {
     }
   },
 
+  getParentNode: function (drawedObject) {
+    var node;
+    var parent = $fg(drawedObject.parent);
+    var guid = parent.attr('id');
+    vm.getCreatedElement(guid, function (result) {
+      node = result;
+    })
+    return node;
+  },
+
   getParentGuid: function (drawedElement) {
     var parent = drawedElement.parent();
     if (!parent.hasClass("rect")) return null;
@@ -614,55 +633,66 @@ farmGraphModule = {
       createdItem.appendTo(farmGraphModule.elements.drawArea);
       // }
     }
+  },
 
-    self.detectPosition = function (createdItem) {
+  detectPosition: function (createdItem) {
+    var options = createdItem.data('options');
 
-      var options = createdItem.data('options');
-      var parent = null;
-      var canvasElements = $fg('div.rect').not(createdItem);
+    var parent = null;
+    var canvasElements = $fg('div.rect').not(createdItem);
 
-      canvasElements.filter(function (i, item) {
+    canvasElements.filter(function (i, item) {
+      var obj = $fg(item),
+        guid = obj.attr('id');
 
-        var left_right = {
-          start: item.offsetLeft,
-          end: item.offsetLeft + item.offsetWidth
-        };
-
-        var top_bottom = {
-          start: item.offsetTop,
-          end: item.offsetTop + item.offsetHeight
-        }
-
-        if ((options.position().x >= left_right.start && options.position().x <= left_right.end) && (options.position().y >= top_bottom.start && options.position().y <= top_bottom.end)) {
-          parent = {
-            id: $fg(item).attr('id'),
-            position: self.calcPos($fg(item))
-          };
-        }
-
-      })
-      return parent;
-    }
-
-    self.calcPos = function (elm) {
       var position = {
-          x: parseInt(elm.css("left")),
-          y: parseInt(elm.css("top")),
-        },
-        curr = elm;
-      while (curr.parent().is('.rect')) {
-        curr = curr.parent();
-        position.x -= parseInt(curr.css("left"));
-        position.y -= parseInt(curr.css("top"));
+        w: item.offsetWidth,
+        h: item.offsetHeight,
+        x: item.offsetLeft,
+        y: item.offsetTop
+      };
+
+      var left_right = {
+        start: position.x,
+        end: position.x + position.w
+      };
+
+      position.b = vm.convertToBottomPosition(position)
+
+      var top_bottom = {
+        start: position.b,
+        end: position.b + position.h
       }
-      return position;
+
+      if ((options.position().x >= left_right.start && options.position().x <= left_right.end) && (options.position().y >= top_bottom.start && options.position().y <= top_bottom.end)) {
+        vm.getCreatedElement(guid, function (response) {
+          parent = {
+            id: response.formData().NodeId,
+            position: farmGraphModule.calcPos(obj)
+          };
+        })
+      }
+    })
+    return parent;
+  },
+
+  calcPos: function (elm) {
+    var position = {
+        x: parseInt(elm.css("left")),
+        y: parseInt(elm.css("top")),
+      },
+      curr = elm;
+    while (curr.parent().is('.rect')) {
+      curr = curr.parent();
+      position.x -= parseInt(curr.css("left"));
+      position.y -= parseInt(curr.css("top"));
     }
+    return position;
   },
 
   redirectForm: function (page, exParams) {
 
     var redirectParams = farmGraphModule.elements.elementModal.selector.data('redirectParams');
-
     var src = page + '?' + redirectParams;
     if (exParams) src = src + '&' + exParams;
     farmGraphModule.formOpenDialog(src, function () {
@@ -874,5 +904,15 @@ farmGraphModule = {
     this.bootstrapSlider();
     this.contextMenu();
     this.bindCustomScrollBar();
+
+
+
+    // $fg(window).on("beforeunload", function (e) {
+    //   // Your message won't get displayed by modern browsers; the browser's built-in
+    //   // one will be instead. But for older browsers, best to include an actual
+    //   // message instead of just "x" or similar.
+    //   return e.originalEvent.returnValue = "Your message here";
+    // });
+
   }
 };

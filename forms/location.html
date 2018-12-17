@@ -16,8 +16,6 @@
         typeId = farmGraphModule.elements.elementModal.selector.data('type'),
         link = '/Content/LocationAdd.aspx';
 
-    console.log(50, update);
-
     farmGraphModule.farmDb.GetNodeItems(typeId, function (response) {
         if (response == null) return;
         fm = new formNodeModel();
@@ -35,7 +33,6 @@
 
 
     function setNodeElement(option) {
-        console.log(60, option);
         if (update) {
             console.log(100, update);
             link = '/Content/LocationEdit.aspx';
@@ -43,7 +40,6 @@
             return;
         }
 
-        console.log(70, link);
         if (option.length == 0) {
             console.log(80, option.length);
             farmGraphModule.redirectForm(link)
