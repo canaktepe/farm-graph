@@ -1,8 +1,7 @@
 const createQueryParams = params =>
     Object.keys(params)
     .map(k => `${k}=${encodeURI(params[k])}`)
-    .join('&');
-
+    .join("&");
 
 formNodeModel = function (data) {
     var self = this;
@@ -98,7 +97,7 @@ jsonToModel = function (data) {
             output: false
         }
     );
-
+    self.updatedPosition = ko.observable(data.updatedPosition);
     if (self.routingEnabled().output) {
         self.routings = ko.observableArray([]);
         self.routingType = data.routingType ?
@@ -307,11 +306,12 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 var ldnSize = 4,
                     ddsSize = 6,
                     selectedRtType = activeElement.routingType().id(),
-                    routingCount = ko.utils.arrayFilter(activeElement.routings(), function (
-                        route
-                    ) {
-                        return route.isDeleted() == false;
-                    }).length;
+                    routingCount = ko.utils.arrayFilter(
+                        activeElement.routings(),
+                        function (route) {
+                            return route.isDeleted() == false;
+                        }
+                    ).length;
 
                 if (
                     (selectedRtType == 1 && routingCount >= ldnSize) ||
@@ -428,6 +428,78 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 });
             };
 
+            //abc
+            self.activeElementWrite = function (guid) {
+                var activeElement;
+                if (guid) {
+                    self.getCreatedElement(guid, function (item) {
+                        activeElement = item;
+                    })
+
+                } else {
+                    activeElement = self.activeElement();
+                }
+
+                var positionToSnap = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
+                        activeElement.position().x,
+                        activeElement.position().y,
+                        activeElement.position().w,
+                        activeElement.position().h
+                    ),
+                    farmItem = {
+                        guid: activeElement.guid(),
+                        position: activeElement.position(),
+                        formData: activeElement.formData()
+                    },
+                    activeElementDomObj = $fg(
+                        "div[id=" + activeElement.guid() + "]"
+                    );
+                activeElementDomObj.data('options', activeElement);
+
+                if (farmItem.formData.LocationId) {
+                    var detectedLocation = farmGraphModule.detectPosition(
+                        activeElementDomObj
+                    );
+                    if (detectedLocation) {
+                        if (detectedLocation.id != farmItem.formData.LocationId) {
+                            console.log(
+                                farmItem.formData.NodeName +
+                                " has changed location from " +
+                                farmItem.formData.LocationId +
+                                " to " +
+                                detectedLocation.id +
+                                "..."
+                            );
+                            farmItem.formData.LocationId = detectedLocation.id;
+                        }
+                    }
+                }
+
+                farmGraphModule.farmDb.SetFarmItemSizeAndLocation(farmItem, function (
+                    success
+                ) {
+                    if (!success) return;
+                    activeElement.position(positionToSnap);
+                    activeElement.updatedPosition(false);
+                    //set canvas element position
+                    activeElementDomObj.css({
+                        width: positionToSnap.w,
+                        height: positionToSnap.h,
+                        top: self.convertToBottomPosition(positionToSnap),
+                        left: positionToSnap.x
+                    });
+
+                    if (!guid)
+                        farmGraphModule.validationFarmGraph();
+                });
+            };
+
+            self.getUnsavedChangeObjects = function () {
+                return ko.utils.arrayFilter(self.createdElements(), function (element, i) {
+                    return element.updatedPosition();
+                })
+            }
+
             self.getActiveElement = ko.pureComputed({
                     read: function () {
                         return self.activeElement() ?
@@ -442,63 +514,38 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                             };
                     },
                     write: function () {
-                        var positionToSnap = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
-                                self.activeElement().position().x,
-                                self.activeElement().position().y,
-                                self.activeElement().position().w,
-                                self.activeElement().position().h
-                            ),
-                            farmItem = {
-                                guid: self.activeElement().guid(),
-                                position: self.activeElement().position(),
-                                formData: self.activeElement().formData()
-                            },
-                            activeElementDomObj = $fg("div[id=" + self.activeElement().guid() + "]");
-
-                        if (farmItem.formData.LocationId) {
-                            var detectedLocation = farmGraphModule.detectPosition(activeElementDomObj)
-                            if (detectedLocation.id != farmItem.formData.LocationId) {
-                                console.log(farmItem.formData.NodeName + "has changed location from " + farmItem.formData.LocationId + " to " + detectedLocation.id + "...")
-                            }
-                            farmItem.formData.LocationId = detectedLocation.id;
-                        }
-
-                        farmGraphModule.farmDb.SetFarmItemSizeAndLocation(farmItem, function (success) {
-                            if (!success) return;
-                            self.activeElement().position(positionToSnap);
-                            //set canvas element position
-                            activeElementDomObj.css({
-                                width: positionToSnap.w,
-                                height: positionToSnap.h,
-                                // top: self.activeElement().position().y,
-                                top: self.convertToBottomPosition(positionToSnap),
-                                left: positionToSnap.x
-                            });
-                        });
-
-                        // localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
+                        self.activeElementWrite();
                     }
                 },
                 viewModel
             );
 
             self.convertToBottomPosition = function (pos) {
-                return (self.canvasProperties().getHeight() - pos.y) - pos.h;
+                return self.canvasProperties().getHeight() - pos.y - pos.h;
             };
 
             self.setElementPosition = function (event, ui) {
 
+                self.activeElement().updatedPosition(true);
+
                 var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
-                var factor = (1 / zoom) - 1;
+                var factor = 1 / zoom - 1;
 
                 var pos;
 
                 if (ui.size) {
-                    ui.size.width += Math.round((ui.size.width - ui.originalSize.width) * factor);
-                    ui.size.height += Math.round((ui.size.height - ui.originalSize.height) * factor);
-                    ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
-                    ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
-
+                    ui.size.width += Math.round(
+                        (ui.size.width - ui.originalSize.width) * factor
+                    );
+                    ui.size.height += Math.round(
+                        (ui.size.height - ui.originalSize.height) * factor
+                    );
+                    ui.position.top += Math.round(
+                        (ui.position.top - ui.originalPosition.top) * factor
+                    );
+                    ui.position.left += Math.round(
+                        (ui.position.left - ui.originalPosition.left) * factor
+                    );
 
                     pos = {
                         x: typeof ui.position.left == "number" ?
@@ -509,10 +556,14 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                             ui.size.width : self.getActiveElement().position().w,
                         h: typeof ui.size.height == "number" ?
                             ui.size.height : self.getActiveElement().position().h
-                    }
+                    };
                 } else {
-                    ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
-                    ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
+                    ui.position.top += Math.round(
+                        (ui.position.top - ui.originalPosition.top) * factor
+                    );
+                    ui.position.left += Math.round(
+                        (ui.position.left - ui.originalPosition.left) * factor
+                    );
 
                     pos = {
                         x: typeof ui.position.left == "number" ?
@@ -521,11 +572,8 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                             ui.position.top : self.getActiveElement().position().y,
                         w: self.getActiveElement().position().w,
                         h: self.getActiveElement().position().h
-                    }
-
+                    };
                 }
-
-
 
                 // this section is setting location inputs on Object Information parts
                 var posToObjectInf = {
@@ -533,7 +581,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     top: self.convertToBottomPosition(pos),
                     width: pos.w,
                     height: pos.h
-                }
+                };
 
                 // this section is set size of elements on canvas
                 pos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
@@ -548,7 +596,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     posToObjectInf.top,
                     posToObjectInf.width,
                     posToObjectInf.height
-                )
+                );
 
                 self.getActiveElement().position(posToObjectInf);
                 return pos;
@@ -562,7 +610,6 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
                 ko.utils.arrayForEach(data, function (el) {
                     ko.utils.arrayFilter(acceptable, function (acc) {
-
                         if (acc == el.id()) {
                             el.status(true);
                         }
@@ -607,29 +654,29 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                         return children && children.some(iter);
                     });
                     // localStorage.setItem("JSONData", ko.toJSON(self.createdElements()));
-                }
+                };
 
                 // remove active element
                 if (activeElement) {
-
                     //working this part if new drawed element removing
-                    if (typeof (activeElement.guid()) === 'string') {
+                    if (typeof activeElement.guid() === "string") {
                         deleteelementOnCanvas();
                         return;
                     }
 
                     //working this part if db element removing
-                    farmGraphModule.farmDb.RemoveNodeItem(activeElement.guid(), function (success) {
+                    farmGraphModule.farmDb.RemoveNodeItem(activeElement.guid(), function (
+                        success
+                    ) {
                         if (!success) return;
                         deleteelementOnCanvas();
                     });
-
                 }
             };
 
             self.setTextColor = function () {
                 var rgb = self.activeElement().color();
-                if (rgb == 'transparent') return "rgb(0,0,0)";
+                if (rgb == "transparent") return "rgb(0,0,0)";
 
                 var colors = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
                 var brightness = 5;
@@ -694,7 +741,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
             self.pushElement = function (parentGuid, element) {
                 var newElement = new jsonToModel(ko.toJS(element));
-                // if (parentGuid == null) 
+                // if (parentGuid == null)
                 self.createdElements.push(newElement);
 
                 // self.getCreatedElement(parentGuid, function (data) {
@@ -732,16 +779,12 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 self.getCreatedElement(oldGuid, function (callback) {
                     callback.guid(guid);
                 });
-            }
+            };
 
             self.selectElement = function (guid) {
                 if (!guid) return;
                 self.getCreatedElement(guid, function (item) {
-
-
                     self.activeElement(item);
-
-
 
                     var textColor = self.setTextColor(item.color);
                     self.textColor(textColor);
@@ -802,44 +845,45 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                         farmGraphModule.elements.farm.mCustomScrollbar("update");
                         farmGraphModule.elements.drawArea.farmDraw.reDrawGrid();
                     }
-                })
+                });
             };
 
             self.loadFarmElements();
         };
 
         (function () {
-            farmGraphModule.farmDb.GetFarm(
-                function (farm) {
+            farmGraphModule.farmDb.GetFarm(function (farm) {
+                if (farm == null) {
+                    //create a new when it has not farm in sytFarmItems table
+                    var farmNodeModel = {
+                        nodeId: 1,
+                        name: "Tests",
+                        width: 8010,
+                        length: 2350
+                    };
 
-                    if (farm == null) {
-                        //create a new when it has not farm in sytFarmItems table
-                        var farmNodeModel = {
-                            nodeId: 1,
-                            name: 'Tests',
-                            width: 8010,
-                            length: 2350
+                    farmGraphModule.farmDb.CreateNewFarmNode(farmNodeModel, function (
+                        data
+                    ) {
+                        if (data) {
+                            farm = {
+                                width: data.Width,
+                                height: data.Length
+                            };
                         }
-
-                        farmGraphModule.farmDb.CreateNewFarmNode(farmNodeModel, function (data) {
-                            if (data) {
-                                farm = {
-                                    width: data.Width,
-                                    height: data.Length
-                                };
-                            }
-                        })
-                    }
-
-                    if (farm) {
-                        farmGraphModule.elements.farmDrawPluginOptions.canvas.width = farm.width;
-                        farmGraphModule.elements.farmDrawPluginOptions.canvas.height = farm.height;
-                        vm = new viewModel();
-                        ko.applyBindings(vm);
-                        farmGraphModule.init(jsonData);
-                    }
+                    });
                 }
-            )
+
+                if (farm) {
+                    farmGraphModule.elements.farmDrawPluginOptions.canvas.width =
+                        farm.width;
+                    farmGraphModule.elements.farmDrawPluginOptions.canvas.height =
+                        farm.height;
+                    vm = new viewModel();
+                    ko.applyBindings(vm);
+                    farmGraphModule.init(jsonData);
+                }
+            });
         })();
-    })
+    });
 });

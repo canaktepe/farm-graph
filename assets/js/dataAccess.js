@@ -30,7 +30,7 @@ farmDbModel = function () {
                 Width: farm.width,
                 Length: farm.length,
                 NodeId: farm.nodeId,
-                Name : farm.name
+                Name: farm.name
             }
         })
         self.Post('/CreateNewFarmNode', data, false, function (response) {
@@ -135,6 +135,15 @@ farmDbModel = function () {
             nodeItem
         });
         self.Post('/AddNodeItem', data, false, function (response) {
+            if (response.d) {
+                var result = response.d;
+                callback(result);
+            }
+        })
+    }
+
+    self.FarmGraphDimensionValidation = function (callback) {
+        self.Post('/FarmGraphDimensionValidation', null, false, function (response) {
             if (response.d) {
                 var result = response.d;
                 callback(result);

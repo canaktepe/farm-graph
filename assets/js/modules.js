@@ -307,7 +307,8 @@ farmGraphModule = {
         params.locationId = drawedElement.formData().LocationId
     } else {
       parentNode = farmGraphModule.getParentNode(drct);
-      params.locationId = parseInt(parentNode.formData().NodeId);
+      if (parentNode)
+        params.locationId = parseInt(parentNode.formData().NodeId);
     }
 
     const queryParams = createQueryParams(params);
@@ -666,10 +667,12 @@ farmGraphModule = {
 
       if ((options.position().x >= left_right.start && options.position().x <= left_right.end) && (options.position().y >= top_bottom.start && options.position().y <= top_bottom.end)) {
         vm.getCreatedElement(guid, function (response) {
-          parent = {
-            id: response.formData().NodeId,
-            position: farmGraphModule.calcPos(obj)
-          };
+          if (response.type() === farmItemTypes.Location) {
+            parent = {
+              id: response.formData().NodeId,
+              position: farmGraphModule.calcPos(obj)
+            };
+          }
         })
       }
     })
@@ -756,7 +759,6 @@ farmGraphModule = {
                 $fg(this).click();
                 click.x = event.clientX;
                 click.y = event.clientY;
-
               },
               drag: function (event, ui) {
                 vm.setElementPosition(event, ui);
@@ -849,6 +851,35 @@ farmGraphModule = {
       })
     })
   },
+  validationFarmGraph: function () {
+    farmGraphModule.farmDb.FarmGraphDimensionValidation(function (data) {
+      if (data.Error) {
+        var error_msg = $fg('<ul>');
+        $fg.each(data.DimensionValidationItems, function (i, validationItem) {
+          $fg('<li>')
+            .text(validationItem.Message)
+            .appendTo(error_msg);
+        })
+        windowManager.ShowMessageBox('Farm Graph Validation Error', error_msg.html());
+      }
+    })
+  },
+  unsavedChangedCallback: function (sender, args) {
+    var save = args === 'YES';
+    if (!save) return;
+    
+    var unsavedObjects = vm.getUnsavedChangeObjects();
+    if (unsavedObjects.length > 0) {
+      $fg.each(unsavedObjects, function (i, item) {
+        vm.activeElementWrite(item.guid());
+      })
+    }
+    console.log(20);
+    setTimeout(() => {
+      farmGraphModule.validationFarmGraph();
+    }, 500);
+  },
+
   bootstrapSlider: function () {
     var slider = elements.bsSliderFarmZoom.bootstrapSlider({
       formatter: function (value) {
@@ -895,7 +926,6 @@ farmGraphModule = {
       }
     });
   },
-
   init: function (jsonData) {
     elements = this.elements;
     this.bindFarmDraw();
@@ -904,14 +934,34 @@ farmGraphModule = {
     this.bootstrapSlider();
     this.contextMenu();
     this.bindCustomScrollBar();
+    this.validationFarmGraph();
 
+    window.addEventListener('beforeunload', function onBeforeUnload(e) {
+      var unsavedObjects = vm.getUnsavedChangeObjects();
+      if (unsavedObjects.length > 0) {
+        setTimeout(() => {
+          windowManager.ShowConfirmation("Unsaved Changes", "<p>There are unsaved changes!</p> <p>Do you want to save changes?</p>", farmGraphModule.unsavedChangedCallback);
+        }, 500);
+
+        // Dialog text doesn't really work in Chrome.
+        const dialogText = 'A dialog text when leaving the page';
+        e.returnValue = dialogText;
+        return dialogText;
+      }
+    });
 
 
     // $fg(window).on("beforeunload", function (e) {
     //   // Your message won't get displayed by modern browsers; the browser's built-in
     //   // one will be instead. But for older browsers, best to include an actual
     //   // message instead of just "x" or similar.
-    //   return e.originalEvent.returnValue = "Your message here";
+    //   // return e.originalEvent.returnValue = "Your message here";
+
+    //   windowManager.ShowConfirmation("Unsaved Changes", "There are unsaved changes!", farmGraphModule.unsavedChangedCallback);
+    //   return false;
+
+    //   // windowManager.ShowConfirmation("Unsaved Changes", "There are unsaved changes!", farmGraphModule.unsavedChangedCallback);
+    //   // return 'Leave?';
     // });
 
   }
