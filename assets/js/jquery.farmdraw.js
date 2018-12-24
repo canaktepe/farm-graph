@@ -74,17 +74,23 @@ and dependencies (minified).
                 resizable: false,
                 showActive: true
             },
-            onDrawStart: function (e) { },
-            onDraw: function (e) { },
-            onDrawComplete: function (e) { },
-            onSelectElement: function (e) { }
+            onDrawStart: function (e) {},
+            onDraw: function (e) {},
+            onDrawComplete: function (e) {},
+            onSelectElement: function (e) {}
         };
 
         var settings = $.extend(true, {}, defaults, options);
 
         function snapElementToGrid(x, y, w, h) {
 
-            var position = { x: parseInt(x), y: parseInt(y), w: parseInt(w), h: parseInt(h) };
+            var position = {
+                x: parseInt(x),
+                y: parseInt(y),
+                w: parseInt(w),
+                h: parseInt(h)
+            };
+
 
             if (!settings.canvas.snapGrid) return position;
 
@@ -99,6 +105,8 @@ and dependencies (minified).
                     h: typeof (position.h) == 'number' ? Math.round(h / gridY) * gridY : undefined
                 }
             }
+
+
             return position;
         }
 
@@ -123,7 +131,11 @@ and dependencies (minified).
             el.addClass('rect')
 
             if (settings.rectangle.border != "")
-                el.css({ border: settings.rectangle.border, borderWidth: settings.rectangle.borderSize + 'px', borderColor: settings.rectangle.borderColor })
+                el.css({
+                    border: settings.rectangle.border,
+                    borderWidth: settings.rectangle.borderSize + 'px',
+                    borderColor: settings.rectangle.borderColor
+                })
 
             settings.canvas.gridSize = settings.canvas.snapGrid ? settings.canvas.gridSize : 0;
 
@@ -152,14 +164,54 @@ and dependencies (minified).
             }
 
             if (settings.rectangle.resizable) {
-                $("<div>", { class: "ui-resizable-handle ui-resizable-nw", attr: { id: "nwgrip" } }).appendTo(el);
-                $("<div>", { class: "ui-resizable-handle ui-resizable-ne", attr: { id: "negrip" } }).appendTo(el);
-                $("<div>", { class: "ui-resizable-handle ui-resizable-sw", attr: { id: "swgrip" } }).appendTo(el);
-                $("<div>", { class: "ui-resizable-handle ui-resizable-se", attr: { id: "segrip" } }).appendTo(el);
-                $("<div>", { class: "ui-resizable-handle ui-resizable-n", attr: { id: "ngrip" } }).appendTo(el);
-                $("<div>", { class: "ui-resizable-handle ui-resizable-e", attr: { id: "egrip" } }).appendTo(el);
-                $("<div>", { class: "ui-resizable-handle ui-resizable-s", attr: { id: "sgrip" } }).appendTo(el);
-                $("<div>", { class: "ui-resizable-handle ui-resizable-w", attr: { id: "wgrip" } }).appendTo(el);
+                $("<div>", {
+                    class: "ui-resizable-handle ui-resizable-nw",
+                    attr: {
+                        id: "nwgrip"
+                    }
+                }).appendTo(el);
+                $("<div>", {
+                    class: "ui-resizable-handle ui-resizable-ne",
+                    attr: {
+                        id: "negrip"
+                    }
+                }).appendTo(el);
+                $("<div>", {
+                    class: "ui-resizable-handle ui-resizable-sw",
+                    attr: {
+                        id: "swgrip"
+                    }
+                }).appendTo(el);
+                $("<div>", {
+                    class: "ui-resizable-handle ui-resizable-se",
+                    attr: {
+                        id: "segrip"
+                    }
+                }).appendTo(el);
+                $("<div>", {
+                    class: "ui-resizable-handle ui-resizable-n",
+                    attr: {
+                        id: "ngrip"
+                    }
+                }).appendTo(el);
+                $("<div>", {
+                    class: "ui-resizable-handle ui-resizable-e",
+                    attr: {
+                        id: "egrip"
+                    }
+                }).appendTo(el);
+                $("<div>", {
+                    class: "ui-resizable-handle ui-resizable-s",
+                    attr: {
+                        id: "sgrip"
+                    }
+                }).appendTo(el);
+                $("<div>", {
+                    class: "ui-resizable-handle ui-resizable-w",
+                    attr: {
+                        id: "wgrip"
+                    }
+                }).appendTo(el);
                 el.resizable({
                     handles: {
                         'nw': '#nwgrip',
@@ -309,7 +361,12 @@ and dependencies (minified).
             }
 
 
-            var gridCanvas = $('<canvas />', { attr: { width: canvas_width, height: canvas_height } });
+            var gridCanvas = $('<canvas />', {
+                attr: {
+                    width: canvas_width,
+                    height: canvas_height
+                }
+            });
             var context = gridCanvas.get(0).getContext("2d");
 
             for (var x = 0; x <= canvas_width; x += gridsizeW) {
@@ -366,7 +423,9 @@ and dependencies (minified).
             var $base = $(el);
 
             $base.init = function () {
-                if (!$base.is('[id]')) $base.attr({ id: 'drawZone_' + i })
+                if (!$base.is('[id]')) $base.attr({
+                    id: 'drawZone_' + i
+                })
 
                 $base.data('options', settings);
 

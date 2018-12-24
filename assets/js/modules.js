@@ -106,27 +106,29 @@ farmGraphModule = {
       return this.substr(1, this.length);
     };
 
-    Object.defineProperty(Object.prototype, "setElementPosition", {
-      value: function setElementPosition() {
-        var options = this.data('options');
+    // Object.defineProperty(Object.prototype, "setElementPosition", {
+    //   value: function setElementPosition() {
+    //     var options = this.data('options');
 
-        var position = {
-          left: options.position.x,
-          top: options.position.y
-        };
+    //     console.log(100, options)
 
-        var parents = $fg.grep(this.parents(), function (parent) {
-          if ($fg(parent).hasClass('rectangle')) {
-            position.left -= parseInt($fg(parent).css("left")),
-              position.top -= parseInt($fg(parent).css("top"))
-          }
-        })
-        this.css(position)
+    //     var position = {
+    //       left: options.position.x,
+    //       top: options.position.y
+    //     };
 
-      },
-      writable: true,
-      configurable: true
-    });
+    //     var parents = $fg.grep(this.parents(), function (parent) {
+    //       if ($fg(parent).hasClass('rectangle')) {
+    //         position.left -= parseInt($fg(parent).css("left")),
+    //           position.top -= parseInt($fg(parent).css("top"))
+    //       }
+    //     })
+    //     this.css(position)
+
+    //   },
+    //   writable: true,
+    //   configurable: true
+    // });
   },
 
   bindFarmDraw: function () {
@@ -759,6 +761,7 @@ farmGraphModule = {
                 $fg(this).click();
                 click.x = event.clientX;
                 click.y = event.clientY;
+
               },
               drag: function (event, ui) {
                 vm.setElementPosition(event, ui);
@@ -834,6 +837,9 @@ farmGraphModule = {
               containment: "parent",
               autoHide: true,
               // grid: elements.farmDrawPluginOptions.canvas.gridSize,
+              start:function(event,ui){
+                $fg(this).click();
+              },
               resize: function (event, ui) {
                 var guid = $fg(ui.helper).attr("id");
                 vm.setElementPosition(event, ui);
@@ -867,14 +873,13 @@ farmGraphModule = {
   unsavedChangedCallback: function (sender, args) {
     var save = args === 'YES';
     if (!save) return;
-    
+
     var unsavedObjects = vm.getUnsavedChangeObjects();
     if (unsavedObjects.length > 0) {
       $fg.each(unsavedObjects, function (i, item) {
         vm.activeElementWrite(item.guid());
       })
     }
-    console.log(20);
     setTimeout(() => {
       farmGraphModule.validationFarmGraph();
     }, 500);
@@ -951,18 +956,6 @@ farmGraphModule = {
     });
 
 
-    // $fg(window).on("beforeunload", function (e) {
-    //   // Your message won't get displayed by modern browsers; the browser's built-in
-    //   // one will be instead. But for older browsers, best to include an actual
-    //   // message instead of just "x" or similar.
-    //   // return e.originalEvent.returnValue = "Your message here";
-
-    //   windowManager.ShowConfirmation("Unsaved Changes", "There are unsaved changes!", farmGraphModule.unsavedChangedCallback);
-    //   return false;
-
-    //   // windowManager.ShowConfirmation("Unsaved Changes", "There are unsaved changes!", farmGraphModule.unsavedChangedCallback);
-    //   // return 'Leave?';
-    // });
 
   }
 };

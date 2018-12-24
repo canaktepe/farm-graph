@@ -526,7 +526,12 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
 
             self.setElementPosition = function (event, ui) {
 
-                self.activeElement().updatedPosition(true);
+                var activeElement = self.activeElement();
+
+                if (activeElement.updatedPosition() === false) {
+                    activeElement.updatedPosition(true);
+                    console.log(activeElement.guid() + ' NodeId position updated!');
+                }
 
                 var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
                 var factor = 1 / zoom - 1;
@@ -575,6 +580,9 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     };
                 }
 
+
+
+
                 // this section is setting location inputs on Object Information parts
                 var posToObjectInf = {
                     left: pos.x,
@@ -586,11 +594,12 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 // this section is set size of elements on canvas
                 pos = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
                     pos.x,
-                    pos.y,
+                    self.convertToBottomPosition(pos),
                     pos.w,
                     pos.h
                 );
 
+                // TODO:part bottom 0 control
                 posToObjectInf = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
                     posToObjectInf.left,
                     posToObjectInf.top,
