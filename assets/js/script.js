@@ -650,7 +650,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     }
                 };
 
-                deleteelementOnCanvas = function () {
+                deleteElementOnCanvas = function () {
                     self.createdElements().some(function iter(o, i, a) {
                         removeAllRoutingRelations(o);
                         if (o.guid() === activeElement.guid()) {
@@ -669,16 +669,21 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 if (activeElement) {
                     //working this part if new drawed element removing
                     if (typeof activeElement.guid() === "string") {
-                        deleteelementOnCanvas();
+                        deleteElementOnCanvas();
                         return;
                     }
 
+
                     //working this part if db element removing
-                    farmGraphModule.farmDb.RemoveNodeItem(activeElement.guid(), function (
+                    // var node = {
+                    //     NodeId: activeElement.guid(),
+                    //     NodeType: activeElement.type()
+                    // }
+                    farmGraphModule.farmDb.RemoveNodeItem(ko.toJS(activeElement), function (
                         success
                     ) {
                         if (!success) return;
-                        deleteelementOnCanvas();
+                        deleteElementOnCanvas();
                     });
                 }
             };

@@ -94,9 +94,9 @@ farmDbModel = function () {
         })
     }
 
-    self.RemoveNodeItem = function (fitId, callback) {
+    self.RemoveNodeItem = function (nodeItem, callback) {
         var data = JSON.stringify({
-            fitId
+            nodeItem
         });
         self.Post('/RemoveNodeItem', data, false, function (response) {
             if (response.d) {

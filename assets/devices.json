@@ -23,7 +23,7 @@
       "name": "Barn",
       "pageTemplate": "barn.html",
       "resizable": true,
-      "acceptable": [7000,12000,5000,8000,11000]
+      "acceptable": [7000,12000,5000,8000,11000,12000]
     },
     {
       "id": 7000,
@@ -35,7 +35,7 @@
       "name": "Location",
       "pageTemplate": "location.html",
       "resizable": true,
-      "acceptable": [3000,5000, 10000,4000],
+      "acceptable": [3000,5000,8000, 10000,4000],
       "routingEnabled": {
         "input": true,
         "output": false
@@ -69,13 +69,13 @@
       "color": "rgb(224, 224, 224)",
       "zIndex": 3,
       "name": "Concentrate Silo",
-      "pageTemplate": "ConcentrateSilo.html",
+      "pageTemplate": "withoutdata.html",
       "resizable": true
     },{
       "id": 5000,
       "type": 5,
       "order": 1,
-      "color": "rgb(224, 224, 224)",
+      "color": "rgb(240, 163, 147)",
       "zIndex": 3,
       "name": "Cubicle",
       "pageTemplate": "cubicle.html",
@@ -88,7 +88,7 @@
       "color": "rgb(185, 155, 255)",
       "zIndex": 3,
       "name": "Feed Area",
-      "pageTemplate": "feedarea.html",
+      "pageTemplate": "withoutdata.html",
       "resizable": true
     },
     {
@@ -98,7 +98,7 @@
       "color": "rgb(202, 204, 206)",
       "zIndex": 3,
       "name": "Milk Tank",
-      "pageTemplate": "bulktank.html",
+      "pageTemplate": "withoutdata.html",
       "resizable": true
     }
   ]

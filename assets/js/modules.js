@@ -18,10 +18,11 @@ farmGraphModule = {
         resizable: true
       },
       onDrawComplete(e) {
-
         if (!e.drawingRect) return;
-
         farmGraphModule.openModal(false, e, function (item) {
+
+
+
           if (typeof item === "object") {
             e.drawingRect.click();
           }
@@ -64,7 +65,7 @@ farmGraphModule = {
     bsSliderFarmZoom: $fg("#bsSliderFarmZoom"),
     ctxMenuSelector: $fg(".context"),
     drawArea: $fg("#draw-area"),
-    mainAcceptable: ko.observableArray([9000]),
+    mainAcceptable: ko.observableArray([8000, 9000, 11000, 12000]),
     redirectModal: {
       selector: $fg('#redirectModal'),
       contentBody: $fg('#redirectContent')
@@ -105,6 +106,8 @@ farmGraphModule = {
     String.prototype.getClass = function () {
       return this.substr(1, this.length);
     };
+
+
 
     // Object.defineProperty(Object.prototype, "setElementPosition", {
     //   value: function setElementPosition() {
@@ -147,8 +150,7 @@ farmGraphModule = {
   },
 
   setEnableElementsType: function (drct) {
-    var parent = $fg(drct.parent);
-
+    var parent = $fg(drct.parent).hasClass('rect-name') ? $fg(drct.parent).parent() : $fg(drct.parent);
     var isChild = parent.hasClass("rect");
     var acceptable = elements.mainAcceptable();
 
@@ -268,8 +270,6 @@ farmGraphModule = {
 
   openModal: function (update, drct, callback) {
     var drawedElement = drct.drawingRect ? drct.drawingRect : drct;
-
-
     var parentNode;
 
     // off button events
@@ -406,8 +406,13 @@ farmGraphModule = {
 
       if (typeof (options.guid()) == 'string') {
         var oldId = options.guid();
-        var newId = fm.newNodeId();
-        options.guid(newId);
+        var newId;
+        if (typeof (fm) !== 'undefined') {
+          newId = fm.newNodeId();
+          options.guid(newId);
+        } else {
+          options.guid(0);
+        }
 
         //add items to database
         farmGraphModule.farmDb.AddNodeItem(ko.toJS(options), function (data) {
@@ -527,6 +532,7 @@ farmGraphModule = {
       vm.setDisableAllTypes();
       //object Types page set enabled according to drawed elements acceptable values
       elements.elementModal.selector.find(".modal-title").text("Select Type");
+
       farmGraphModule.setEnableElementsType(drct);
       elements.elementModal.contentBody.hide();
       elements.elementModal.typesBody.show();
@@ -679,6 +685,10 @@ farmGraphModule = {
       }
     })
     return parent;
+  },
+
+  getObjectKeyByValue(obj, val) {
+    return Object.entries(obj).find(i => i[1] === val);
   },
 
   calcPos: function (elm) {
@@ -837,7 +847,7 @@ farmGraphModule = {
               containment: "parent",
               autoHide: true,
               // grid: elements.farmDrawPluginOptions.canvas.gridSize,
-              start:function(event,ui){
+              start: function (event, ui) {
                 $fg(this).click();
               },
               resize: function (event, ui) {
