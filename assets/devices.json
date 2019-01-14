@@ -35,7 +35,7 @@
       "name": "Location",
       "pageTemplate": "location.html",
       "resizable": true,
-      "acceptable": [3000,5000,8000, 10000,4000],
+      "acceptable": [3000,4000,5000,8000, 10000],
       "routingEnabled": {
         "input": true,
         "output": false
@@ -70,7 +70,8 @@
       "zIndex": 3,
       "name": "Concentrate Silo",
       "pageTemplate": "withoutdata.html",
-      "resizable": true
+      "resizable": true,
+      "radius":true
     },{
       "id": 5000,
       "type": 5,
@@ -85,7 +86,7 @@
       "id": 8000,
       "type": 8,
       "order": 2,
-      "color": "rgb(185, 155, 255)",
+      "color": "rgb(127,127,127)",
       "zIndex": 3,
       "name": "Feed Area",
       "pageTemplate": "withoutdata.html",
@@ -99,7 +100,8 @@
       "zIndex": 3,
       "name": "Milk Tank",
       "pageTemplate": "withoutdata.html",
-      "resizable": true
+      "resizable": true,
+      "radius":true
     }
   ]
 }

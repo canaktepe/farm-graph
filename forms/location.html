@@ -31,17 +31,14 @@
         setNodeElement(option);
     })
 
-
     function setNodeElement(option) {
         if (update) {
-            console.log(100, update);
             link = '/Content/LocationEdit.aspx';
             farmGraphModule.redirectForm(link)
             return;
         }
 
         if (option.length == 0) {
-            console.log(80, option.length);
             farmGraphModule.redirectForm(link)
             return;
         }

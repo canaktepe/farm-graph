@@ -105,8 +105,6 @@ and dependencies (minified).
                     h: typeof (position.h) == 'number' ? Math.round(h / gridY) * gridY : undefined
                 }
             }
-
-
             return position;
         }
 
@@ -116,10 +114,6 @@ and dependencies (minified).
 
         function createRectangle(e, w, h) {
             var drawBox = $(e);
-
-
-
-
             var el = $("<div />").css({
                 // left: e.drawStartX,
                 // top: e.drawStartY,
@@ -149,9 +143,7 @@ and dependencies (minified).
 
             // without children structure
             // var drawBox = farmGraphModule.elements.drawArea;
-
             el.appendTo(drawBox);
-
             if (settings.rectangle.draggable) {
                 el.draggable({
                     containment: 'parent',
@@ -360,7 +352,6 @@ and dependencies (minified).
                 canvas_height = parseInt(drawBox.css('height'));
             }
 
-
             var gridCanvas = $('<canvas />', {
                 attr: {
                     width: canvas_width,
@@ -404,9 +395,7 @@ and dependencies (minified).
 
         function keydown(e) {
             if (!drawingEnabled) return;
-            if (e.which == 27) {
-                $(settings.drawNewButton).click();
-            }
+            if (e.which == 27) $(settings.drawNewButton).click();
         }
 
         var drawNewButton,
@@ -414,6 +403,7 @@ and dependencies (minified).
         if (!drawingEnabled) {
             drawNewButton = $(settings.drawNewButton)
                 .on('click', function () {
+                    console.log('clicked');
                     drawEnableOrDisable();
                     dragEnableOrDisable();
                 })

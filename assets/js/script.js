@@ -89,6 +89,7 @@ jsonToModel = function (data) {
     self.pageTemplate = ko.observable(data.pageTemplate);
     self.position = ko.observable(data.position);
     self.resizable = ko.observable(data.resizable);
+    self.radius  = ko.observable(data.radius);
     self.status = ko.observable(data.status);
     self.type = ko.observable(data.type);
     self.routingEnabled = ko.observable(
@@ -235,6 +236,7 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
         viewModel = function () {
             var self = this;
 
+            self.editMode = ko.observable(false);
             self.devices = ko.observableArray([]);
             self.physicals = ko.observableArray([]);
             self.objects = ko.observableArray([]);
@@ -417,6 +419,11 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
             //   }
             // });
 
+            self.switchToEditMode = function () {
+                self.editMode(!self.editMode())
+                farmGraphModule.toggleEditMode();
+            };
+
             self.setDefaultRouting = function (data) {
                 return ko.utils.arrayFilter(self.activeElement().routings(), function (
                     route
@@ -428,7 +435,6 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 });
             };
 
-            //abc
             self.activeElementWrite = function (guid) {
                 var activeElement;
                 if (guid) {

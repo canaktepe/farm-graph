@@ -20,27 +20,15 @@ farmGraphModule = {
       onDrawComplete(e) {
         if (!e.drawingRect) return;
         farmGraphModule.openModal(false, e, function (item) {
-
-
-
-          if (typeof item === "object") {
-            e.drawingRect.click();
-          }
+          if (typeof item === "object") e.drawingRect.click();
         });
       },
       onSelectElement(e) {
-
         var guid = $fg(e).attr("id");
         if (!guid) return;
-
         vm.selectElement(guid);
-
         $fg(e).draggable("option", "start", function (event, ui) {
           $fg(this).click();
-        });
-        $fg(e).draggable("option", "stop", function (event, ui) {
-          // var newPos = vm.setElementPosition(event,ui);
-          // $fg(this).css({ top: newPos.y, left: newPos.x });
         });
         $fg(e).draggable("option", "drag", function (event, ui) {
           vm.setElementPosition(event, ui);
@@ -53,10 +41,6 @@ farmGraphModule = {
         $fg(e).resizable("option", "start", function (event, ui) {
           guid = $fg(e).attr("id");
           vm.selectElement(guid);
-        });
-        $fg(e).resizable("option", "stop", function (event, ui) {
-          // var newPos = vm.setElementPosition(event,ui);
-          // $fg(this).css({ top: newPos.y, left: newPos.x });
         });
       }
     },
@@ -106,32 +90,25 @@ farmGraphModule = {
     String.prototype.getClass = function () {
       return this.substr(1, this.length);
     };
+  },
 
+  toggleEditMode: function () {
 
+    //scroll reload
+    elements.farm.css('height', '0');
+    elements.farm.css('max-height', '0');
+    setTimeout(() => {
+      elements.farm.css('height', '100%');
+      elements.farm.css('max-height', '100%');
+    }, 100);
 
-    // Object.defineProperty(Object.prototype, "setElementPosition", {
-    //   value: function setElementPosition() {
-    //     var options = this.data('options');
-
-    //     console.log(100, options)
-
-    //     var position = {
-    //       left: options.position.x,
-    //       top: options.position.y
-    //     };
-
-    //     var parents = $fg.grep(this.parents(), function (parent) {
-    //       if ($fg(parent).hasClass('rectangle')) {
-    //         position.left -= parseInt($fg(parent).css("left")),
-    //           position.top -= parseInt($fg(parent).css("top"))
-    //       }
-    //     })
-    //     this.css(position)
-
-    //   },
-    //   writable: true,
-    //   configurable: true
-    // });
+    var editModeEnable = vm.editMode();
+    $fg(".rect").draggable({
+      disabled: !editModeEnable
+    });
+    $fg(".rect").resizable({
+      disabled: !editModeEnable
+    });
   },
 
   bindFarmDraw: function () {
@@ -402,16 +379,19 @@ farmGraphModule = {
             zIndex: options.zIndex()
           })
           .dblclick(farmGraphModule.elementUpdatedblClick);
+
+        if (options.radius()) drawedElement.addClass('radius');
       }
 
       if (typeof (options.guid()) == 'string') {
         var oldId = options.guid();
         var newId;
+
         if (typeof (fm) !== 'undefined') {
           newId = fm.newNodeId();
           options.guid(newId);
         } else {
-          options.guid(0);
+          options.guid(-1);
         }
 
         //add items to database
@@ -596,6 +576,7 @@ farmGraphModule = {
   },
 
   elementSelectClick: function (e) {
+    if (!vm.editMode()) return;
     var obj = $fg(e.currentTarget);
     $fg(".rect.active").removeClass("active");
     $fg(this).addClass(elements.activeClass);
@@ -617,12 +598,15 @@ farmGraphModule = {
           backgroundColor: data.color(),
           border: data.border(),
           zIndex: data.zIndex(),
-          top: /* data.position().y*/ (vm.canvasProperties().getHeight() - data.position().y) - data.position().h,
+          top: (vm.canvasProperties().getHeight() - data.position().y) - data.position().h,
           left: data.position().x,
           width: data.position().w,
           height: data.position().h
         })
-        .data('options', data)
+        .data('options', data);
+
+      if (data.radius()) elem.addClass('radius');
+
       callback(elem);
     }
 
@@ -706,7 +690,6 @@ farmGraphModule = {
   },
 
   redirectForm: function (page, exParams) {
-
     var redirectParams = farmGraphModule.elements.elementModal.selector.data('redirectParams');
     var src = page + '?' + redirectParams;
     if (exParams) src = src + '&' + exParams;
@@ -771,14 +754,9 @@ farmGraphModule = {
                 $fg(this).click();
                 click.x = event.clientX;
                 click.y = event.clientY;
-
               },
               drag: function (event, ui) {
                 vm.setElementPosition(event, ui);
-              },
-              stop: function (event, ui) {
-                // var newPos = vm.setElementPosition(event, ui);
-                // $fg(this).css({ top: newPos.y, left: newPos.x });
               }
             });
 
@@ -854,10 +832,6 @@ farmGraphModule = {
                 var guid = $fg(ui.helper).attr("id");
                 vm.setElementPosition(event, ui);
                 vm.selectElement(guid);
-              },
-              stop: function (event, ui) {
-                // var newPos = vm.setElementPosition(event,ui);
-                // $fg(this).css({ top: newPos.y, l });
               }
             });
           }
@@ -894,7 +868,6 @@ farmGraphModule = {
       farmGraphModule.validationFarmGraph();
     }, 500);
   },
-
   bootstrapSlider: function () {
     var slider = elements.bsSliderFarmZoom.bootstrapSlider({
       formatter: function (value) {
@@ -908,15 +881,16 @@ farmGraphModule = {
       }
     });
   },
-
   contextMenu: function () {
     elements.ctxMenuSelector.contextmenu({
       before: function (e, context) {
+        if (vm.editMode() == false)
+          return false;
+
         this.$element
           .find(".rect")
           .on("click.context.data-api", $fg.proxy(this.closemenu, this));
         var target = $fg(e.target);
-
         target.click();
         if (!target.hasClass("rect")) {
           $fg("#context-menu")
@@ -951,6 +925,8 @@ farmGraphModule = {
     this.bindCustomScrollBar();
     this.validationFarmGraph();
 
+    this.toggleEditMode();
+
     window.addEventListener('beforeunload', function onBeforeUnload(e) {
       var unsavedObjects = vm.getUnsavedChangeObjects();
       if (unsavedObjects.length > 0) {
@@ -964,8 +940,5 @@ farmGraphModule = {
         return dialogText;
       }
     });
-
-
-
   }
 };
