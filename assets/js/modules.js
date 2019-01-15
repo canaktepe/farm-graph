@@ -27,11 +27,12 @@ farmGraphModule = {
         var guid = $fg(e).attr("id");
         if (!guid) return;
         vm.selectElement(guid);
-        $fg(e).draggable("option", "start", function (event, ui) {
+        $fg(e).draggable("option", "start", function (evt, ui) {
           $fg(this).click();
+          vm.dragStart(evt);
         });
-        $fg(e).draggable("option", "drag", function (event, ui) {
-          vm.setElementPosition(event, ui);
+        $fg(e).draggable("option", "drag", function (evt, ui) {
+          vm.dragElement(evt,ui);
         });
         $fg(e).resizable("option", "resize", function (event, ui) {
           guid = $fg(e).attr("id");
@@ -737,10 +738,15 @@ farmGraphModule = {
   bindDbData: function (JSONData, parentObj) {
     if (JSONData == null) return;
     var dbModel = new farmGraphModule.dataBindModel();
-    var click = {
+
+    var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
+
+    var start_pointer = {
       x: 0,
       y: 0
-    };
+    }
+
+
     $fg.each(JSONData, function (i, data) {
       dbModel.createItem(data, function (createdItem) {
         if (createdItem) {
@@ -750,13 +756,13 @@ farmGraphModule = {
             .draggable({
               containment: "parent",
               //  grid: elements.farmDrawPluginOptions.canvas.gridSize,
-              start: function (event, ui) {
+              start: function (evt, ui) {
                 $fg(this).click();
-                click.x = event.clientX;
-                click.y = event.clientY;
+                vm.dragStart(evt);
               },
-              drag: function (event, ui) {
-                vm.setElementPosition(event, ui);
+              drag: function (evt, ui) {
+                // vm.setElementPosition(event, ui);
+                vm.dragElement(evt, ui);
               }
             });
 
@@ -825,13 +831,13 @@ farmGraphModule = {
               containment: "parent",
               autoHide: true,
               // grid: elements.farmDrawPluginOptions.canvas.gridSize,
-              start: function (event, ui) {
+              start: function (evt, ui) {
                 $fg(this).click();
               },
               resize: function (event, ui) {
                 var guid = $fg(ui.helper).attr("id");
-                vm.setElementPosition(event, ui);
                 vm.selectElement(guid);
+               vm.setElementPosition(event, ui);
               }
             });
           }
@@ -919,8 +925,8 @@ farmGraphModule = {
     elements = this.elements;
     this.bindFarmDraw();
     this.bindExtensionMethods();
-    this.bindDbData(jsonData, null);
     this.bootstrapSlider();
+    this.bindDbData(jsonData, null);
     this.contextMenu();
     this.bindCustomScrollBar();
     this.validationFarmGraph();

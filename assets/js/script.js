@@ -89,7 +89,7 @@ jsonToModel = function (data) {
     self.pageTemplate = ko.observable(data.pageTemplate);
     self.position = ko.observable(data.position);
     self.resizable = ko.observable(data.resizable);
-    self.radius  = ko.observable(data.radius);
+    self.radius = ko.observable(data.radius);
     self.status = ko.observable(data.status);
     self.type = ko.observable(data.type);
     self.routingEnabled = ko.observable(
@@ -530,64 +530,88 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                 return self.canvasProperties().getHeight() - pos.y - pos.h;
             };
 
-            self.setElementPosition = function (event, ui) {
 
+            self.startPointer = {
+                x: 0,
+                y: 0
+            }
+
+            self.dragStart = function (evt) {
+                var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
+                self.startPointer.y = (evt.pageY - $fg('#draw-area').offset().top) / zoom - parseInt($fg(evt.target).css('top'));
+                self.startPointer.x = (evt.pageX - $fg('#draw-area').offset().left) / zoom - parseInt($fg(evt.target).css('left'));
+            };
+
+            self.dragElement = function (evt, ui) {
+                var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
+                var canvasTop = $fg('#draw-area').offset().top;
+                var canvasLeft = $fg('#draw-area').offset().left;
+                var canvasHeight = $fg('#draw-area').height();
+                var canvasWidth = $fg('#draw-area').width();
+
+                // Fix for zoom
+                ui.position.top = Math.round((evt.pageY - canvasTop) / zoom - self.startPointer.y);
+                ui.position.left = Math.round((evt.pageX - canvasLeft) / zoom - self.startPointer.x);
+
+                // Check if element is outside canvas
+                if (ui.position.left <= 0) ui.position.left = 0;
+                if (ui.position.left + $fg(ui.helper).width() >= canvasWidth) ui.position.left = canvasWidth - $fg(ui.helper).width();
+                if (ui.position.top <= 0) ui.position.top = 0;
+                if (ui.position.top + $fg(ui.helper).outerHeight() >= canvasHeight) ui.position.top = canvasHeight - $fg(ui.helper).outerHeight();
+
+                // Finally, make sure offset aligns with position
+                ui.offset.top = Math.round(ui.position.top + canvasTop);
+                ui.offset.left = Math.round(ui.position.left + canvasLeft);
+
+                var pos = {
+                    x: typeof ui.position.left == "number" ? ui.position.left : self.getActiveElement().position().x,
+                    y: typeof ui.position.top == "number" ? ui.position.top : self.getActiveElement().position().y,
+                    w: self.getActiveElement().position().w,
+                    h: self.getActiveElement().position().h
+                };
+                pos.y = self.convertToBottomPosition(pos);
+
+                self.getActiveElement().position(pos);
+
+                // this part is important for unsaved changes
                 var activeElement = self.activeElement();
-
                 if (activeElement.updatedPosition() === false) {
                     activeElement.updatedPosition(true);
                     console.log(activeElement.guid() + ' NodeId position updated!');
                 }
+            }
 
+            self.setElementPosition = function (event, ui) {
+                // zoom calculating for draggable item position
                 var zoom = farmGraphModule.elements.drawArea.farmDraw.getZoom();
                 var factor = 1 / zoom - 1;
-
                 var pos;
 
                 if (ui.size) {
-                    ui.size.width += Math.round(
-                        (ui.size.width - ui.originalSize.width) * factor
-                    );
-                    ui.size.height += Math.round(
-                        (ui.size.height - ui.originalSize.height) * factor
-                    );
-                    ui.position.top += Math.round(
-                        (ui.position.top - ui.originalPosition.top) * factor
-                    );
-                    ui.position.left += Math.round(
-                        (ui.position.left - ui.originalPosition.left) * factor
-                    );
+                    ui.size.width += Math.round((ui.size.width - ui.originalSize.width) * factor);
+                    ui.size.height += Math.round((ui.size.height - ui.originalSize.height) * factor);
+                    ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
+                    ui.position.left += Math.round((ui.position.left - ui.originalPosition.left) * factor);
 
                     pos = {
-                        x: typeof ui.position.left == "number" ?
-                            ui.position.left : self.getActiveElement().position().x,
-                        y: typeof ui.position.top == "number" ?
-                            ui.position.top : self.getActiveElement().position().y,
-                        w: typeof ui.size.width == "number" ?
-                            ui.size.width : self.getActiveElement().position().w,
-                        h: typeof ui.size.height == "number" ?
-                            ui.size.height : self.getActiveElement().position().h
+                        x: typeof ui.position.left == "number" ? ui.position.left : self.getActiveElement().position().x,
+                        y: typeof ui.position.top == "number" ? ui.position.top : self.getActiveElement().position().y,
+                        w: typeof ui.size.width == "number" ? ui.size.width : self.getActiveElement().position().w,
+                        h: typeof ui.size.height == "number" ? ui.size.height : self.getActiveElement().position().h
                     };
                 } else {
-                    ui.position.top += Math.round(
-                        (ui.position.top - ui.originalPosition.top) * factor
-                    );
-                    ui.position.left += Math.round(
-                        (ui.position.left - ui.originalPosition.left) * factor
-                    );
+                    var top = Math.round((ui.position.top - ui.originalPosition.top) * factor);
+                    var left = Math.round((ui.position.left - ui.originalPosition.left) * factor);
+                    ui.position.top += top;
+                    ui.position.left += left;
 
                     pos = {
-                        x: typeof ui.position.left == "number" ?
-                            ui.position.left : self.getActiveElement().position().x,
-                        y: typeof ui.position.top == "number" ?
-                            ui.position.top : self.getActiveElement().position().y,
+                        x: typeof ui.position.left == "number" ? ui.position.left : self.getActiveElement().position().x,
+                        y: typeof ui.position.top == "number" ? ui.position.top : self.getActiveElement().position().y,
                         w: self.getActiveElement().position().w,
                         h: self.getActiveElement().position().h
                     };
                 }
-
-
-
 
                 // this section is setting location inputs on Object Information parts
                 var posToObjectInf = {
@@ -605,7 +629,6 @@ farmGraphModule.bindJsonElements(function (jsonResponse) {
                     pos.h
                 );
 
-                // TODO:part bottom 0 control
                 posToObjectInf = farmGraphModule.elements.drawArea.farmDraw.snapToGrid(
                     posToObjectInf.left,
                     posToObjectInf.top,
